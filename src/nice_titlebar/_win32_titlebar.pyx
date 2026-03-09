@@ -210,6 +210,8 @@ cdef extern from *:
 	ctypedef void* HBRUSH
 	ctypedef void* HCURSOR
 	ctypedef void* HICON
+	ctypedef void* HFONT
+	ctypedef void* HGDIOBJ
 	ctypedef void* HMENU
 	ctypedef void* HDC
 	ctypedef intptr_t LRESULT
@@ -258,9 +260,28 @@ cdef extern from *:
 	COLORREF SetTextColor(HDC dc, COLORREF color)
 	int SetBkMode(HDC dc, int mode)
 	int DrawTextA(HDC dc, const char* text, int length, RECT* rect, unsigned int format)
+	HFONT CreateFontA(
+		int nHeight,
+		int nWidth,
+		int nEscapement,
+		int nOrientation,
+		int fnWeight,
+		DWORD fdwItalic,
+		DWORD fdwUnderline,
+		DWORD fdwStrikeOut,
+		DWORD fdwCharSet,
+		DWORD fdwOutputPrecision,
+		DWORD fdwClipPrecision,
+		DWORD fdwQuality,
+		DWORD fdwPitchAndFamily,
+		const char* lpszFace,
+	)
+	HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h)
+	int DeleteObject(void* obj)
 	LONG_PTR SetWindowLongPtrW(HWND hwnd, int index, LONG_PTR value)
 	LONG_PTR GetWindowLongPtrW(HWND hwnd, int index)
 	int PostMessageW(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+	int IsZoomed(HWND hwnd)
 	unsigned int GetDpiForWindow(HWND hwnd)
 	int SetLayeredWindowAttributes(HWND hwnd, COLORREF key, unsigned char alpha, DWORD flags)
 	void ntb_init_wndclass(WNDCLASSEXA* cls, void* proc, HINSTANCE inst, const char* class_name)
@@ -307,7 +328,10 @@ cdef int WM_PAINT = 0x000F
 cdef int WM_SIZE = 0x0005
 cdef int WM_NCHITTEST = 0x0084
 cdef int WM_LBUTTONDOWN = 0x0201
+cdef int WM_LBUTTONUP = 0x0202
 cdef int WM_MOUSEMOVE = 0x0200
+cdef int WM_KEYDOWN = 0x0100
+cdef int WM_CHAR = 0x0102
 cdef int WM_NCCALCSIZE = 0x0083
 cdef int HTCLIENT = 1
 cdef int HTCAPTION = 2
@@ -324,15 +348,47 @@ cdef int DT_LEFT = 0x0000
 cdef int DT_VCENTER = 0x0004
 cdef int DT_SINGLELINE = 0x0020
 cdef int DT_END_ELLIPSIS = 0x00008000
+cdef int DT_CENTER = 0x0001
 cdef int WM_SYSCOMMAND = 0x0112
 cdef int SC_MINIMIZE = 0xF020
 cdef int SC_MAXIMIZE = 0xF030
 cdef int SC_RESTORE = 0xF120
 cdef int SC_CLOSE = 0xF060
 
+cdef int CLEARTYPE_QUALITY = 5
+cdef int FW_NORMAL = 400
+cdef int DEFAULT_CHARSET = 1
+cdef int OUT_DEFAULT_PRECIS = 0
+cdef int CLIP_DEFAULT_PRECIS = 0
+cdef int DEFAULT_PITCH = 0
+cdef int FF_DONTCARE = 0
+
 cdef dict _WINDOWS = {}
 cdef bint _CLASS_REGISTERED = False
 cdef bytes _CLASS_NAME = b"NiceTitlebarWindowClass"
+
+
+cdef class Canvas:
+	"""Lightweight Direct2D canvas exposed to Python."""
+
+	cdef NativeWindow _window
+
+	def __cinit__(self, NativeWindow window):
+		self._window = window
+		Py_INCREF(window)
+
+	def __dealloc__(self):
+		Py_DECREF(self._window)
+
+	def clear(self, color):
+		"""Clear the client area with an RGBA color tuple."""
+		cdef tuple rgba = _normalize_rgba(color)
+		self._window._canvas_clear(rgba)
+
+	def fill_rect(self, float x, float y, float width, float height, color):
+		"""Fill a rectangle at (x, y, width, height) with RGBA color."""
+		cdef tuple rgba = _normalize_rgba(color)
+		self._window._canvas_fill_rect(x, y, width, height, rgba)
 
 
 cdef inline COLORREF _rgb_color(int r, int g, int b):
@@ -373,6 +429,13 @@ cdef class NativeWindow:
 	cdef list _button_rects
 	cdef object _close_callback
 	cdef object _close_owner
+	cdef object _owner
+	cdef object _paint_callback
+	cdef object _mouse_move_cb
+	cdef object _mouse_down_cb
+	cdef object _mouse_up_cb
+	cdef object _key_down_cb
+	cdef object _char_cb
 	cdef int _hover_index
 	cdef bint _transparent
 	cdef float _opacity
@@ -393,6 +456,13 @@ cdef class NativeWindow:
 		self._button_rects = []
 		self._close_callback = None
 		self._close_owner = None
+		self._owner = None
+		self._paint_callback = None
+		self._mouse_move_cb = None
+		self._mouse_down_cb = None
+		self._mouse_up_cb = None
+		self._key_down_cb = None
+		self._char_cb = None
 		self._hover_index = -1
 		self._transparent = False
 		self._opacity = 1.0
@@ -437,6 +507,43 @@ cdef class NativeWindow:
 		"""Register Python callback invoked when the window is destroyed."""
 		self._close_callback = callback
 		self._close_owner = owner
+
+	def set_owner(self, object owner):
+		"""Store the high-level Python Window object for callbacks."""
+		self._owner = owner
+
+	def set_paint_callback(self, object callback):
+		"""Register a Python paint callback: (window, canvas) -> None."""
+		self._paint_callback = callback
+
+	def set_mouse_callbacks(self, object move_cb, object down_cb, object up_cb):
+		"""Register Python mouse callbacks: (window, x, y) -> None."""
+		self._mouse_move_cb = move_cb
+		self._mouse_down_cb = down_cb
+		self._mouse_up_cb = up_cb
+
+	def set_key_callbacks(self, object key_down_cb, object char_cb):
+		"""Register Python keyboard callbacks."""
+		self._key_down_cb = key_down_cb
+		self._char_cb = char_cb
+
+	cdef void _canvas_clear(self, tuple rgba):
+		"""Clear the current render target with an RGBA color."""
+		ntb_d2d_clear(&self._d2d, rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)
+
+	cdef void _canvas_fill_rect(self, float x, float y, float width, float height, tuple rgba):
+		"""Fill a rectangle using the current render target."""
+		ntb_d2d_fill_rect(
+			&self._d2d,
+			x,
+			y,
+			x + width,
+			y + height,
+			rgba[0] / 255.0,
+			rgba[1] / 255.0,
+			rgba[2] / 255.0,
+			rgba[3] / 255.0,
+		)
 
 	def show(self):
 		"""Create and show the window if not already created."""
@@ -524,10 +631,26 @@ cdef class NativeWindow:
 		if self._hwnd != <HWND>0:
 			InvalidateRect(self._hwnd, <RECT*>0, 0)
 
+	cdef void _invalidate_button(self, int idx):
+		# This requests a repaint for a single button rectangle.
+		cdef RECT r
+		cdef tuple rect
+		if self._hwnd == <HWND>0:
+			return
+		if idx < 0 or idx >= len(self._button_rects):
+			self._invalidate()
+			return
+		rect = self._button_rects[idx]
+		r.left = rect[0]
+		r.top = rect[1]
+		r.right = rect[2]
+		r.bottom = rect[3]
+		InvalidateRect(self._hwnd, &r, 0)
+
 	cdef int _hit_test(self, int x, int y):
 		# This returns non-client hit-test codes for drag/resize.
 		cdef RECT rect
-		cdef int border = 8
+		cdef int border = 5
 		cdef int left = 0
 		cdef int top = 0
 		cdef int width = 0
@@ -571,7 +694,7 @@ cdef class NativeWindow:
 		return -1
 
 	cdef void _draw(self):
-		# This draws titlebar and client backgrounds with Direct2D.
+		# This draws titlebar, client background, buttons, and delegates to Python canvas.
 		cdef RECT rect
 		cdef int width = 0
 		cdef int height = 0
@@ -600,6 +723,16 @@ cdef class NativeWindow:
 			bg[2] / 255.0,
 			bg[3] / 255.0,
 		)
+		# Allow Python-side drawing into the client area via a canvas before we
+		# render titlebar buttons on top.
+		if self._paint_callback is not None and self._owner is not None:
+			canvas = Canvas(self)
+			try:
+				self._paint_callback(self._owner, canvas)
+			except Exception:
+				PyErr_Clear()
+			del canvas
+
 		for idx, button_rect in enumerate(self._button_rects):
 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))
 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
@@ -622,6 +755,8 @@ cdef class NativeWindow:
 	cdef void _draw_text_overlay(self):
 		# This overlays text/icons with GDI for simple glyph rendering.
 		cdef HDC dc
+		cdef HFONT hFont = <HFONT>0
+		cdef HGDIOBJ oldFont = <HGDIOBJ>0
 		cdef RECT text_rect
 		cdef tuple text_color = self._titlebar_text
 		cdef int idx
@@ -635,14 +770,39 @@ cdef class NativeWindow:
 		dc = GetDC(self._hwnd)
 		if dc == <HDC>0:
 			return
+
+		# Use a smoother GUI font for title and button glyphs.
+		hFont = CreateFontA(
+			-14,
+			0,
+			0,
+			0,
+			FW_NORMAL,
+			0,
+			0,
+			0,
+			DEFAULT_CHARSET,
+			OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS,
+			CLEARTYPE_QUALITY,
+			DEFAULT_PITCH | FF_DONTCARE,
+			b"Segoe UI",
+		)
+		if hFont != <HFONT>0:
+			oldFont = SelectObject(dc, <HGDIOBJ>hFont)
+
 		SetBkMode(dc, TRANSPARENT)
 		SetTextColor(dc, _rgb_color(text_color[0], text_color[1], text_color[2]))
+
+		# Title text area.
 		text_rect.left = 14
 		text_rect.top = 0
 		text_rect.right = self._width - 180
 		text_rect.bottom = self._titlebar_height
 		title_bytes = self._title.encode("utf-8", "replace")
 		DrawTextA(dc, <const char*>title_bytes, -1, &text_rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+
+		# Button glyphs, centered in their rectangles.
 		for idx, rect in enumerate(self._button_rects):
 			button = self._buttons[idx]
 			icon = <str>button.get("icon", "")
@@ -653,7 +813,20 @@ cdef class NativeWindow:
 			text_rect.right = rect[2]
 			text_rect.bottom = rect[3]
 			icon_bytes = icon.encode("utf-8", "replace")
-			DrawTextA(dc, <const char*>icon_bytes, -1, &text_rect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+			DrawTextA(
+				dc,
+				<const char*>icon_bytes,
+				-1,
+				&text_rect,
+				DT_CENTER | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS,
+			)
+
+		# Restore and clean up the font before releasing the DC.
+		if hFont != <HFONT>0:
+			if oldFont != <HGDIOBJ>0:
+				SelectObject(dc, oldFont)
+			DeleteObject(hFont)
+
 		ReleaseDC(self._hwnd, dc)
 
 	cdef str _default_icon(self, str kind):
@@ -684,14 +857,18 @@ cdef class NativeWindow:
 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MINIMIZE, 0)
 			return
 		if kind == "maximize":
-			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
+			# Toggle maximize / restore based on current zoom state.
+			if IsZoomed(self._hwnd):
+				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
+			else:
+				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
 			return
 		if kind == "restore":
 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
 			return
 		try:
-			if button.get("on_click") is not None:
-				button["on_click"](self._close_owner)
+			if button.get("on_click") is not None and self._owner is not None:
+				button["on_click"](self._owner)
 		except Exception:
 			PyErr_Clear()
 
@@ -723,7 +900,13 @@ cdef LRESULT __stdcall _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		idx = window._button_hit(x, y)
 		if idx != window._hover_index:
 			window._hover_index = idx
-			window._invalidate()
+			window._invalidate_button(idx)
+		# Forward client-area mouse move events into Python.
+		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:
+			try:
+				window._mouse_move_cb(window._owner, x, y)
+			except Exception:
+				PyErr_Clear()
 		return 0
 
 	if msg == WM_LBUTTONDOWN:
@@ -731,6 +914,39 @@ cdef LRESULT __stdcall _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		y = ntb_get_y_lparam(lparam)
 		if y < window._titlebar_height:
 			window._handle_button_click(x, y)
+		else:
+			if window._mouse_down_cb is not None and window._owner is not None:
+				try:
+					window._mouse_down_cb(window._owner, x, y)
+				except Exception:
+					PyErr_Clear()
+		return 0
+
+	if msg == WM_LBUTTONUP:
+		x = ntb_get_x_lparam(lparam)
+		y = ntb_get_y_lparam(lparam)
+		if y >= window._titlebar_height:
+			if window._mouse_up_cb is not None and window._owner is not None:
+				try:
+					window._mouse_up_cb(window._owner, x, y)
+				except Exception:
+					PyErr_Clear()
+		return 0
+
+	if msg == WM_KEYDOWN:
+		if window._key_down_cb is not None and window._owner is not None:
+			try:
+				window._key_down_cb(window._owner, <int>wparam)
+			except Exception:
+				PyErr_Clear()
+		return 0
+
+	if msg == WM_CHAR:
+		if window._char_cb is not None and window._owner is not None:
+			try:
+				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+			except Exception:
+				PyErr_Clear()
 		return 0
 
 	if msg == WM_SIZE:
@@ -777,4 +993,5 @@ def run_event_loop():
 	while GetMessageW(&msg, <HWND>0, 0, 0) > 0:
 		TranslateMessage(&msg)
 		DispatchMessageW(&msg)
+
 

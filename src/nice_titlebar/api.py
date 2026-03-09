@@ -8,9 +8,11 @@ from typing import Callable
 from .types import TitleBarButton, TitleBarStyle, normalize_color
 
 try:
+	from ._win32_titlebar import Canvas as _NativeCanvas
 	from ._win32_titlebar import NativeWindow as _NativeWindow
 	from ._win32_titlebar import run_event_loop as _run_event_loop
 except Exception as exc:  # pragma: no cover - runtime fallback
+	_NativeCanvas = None
 	_NativeWindow = None
 	_IMPORT_ERROR = exc
 else:
@@ -86,6 +88,8 @@ class Window:
 			transparent,
 			opacity,
 		)
+		# Attach the high-level Window instance so native callbacks can use it.
+		self._native.set_owner(self)
 		self.titlebar = TitleBar(
 			owner=self,
 			style=TitleBarStyle(
@@ -99,6 +103,12 @@ class Window:
 		)
 		self._sync_titlebar()
 		self._native.set_client_background(*self._background_color)
+		# Python-side storage for input callbacks (native layer has no public accessors).
+		self._mouse_move_cb: Callable[["Window", int, int], None] | None = None
+		self._mouse_down_cb: Callable[["Window", int, int], None] | None = None
+		self._mouse_up_cb: Callable[["Window", int, int], None] | None = None
+		self._key_down_cb: Callable[["Window", int], None] | None = None
+		self._char_cb: Callable[["Window", str], None] | None = None
 
 	def show(self) -> None:
 		"""Create and display the native window."""
@@ -128,6 +138,39 @@ class Window:
 		"""Set client area background color."""
 		self._background_color = normalize_color(color)
 		self._native.set_client_background(*self._background_color)
+
+	def on_paint(self, callback: Callable[["Window", "_NativeCanvas"], None]) -> None:
+		"""Register a Python paint callback to draw into the client area.
+
+		The callback receives (window, canvas), where `canvas` exposes simple
+		Direct2D-backed drawing primitives such as `fill_rect` and `clear`.
+		"""
+		self._native.set_paint_callback(callback)
+
+	def on_mouse_move(self, callback: Callable[["Window", int, int], None]) -> None:
+		"""Register a callback for mouse movement over the client area."""
+		self._mouse_move_cb = callback
+		self._native.set_mouse_callbacks(self._mouse_move_cb, self._mouse_down_cb, self._mouse_up_cb)
+
+	def on_mouse_down(self, callback: Callable[["Window", int, int], None]) -> None:
+		"""Register a callback for mouse button presses in the client area."""
+		self._mouse_down_cb = callback
+		self._native.set_mouse_callbacks(self._mouse_move_cb, self._mouse_down_cb, self._mouse_up_cb)
+
+	def on_mouse_up(self, callback: Callable[["Window", int, int], None]) -> None:
+		"""Register a callback for mouse button releases in the client area."""
+		self._mouse_up_cb = callback
+		self._native.set_mouse_callbacks(self._mouse_move_cb, self._mouse_down_cb, self._mouse_up_cb)
+
+	def on_key_down(self, callback: Callable[["Window", int], None]) -> None:
+		"""Register a callback for key-down events (virtual-key codes)."""
+		self._key_down_cb = callback
+		self._native.set_key_callbacks(self._key_down_cb, self._char_cb)
+
+	def on_text_input(self, callback: Callable[["Window", str], None]) -> None:
+		"""Register a callback for character input (WM_CHAR, already decoded)."""
+		self._char_cb = callback
+		self._native.set_key_callbacks(self._key_down_cb, self._char_cb)
 
 	def _sync_titlebar(self) -> None:
 		"""Push Python-side titlebar state into the native layer."""

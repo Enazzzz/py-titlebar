@@ -1746,9 +1746,23 @@ static const char* const __pyx_f[] = {
 /* #### Code section: type_declarations ### */
 
 /*--- Type declarations ---*/
+struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas;
 struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow;
 
-/* "nice_titlebar/_win32_titlebar.pyx":360
+/* "nice_titlebar/_win32_titlebar.pyx":371
+ * 
+ * 
+ * cdef class Canvas:             # <<<<<<<<<<<<<<
+ * 	"""Lightweight Direct2D canvas exposed to Python."""
+ * 
+*/
+struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas {
+  PyObject_HEAD
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *_window;
+};
+
+
+/* "nice_titlebar/_win32_titlebar.pyx":416
  * 
  * 
  * cdef class NativeWindow:             # <<<<<<<<<<<<<<
@@ -1771,6 +1785,13 @@ struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow {
   PyObject *_button_rects;
   PyObject *_close_callback;
   PyObject *_close_owner;
+  PyObject *_owner;
+  PyObject *_paint_callback;
+  PyObject *_mouse_move_cb;
+  PyObject *_mouse_down_cb;
+  PyObject *_mouse_up_cb;
+  PyObject *_key_down_cb;
+  PyObject *_char_cb;
   int _hover_index;
   int _transparent;
   float _opacity;
@@ -1780,9 +1801,12 @@ struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow {
 
 
 struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow {
+  void (*_canvas_clear)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, PyObject *);
+  void (*_canvas_fill_rect)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, float, float, float, float, PyObject *);
   void (*_register_window_class)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *);
   void (*_layout_buttons)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *);
   void (*_invalidate)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *);
+  void (*_invalidate_button)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int);
   int (*_hit_test)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int, int);
   int (*_button_hit)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int, int);
   void (*_draw)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *);
@@ -1931,40 +1955,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStrNoError(PyObject* obj, P
 /* GetBuiltinName.proto */
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
-/* RaiseTooManyValuesToUnpack.proto */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
-
-/* RaiseNeedMoreValuesToUnpack.proto */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
-
-/* IterFinish.proto */
-static CYTHON_INLINE int __Pyx_IterFinish(void);
-
-/* UnpackItemEndCheck.proto */
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
-
-/* PyValueError_Check.proto */
-#define __Pyx_PyExc_ValueError_Check(obj)  __Pyx_TypeCheck(obj, PyExc_ValueError)
-
-/* PyObjectCall.proto (used by PyObjectFastCall) */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
-#else
-#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
-#endif
-
-/* PyObjectCallMethO.proto (used by PyObjectFastCall) */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
-#endif
-
-/* PyObjectFastCall.proto */
-#define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
-static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject * const*args, size_t nargs, PyObject *kwargs);
-
-/* RaiseException.export */
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
-
 /* TupleAndListFromArray.proto (used by fastcall) */
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyList_FromArray(PyObject *const *src, Py_ssize_t n);
@@ -2018,10 +2008,6 @@ static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int 
 #define __Pyx_ArgsSlice_FASTCALL(args, start, stop) PyTuple_GetSlice(args, start, stop)
 #endif
 
-/* RaiseArgTupleInvalid.proto */
-static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
-
 /* py_dict_items.proto (used by OwnedDictNext) */
 static CYTHON_INLINE PyObject* __Pyx_PyDict_Items(PyObject* d);
 
@@ -2034,6 +2020,22 @@ static CYTHON_INLINE PyObject* __Pyx_PyDict_Items(PyObject* d);
     ((__Pyx_PyCFunctionFast)(void(*)(void))(PyCFunction)(cfunc)->func)(self, args, nargs)
 #define __Pyx_CallCFunctionFastWithKeywords(cfunc, self, args, nargs, kwnames)\
     ((__Pyx_PyCFunctionFastWithKeywords)(void(*)(void))(PyCFunction)(cfunc)->func)(self, args, nargs, kwnames)
+
+/* PyObjectCall.proto (used by PyObjectFastCall) */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
+#else
+#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
+#endif
+
+/* PyObjectCallMethO.proto (used by PyObjectFastCall) */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+/* PyObjectFastCall.proto (used by PyObjectCallOneArg) */
+#define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
+static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject * const*args, size_t nargs, PyObject *kwargs);
 
 /* PyObjectCallOneArg.proto (used by CallUnboundCMethod0) */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
@@ -2083,16 +2085,13 @@ static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod0(__Pyx_CachedCFunction* 
 /* py_dict_values.proto (used by OwnedDictNext) */
 static CYTHON_INLINE PyObject* __Pyx_PyDict_Values(PyObject* d);
 
-/* OwnedDictNext.proto (used by RejectKeywords) */
+/* OwnedDictNext.proto (used by ParseKeywordsImpl) */
 #if CYTHON_AVOID_BORROWED_REFS
 static int __Pyx_PyDict_NextRef(PyObject *p, PyObject **ppos, PyObject **pkey, PyObject **pvalue);
 #else
 CYTHON_INLINE
 static int __Pyx_PyDict_NextRef(PyObject *p, Py_ssize_t *ppos, PyObject **pkey, PyObject **pvalue);
 #endif
-
-/* RejectKeywords.export */
-static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds);
 
 /* RaiseDoubleKeywords.proto (used by ParseKeywordsImpl) */
 static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_name);
@@ -2145,6 +2144,10 @@ static CYTHON_INLINE int __Pyx_ParseKeywords(
     int ignore_unknown_kwargs
 );
 
+/* RaiseArgTupleInvalid.proto */
+static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
 /* ArgTypeTestFunc.export */
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
 
@@ -2152,6 +2155,38 @@ static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *nam
 #define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
     ((likely(__Pyx_IS_TYPE(obj, type) | (none_allowed && (obj == Py_None)))) ? 1 :\
         __Pyx__ArgTypeTest(obj, type, name, exact))
+
+/* RejectKeywords.export */
+static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds);
+
+/* PyTypeError_Check.proto */
+#define __Pyx_PyExc_TypeError_Check(obj)  __Pyx_TypeCheck(obj, PyExc_TypeError)
+
+/* RaiseException.export */
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
+
+/* RaiseTooManyValuesToUnpack.proto */
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
+
+/* RaiseNeedMoreValuesToUnpack.proto */
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
+
+/* IterFinish.proto */
+static CYTHON_INLINE int __Pyx_IterFinish(void);
+
+/* UnpackItemEndCheck.proto */
+static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
+
+/* PyValueError_Check.proto */
+#define __Pyx_PyExc_ValueError_Check(obj)  __Pyx_TypeCheck(obj, PyExc_ValueError)
+
+/* PyFloatBinop.proto */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyFloat_TrueDivideObjC(PyObject *op1, PyObject *op2, double floatval, int inplace, int zerodivision_check);
+#else
+#define __Pyx_PyFloat_TrueDivideObjC(op1, op2, floatval, inplace, zerodivision_check)\
+    (inplace ? PyNumber_InPlaceTrueDivide(op1, op2) : PyNumber_TrueDivide(op1, op2))
+#endif
 
 /* PyRuntimeError_Check.proto */
 #define __Pyx_PyExc_RuntimeError_Check(obj)  __Pyx_TypeCheck(obj, PyExc_RuntimeError)
@@ -2175,12 +2210,12 @@ static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject 
 /* RaiseUnexpectedTypeError.proto */
 static int __Pyx_RaiseUnexpectedTypeError(const char *expected, PyObject *obj);
 
-/* PyFloatBinop.proto */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyFloat_TrueDivideObjC(PyObject *op1, PyObject *op2, double floatval, int inplace, int zerodivision_check);
+/* GetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
 #else
-#define __Pyx_PyFloat_TrueDivideObjC(op1, op2, floatval, inplace, zerodivision_check)\
-    (inplace ? PyNumber_InPlaceTrueDivide(op1, op2) : PyNumber_TrueDivide(op1, op2))
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
 #endif
 
 /* PyObjectFastCallMethod.proto */
@@ -2200,17 +2235,6 @@ static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
 #define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
 #define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
 #endif
-
-/* GetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
-#endif
-
-/* PyTypeError_Check.proto */
-#define __Pyx_PyExc_TypeError_Check(obj)  __Pyx_TypeCheck(obj, PyExc_TypeError)
 
 /* dict_getitem_default.proto */
 static PyObject* __Pyx_PyDict_GetItemDefault(PyObject* d, PyObject* key, PyObject* default_value);
@@ -2236,19 +2260,19 @@ static CYTHON_INLINE int __Pyx_PyDict_ContainsTF(PyObject* item, PyObject* dict,
 /* AllocateExtensionType.proto */
 static PyObject *__Pyx_AllocateExtensionType(PyTypeObject *t, int is_final);
 
-/* DefaultPlacementNew.proto */
-#include <new>
-template<typename T>
-void __Pyx_default_placement_construct(T* x) {
-    new (static_cast<void*>(x)) T();
-}
-
 /* CallTypeTraverse.proto */
 #if !CYTHON_USE_TYPE_SPECS || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX < 0x03090000)
 #define __Pyx_call_type_traverse(o, always_call, visit, arg) 0
 #else
 static int __Pyx_call_type_traverse(PyObject *o, int always_call, visitproc visit, void *arg);
 #endif
+
+/* DefaultPlacementNew.proto */
+#include <new>
+template<typename T>
+void __Pyx_default_placement_construct(T* x) {
+    new (static_cast<void*>(x)) T();
+}
 
 /* LimitedApiGetTypeDict.proto (used by SetItemOnTypeDict) */
 #if CYTHON_COMPILING_IN_LIMITED_API
@@ -2281,6 +2305,13 @@ static int __Pyx_validate_bases_tuple(const char *type_name, Py_ssize_t dictoffs
 /* PyType_Ready.proto */
 CYTHON_UNUSED static int __Pyx_PyType_Ready(PyTypeObject *t);
 
+/* DelItemOnTypeDict.proto (used by SetupReduce) */
+static int __Pyx__DelItemOnTypeDict(PyTypeObject *tp, PyObject *k);
+#define __Pyx_DelItemOnTypeDict(tp, k) __Pyx__DelItemOnTypeDict((PyTypeObject*)tp, k)
+
+/* SetupReduce.proto */
+static int __Pyx_setup_reduce(PyObject* type_obj);
+
 /* SetVTable.proto */
 static int __Pyx_SetVtable(PyTypeObject* typeptr , void* vtable);
 
@@ -2289,13 +2320,6 @@ static void* __Pyx_GetVtable(PyTypeObject *type);
 
 /* MergeVTables.proto */
 static int __Pyx_MergeVtables(PyTypeObject *type);
-
-/* DelItemOnTypeDict.proto (used by SetupReduce) */
-static int __Pyx__DelItemOnTypeDict(PyTypeObject *tp, PyObject *k);
-#define __Pyx_DelItemOnTypeDict(tp, k) __Pyx__DelItemOnTypeDict((PyTypeObject*)tp, k)
-
-/* SetupReduce.proto */
-static int __Pyx_setup_reduce(PyObject* type_obj);
 
 /* TypeImport.proto */
 #ifndef __PYX_HAVE_RT_ImportType_proto_3_2_4
@@ -2639,9 +2663,12 @@ static int __Pyx_State_RemoveModule(void*);
 #define __PYX_ABI_MODULE_NAME "_cython_" CYTHON_ABI
 #define __PYX_TYPE_MODULE_PREFIX __PYX_ABI_MODULE_NAME "."
 
+static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__canvas_clear(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_rgba); /* proto*/
+static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__canvas_fill_rect(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, float __pyx_v_x, float __pyx_v_y, float __pyx_v_width, float __pyx_v_height, PyObject *__pyx_v_rgba); /* proto*/
 static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_window_class(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto*/
 static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_buttons(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto*/
 static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto*/
+static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate_button(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, int __pyx_v_idx); /* proto*/
 static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, int __pyx_v_x, int __pyx_v_y); /* proto*/
 static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, int __pyx_v_x, int __pyx_v_y); /* proto*/
 static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto*/
@@ -2684,7 +2711,10 @@ static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_PAINT;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SIZE;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_NCHITTEST;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_LBUTTONDOWN;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_LBUTTONUP;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_MOUSEMOVE;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_KEYDOWN;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_CHAR;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_NCCALCSIZE;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_HTCLIENT;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_HTCAPTION;
@@ -2701,11 +2731,19 @@ static int __pyx_v_13nice_titlebar_15_win32_titlebar_DT_LEFT;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_DT_VCENTER;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_DT_SINGLELINE;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_DT_END_ELLIPSIS;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_DT_CENTER;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_SC_MINIMIZE;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_SC_MAXIMIZE;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_SC_RESTORE;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar_SC_CLOSE;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_CLEARTYPE_QUALITY;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_FW_NORMAL;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_DEFAULT_CHARSET;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_OUT_DEFAULT_PRECIS;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_CLIP_DEFAULT_PRECIS;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_DEFAULT_PITCH;
+static int __pyx_v_13nice_titlebar_15_win32_titlebar_FF_DONTCARE;
 static PyObject *__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS = 0;
 static int __pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_REGISTERED;
 static PyObject *__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME = 0;
@@ -2724,8 +2762,15 @@ static PyObject *__pyx_builtin_enumerate;
 /* #### Code section: string_decls ### */
 static const char __pyx_k_utf_8[] = "utf-8";
 static const char __pyx_k_replace[] = "replace";
+static const char __pyx_k_Segoe_UI[] = "Segoe UI";
 static const char __pyx_k_Native_Win32_Direct2D_window_imp[] = "Native Win32 + Direct2D window implementation for nice_titlebar.";
 /* #### Code section: decls ### */
+static int __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas___cinit__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_window); /* proto */
+static void __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_2__dealloc__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_4clear(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, PyObject *__pyx_v_color); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_6fill_rect(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, float __pyx_v_x, float __pyx_v_y, float __pyx_v_width, float __pyx_v_height, PyObject *__pyx_v_color); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_8__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_10__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
 static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, int __pyx_v_width, int __pyx_v_height, PyObject *__pyx_v_title, int __pyx_v_titlebar_height, int __pyx_v_transparent, float __pyx_v_opacity); /* proto */
 static void __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_4__dealloc__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
@@ -2733,13 +2778,19 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
 static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_8set_client_background(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, int __pyx_v_r, int __pyx_v_g, int __pyx_v_b, int __pyx_v_a); /* proto */
 static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set_title(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
 static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_12register_close_callback(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_callback, PyObject *__pyx_v_owner); /* proto */
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14show(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16close(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14set_owner(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_owner); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16set_paint_callback(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_callback); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18set_mouse_callbacks(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_move_cb, PyObject *__pyx_v_down_cb, PyObject *__pyx_v_up_cb); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20set_key_callbacks(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_key_down_cb, PyObject *__pyx_v_char_cb); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_22invalidate(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_24show(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_26close(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_7created___get__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
 static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_7created_2__set__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_28__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_30__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_run_event_loop(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_tp_new_13nice_titlebar_15_win32_titlebar_Canvas(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_13nice_titlebar_15_win32_titlebar_NativeWindow(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 /* #### Code section: late_includes ### */
 /* #### Code section: module_state ### */
@@ -2762,15 +2813,17 @@ typedef struct {
   PyObject *__pyx_empty_bytes;
   PyObject *__pyx_empty_unicode;
   PyTypeObject *__pyx_ptype_7cpython_4type_type;
+  PyObject *__pyx_type_13nice_titlebar_15_win32_titlebar_Canvas;
   PyObject *__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow;
+  PyTypeObject *__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas;
   PyTypeObject *__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow;
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_get;
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_items;
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop;
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_values;
   PyObject *__pyx_tuple[9];
-  PyObject *__pyx_codeobj_tab[9];
-  PyObject *__pyx_string_tab[103];
+  PyObject *__pyx_codeobj_tab[18];
+  PyObject *__pyx_string_tab[137];
   PyObject *__pyx_number_tab[8];
 /* #### Code section: module_state_contents ### */
 /* CommonTypesMetaclass.module_state_decls */
@@ -2830,91 +2883,125 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_kp_u_no_default___reduce___due_to_non __pyx_string_tab[15]
 #define __pyx_kp_u_src_nice_titlebar__win32_titleba __pyx_string_tab[16]
 #define __pyx_kp_u_stringsource __pyx_string_tab[17]
-#define __pyx_n_u_NativeWindow __pyx_string_tab[18]
-#define __pyx_n_u_NativeWindow___reduce_cython __pyx_string_tab[19]
-#define __pyx_n_u_NativeWindow___setstate_cython __pyx_string_tab[20]
-#define __pyx_n_u_NativeWindow_close __pyx_string_tab[21]
-#define __pyx_n_u_NativeWindow_configure_titlebar __pyx_string_tab[22]
-#define __pyx_n_u_NativeWindow_register_close_call __pyx_string_tab[23]
-#define __pyx_n_u_NativeWindow_set_client_backgrou __pyx_string_tab[24]
-#define __pyx_n_u_NativeWindow_set_title __pyx_string_tab[25]
-#define __pyx_n_u_NativeWindow_show __pyx_string_tab[26]
-#define __pyx_n_u_Pyx_PyDict_NextRef __pyx_string_tab[27]
-#define __pyx_n_u_R __pyx_string_tab[28]
-#define __pyx_n_u_X __pyx_string_tab[29]
-#define __pyx_n_u_a __pyx_string_tab[30]
-#define __pyx_n_u_alpha __pyx_string_tab[31]
-#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[32]
-#define __pyx_n_u_b __pyx_string_tab[33]
-#define __pyx_n_u_bg __pyx_string_tab[34]
-#define __pyx_n_u_buttons __pyx_string_tab[35]
-#define __pyx_n_u_callback __pyx_string_tab[36]
-#define __pyx_n_u_cline_in_traceback __pyx_string_tab[37]
-#define __pyx_n_u_close __pyx_string_tab[38]
-#define __pyx_n_u_configure_titlebar __pyx_string_tab[39]
-#define __pyx_n_u_custom __pyx_string_tab[40]
-#define __pyx_n_u_enumerate __pyx_string_tab[41]
-#define __pyx_n_u_ex_style __pyx_string_tab[42]
-#define __pyx_n_u_font_family __pyx_string_tab[43]
-#define __pyx_n_u_font_size __pyx_string_tab[44]
-#define __pyx_n_u_func __pyx_string_tab[45]
-#define __pyx_n_u_g __pyx_string_tab[46]
-#define __pyx_n_u_get __pyx_string_tab[47]
-#define __pyx_n_u_getstate __pyx_string_tab[48]
-#define __pyx_n_u_height __pyx_string_tab[49]
-#define __pyx_n_u_hover __pyx_string_tab[50]
-#define __pyx_n_u_icon __pyx_string_tab[51]
-#define __pyx_n_u_is_coroutine __pyx_string_tab[52]
-#define __pyx_n_u_items __pyx_string_tab[53]
-#define __pyx_n_u_kind __pyx_string_tab[54]
-#define __pyx_n_u_main __pyx_string_tab[55]
-#define __pyx_n_u_maximize __pyx_string_tab[56]
-#define __pyx_n_u_minimize __pyx_string_tab[57]
-#define __pyx_n_u_module __pyx_string_tab[58]
-#define __pyx_n_u_msg __pyx_string_tab[59]
-#define __pyx_n_u_name __pyx_string_tab[60]
-#define __pyx_n_u_nice_titlebar__win32_titlebar __pyx_string_tab[61]
-#define __pyx_n_u_on_click __pyx_string_tab[62]
-#define __pyx_n_u_opacity __pyx_string_tab[63]
-#define __pyx_n_u_owner __pyx_string_tab[64]
-#define __pyx_n_u_pop __pyx_string_tab[65]
-#define __pyx_n_u_pyx_state __pyx_string_tab[66]
-#define __pyx_n_u_pyx_vtable __pyx_string_tab[67]
-#define __pyx_n_u_qualname __pyx_string_tab[68]
-#define __pyx_n_u_r __pyx_string_tab[69]
-#define __pyx_n_u_reduce __pyx_string_tab[70]
-#define __pyx_n_u_reduce_cython __pyx_string_tab[71]
-#define __pyx_n_u_reduce_ex __pyx_string_tab[72]
-#define __pyx_n_u_register_close_callback __pyx_string_tab[73]
-#define __pyx_n_u_restore __pyx_string_tab[74]
-#define __pyx_n_u_run_event_loop __pyx_string_tab[75]
-#define __pyx_n_u_self __pyx_string_tab[76]
-#define __pyx_n_u_set_client_background __pyx_string_tab[77]
-#define __pyx_n_u_set_name __pyx_string_tab[78]
-#define __pyx_n_u_set_title __pyx_string_tab[79]
-#define __pyx_n_u_setdefault __pyx_string_tab[80]
-#define __pyx_n_u_setstate __pyx_string_tab[81]
-#define __pyx_n_u_setstate_cython __pyx_string_tab[82]
-#define __pyx_n_u_show __pyx_string_tab[83]
-#define __pyx_n_u_style __pyx_string_tab[84]
-#define __pyx_n_u_test __pyx_string_tab[85]
-#define __pyx_n_u_text_color __pyx_string_tab[86]
-#define __pyx_n_u_title __pyx_string_tab[87]
-#define __pyx_n_u_title_bytes __pyx_string_tab[88]
-#define __pyx_n_u_titlebar_height __pyx_string_tab[89]
-#define __pyx_n_u_transparent __pyx_string_tab[90]
-#define __pyx_n_u_value __pyx_string_tab[91]
-#define __pyx_n_u_values __pyx_string_tab[92]
-#define __pyx_n_u_width __pyx_string_tab[93]
-#define __pyx_kp_b_iso88591_1E_s_S_1A_1A __pyx_string_tab[94]
-#define __pyx_kp_b_iso88591_1_T_Q_Yb_b_2_Bo____T_s_j_q_G7_9 __pyx_string_tab[95]
-#define __pyx_kp_b_iso88591_Q __pyx_string_tab[96]
-#define __pyx_kp_b_iso88591_T_6_Q __pyx_string_tab[97]
-#define __pyx_kp_b_iso88591_a_2 __pyx_string_tab[98]
-#define __pyx_kp_b_iso88591_j_T_6_gQiq_hm1_l __pyx_string_tab[99]
-#define __pyx_kp_b_iso88591_oQa_q_l_aq_a_l __pyx_string_tab[100]
-#define __pyx_kp_b_iso88591_oS_3a_l __pyx_string_tab[101]
-#define __pyx_n_b_NiceTitlebarWindowClass __pyx_string_tab[102]
+#define __pyx_n_u_Canvas __pyx_string_tab[18]
+#define __pyx_n_u_Canvas___reduce_cython __pyx_string_tab[19]
+#define __pyx_n_u_Canvas___setstate_cython __pyx_string_tab[20]
+#define __pyx_n_u_Canvas_clear __pyx_string_tab[21]
+#define __pyx_n_u_Canvas_fill_rect __pyx_string_tab[22]
+#define __pyx_n_u_NativeWindow __pyx_string_tab[23]
+#define __pyx_n_u_NativeWindow___reduce_cython __pyx_string_tab[24]
+#define __pyx_n_u_NativeWindow___setstate_cython __pyx_string_tab[25]
+#define __pyx_n_u_NativeWindow_close __pyx_string_tab[26]
+#define __pyx_n_u_NativeWindow_configure_titlebar __pyx_string_tab[27]
+#define __pyx_n_u_NativeWindow_invalidate __pyx_string_tab[28]
+#define __pyx_n_u_NativeWindow_register_close_call __pyx_string_tab[29]
+#define __pyx_n_u_NativeWindow_set_client_backgrou __pyx_string_tab[30]
+#define __pyx_n_u_NativeWindow_set_key_callbacks __pyx_string_tab[31]
+#define __pyx_n_u_NativeWindow_set_mouse_callbacks __pyx_string_tab[32]
+#define __pyx_n_u_NativeWindow_set_owner __pyx_string_tab[33]
+#define __pyx_n_u_NativeWindow_set_paint_callback __pyx_string_tab[34]
+#define __pyx_n_u_NativeWindow_set_title __pyx_string_tab[35]
+#define __pyx_n_u_NativeWindow_show __pyx_string_tab[36]
+#define __pyx_n_u_Pyx_PyDict_NextRef __pyx_string_tab[37]
+#define __pyx_n_u_R __pyx_string_tab[38]
+#define __pyx_n_u_X __pyx_string_tab[39]
+#define __pyx_n_u_a __pyx_string_tab[40]
+#define __pyx_n_u_alpha __pyx_string_tab[41]
+#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[42]
+#define __pyx_n_u_b __pyx_string_tab[43]
+#define __pyx_n_u_bg __pyx_string_tab[44]
+#define __pyx_n_u_buttons __pyx_string_tab[45]
+#define __pyx_n_u_callback __pyx_string_tab[46]
+#define __pyx_n_u_char_cb __pyx_string_tab[47]
+#define __pyx_n_u_clear __pyx_string_tab[48]
+#define __pyx_n_u_cline_in_traceback __pyx_string_tab[49]
+#define __pyx_n_u_close __pyx_string_tab[50]
+#define __pyx_n_u_color __pyx_string_tab[51]
+#define __pyx_n_u_configure_titlebar __pyx_string_tab[52]
+#define __pyx_n_u_custom __pyx_string_tab[53]
+#define __pyx_n_u_down_cb __pyx_string_tab[54]
+#define __pyx_n_u_enumerate __pyx_string_tab[55]
+#define __pyx_n_u_ex_style __pyx_string_tab[56]
+#define __pyx_n_u_fill_rect __pyx_string_tab[57]
+#define __pyx_n_u_font_family __pyx_string_tab[58]
+#define __pyx_n_u_font_size __pyx_string_tab[59]
+#define __pyx_n_u_func __pyx_string_tab[60]
+#define __pyx_n_u_g __pyx_string_tab[61]
+#define __pyx_n_u_get __pyx_string_tab[62]
+#define __pyx_n_u_getstate __pyx_string_tab[63]
+#define __pyx_n_u_height __pyx_string_tab[64]
+#define __pyx_n_u_hover __pyx_string_tab[65]
+#define __pyx_n_u_icon __pyx_string_tab[66]
+#define __pyx_n_u_invalidate __pyx_string_tab[67]
+#define __pyx_n_u_is_coroutine __pyx_string_tab[68]
+#define __pyx_n_u_items __pyx_string_tab[69]
+#define __pyx_n_u_key_down_cb __pyx_string_tab[70]
+#define __pyx_n_u_kind __pyx_string_tab[71]
+#define __pyx_n_u_main __pyx_string_tab[72]
+#define __pyx_n_u_maximize __pyx_string_tab[73]
+#define __pyx_n_u_minimize __pyx_string_tab[74]
+#define __pyx_n_u_module __pyx_string_tab[75]
+#define __pyx_n_u_move_cb __pyx_string_tab[76]
+#define __pyx_n_u_msg __pyx_string_tab[77]
+#define __pyx_n_u_name __pyx_string_tab[78]
+#define __pyx_n_u_nice_titlebar__win32_titlebar __pyx_string_tab[79]
+#define __pyx_n_u_on_click __pyx_string_tab[80]
+#define __pyx_n_u_opacity __pyx_string_tab[81]
+#define __pyx_n_u_owner __pyx_string_tab[82]
+#define __pyx_n_u_pop __pyx_string_tab[83]
+#define __pyx_n_u_pyx_state __pyx_string_tab[84]
+#define __pyx_n_u_pyx_vtable __pyx_string_tab[85]
+#define __pyx_n_u_qualname __pyx_string_tab[86]
+#define __pyx_n_u_r __pyx_string_tab[87]
+#define __pyx_n_u_reduce __pyx_string_tab[88]
+#define __pyx_n_u_reduce_cython __pyx_string_tab[89]
+#define __pyx_n_u_reduce_ex __pyx_string_tab[90]
+#define __pyx_n_u_register_close_callback __pyx_string_tab[91]
+#define __pyx_n_u_restore __pyx_string_tab[92]
+#define __pyx_n_u_rgba __pyx_string_tab[93]
+#define __pyx_n_u_run_event_loop __pyx_string_tab[94]
+#define __pyx_n_u_self __pyx_string_tab[95]
+#define __pyx_n_u_set_client_background __pyx_string_tab[96]
+#define __pyx_n_u_set_key_callbacks __pyx_string_tab[97]
+#define __pyx_n_u_set_mouse_callbacks __pyx_string_tab[98]
+#define __pyx_n_u_set_name __pyx_string_tab[99]
+#define __pyx_n_u_set_owner __pyx_string_tab[100]
+#define __pyx_n_u_set_paint_callback __pyx_string_tab[101]
+#define __pyx_n_u_set_title __pyx_string_tab[102]
+#define __pyx_n_u_setdefault __pyx_string_tab[103]
+#define __pyx_n_u_setstate __pyx_string_tab[104]
+#define __pyx_n_u_setstate_cython __pyx_string_tab[105]
+#define __pyx_n_u_show __pyx_string_tab[106]
+#define __pyx_n_u_style __pyx_string_tab[107]
+#define __pyx_n_u_test __pyx_string_tab[108]
+#define __pyx_n_u_text_color __pyx_string_tab[109]
+#define __pyx_n_u_title __pyx_string_tab[110]
+#define __pyx_n_u_title_bytes __pyx_string_tab[111]
+#define __pyx_n_u_titlebar_height __pyx_string_tab[112]
+#define __pyx_n_u_transparent __pyx_string_tab[113]
+#define __pyx_n_u_up_cb __pyx_string_tab[114]
+#define __pyx_n_u_value __pyx_string_tab[115]
+#define __pyx_n_u_values __pyx_string_tab[116]
+#define __pyx_n_u_width __pyx_string_tab[117]
+#define __pyx_n_u_window __pyx_string_tab[118]
+#define __pyx_n_u_x __pyx_string_tab[119]
+#define __pyx_n_u_y __pyx_string_tab[120]
+#define __pyx_kp_b_iso88591_1E_s_S_1A_1A __pyx_string_tab[121]
+#define __pyx_kp_b_iso88591_1_T_Q_Yb_b_2_Bo____T_s_j_q_G7_9 __pyx_string_tab[122]
+#define __pyx_kp_b_iso88591_O1A_h_Cwha __pyx_string_tab[123]
+#define __pyx_kp_b_iso88591_O1A_hnAQ __pyx_string_tab[124]
+#define __pyx_kp_b_iso88591_Q __pyx_string_tab[125]
+#define __pyx_kp_b_iso88591_T_6_Q __pyx_string_tab[126]
+#define __pyx_kp_b_iso88591__5 __pyx_string_tab[127]
+#define __pyx_kp_b_iso88591_a_2 __pyx_string_tab[128]
+#define __pyx_kp_b_iso88591_a_3 __pyx_string_tab[129]
+#define __pyx_kp_b_iso88591_a_l __pyx_string_tab[130]
+#define __pyx_kp_b_iso88591_j __pyx_string_tab[131]
+#define __pyx_kp_b_iso88591_j_T_6_gQiq_hm1_l __pyx_string_tab[132]
+#define __pyx_kp_b_iso88591_l __pyx_string_tab[133]
+#define __pyx_kp_b_iso88591_oQa_q_l_aq_a_l __pyx_string_tab[134]
+#define __pyx_kp_b_iso88591_oS_3a_l __pyx_string_tab[135]
+#define __pyx_n_b_NiceTitlebarWindowClass __pyx_string_tab[136]
 #define __pyx_float_255_0 __pyx_number_tab[0]
 #define __pyx_int_0 __pyx_number_tab[1]
 #define __pyx_int_24 __pyx_number_tab[2]
@@ -2938,11 +3025,13 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   __Pyx_State_RemoveModule(NULL);
   #endif
   Py_CLEAR(clear_module_state->__pyx_ptype_7cpython_4type_type);
+  Py_CLEAR(clear_module_state->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas);
+  Py_CLEAR(clear_module_state->__pyx_type_13nice_titlebar_15_win32_titlebar_Canvas);
   Py_CLEAR(clear_module_state->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow);
   Py_CLEAR(clear_module_state->__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow);
   for (int i=0; i<9; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
-  for (int i=0; i<9; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<103; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<18; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
+  for (int i=0; i<137; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<8; ++i) { Py_CLEAR(clear_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_clear_contents ### */
 /* CommonTypesMetaclass.module_state_clear */
@@ -2967,11 +3056,13 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_empty_bytes);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_empty_unicode);
   Py_VISIT(traverse_module_state->__pyx_ptype_7cpython_4type_type);
+  Py_VISIT(traverse_module_state->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas);
+  Py_VISIT(traverse_module_state->__pyx_type_13nice_titlebar_15_win32_titlebar_Canvas);
   Py_VISIT(traverse_module_state->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow);
   Py_VISIT(traverse_module_state->__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow);
   for (int i=0; i<9; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
-  for (int i=0; i<9; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<103; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<18; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
+  for (int i=0; i<137; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<8; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_traverse_contents ### */
 /* CommonTypesMetaclass.module_state_traverse */
@@ -2986,7 +3077,714 @@ return 0;
 #endif
 /* #### Code section: module_code ### */
 
-/* "nice_titlebar/_win32_titlebar.pyx":338
+/* "nice_titlebar/_win32_titlebar.pyx":376
+ * 	cdef NativeWindow _window
+ * 
+ * 	def __cinit__(self, NativeWindow window):             # <<<<<<<<<<<<<<
+ * 		self._window = window
+ * 		Py_INCREF(window)
+*/
+
+/* Python wrapper */
+static int __pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_window = 0;
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return -1;
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_window,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_VARARGS(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 376, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  1:
+        values[0] = __Pyx_ArgRef_VARARGS(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 376, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "__cinit__", 0) < (0)) __PYX_ERR(0, 376, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 1, 1, i); __PYX_ERR(0, 376, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_VARARGS(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 376, __pyx_L3_error)
+    }
+    __pyx_v_window = ((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)values[0]);
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 376, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return -1;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_window), __pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, 1, "window", 0))) __PYX_ERR(0, 376, __pyx_L1_error)
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas___cinit__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_v_self), __pyx_v_window);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = -1;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  goto __pyx_L7_cleaned_up;
+  __pyx_L0:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __pyx_L7_cleaned_up:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas___cinit__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_window) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__cinit__", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":377
+ * 
+ * 	def __cinit__(self, NativeWindow window):
+ * 		self._window = window             # <<<<<<<<<<<<<<
+ * 		Py_INCREF(window)
+ * 
+*/
+  __Pyx_INCREF((PyObject *)__pyx_v_window);
+  __Pyx_GIVEREF((PyObject *)__pyx_v_window);
+  __Pyx_GOTREF((PyObject *)__pyx_v_self->_window);
+  __Pyx_DECREF((PyObject *)__pyx_v_self->_window);
+  __pyx_v_self->_window = __pyx_v_window;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":378
+ * 	def __cinit__(self, NativeWindow window):
+ * 		self._window = window
+ * 		Py_INCREF(window)             # <<<<<<<<<<<<<<
+ * 
+ * 	def __dealloc__(self):
+*/
+  Py_INCREF(((PyObject *)__pyx_v_window));
+
+  /* "nice_titlebar/_win32_titlebar.pyx":376
+ * 	cdef NativeWindow _window
+ * 
+ * 	def __cinit__(self, NativeWindow window):             # <<<<<<<<<<<<<<
+ * 		self._window = window
+ * 		Py_INCREF(window)
+*/
+
+  /* function exit code */
+  __pyx_r = 0;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":380
+ * 		Py_INCREF(window)
+ * 
+ * 	def __dealloc__(self):             # <<<<<<<<<<<<<<
+ * 		Py_DECREF(self._window)
+ * 
+*/
+
+/* Python wrapper */
+static void __pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_3__dealloc__(PyObject *__pyx_v_self); /*proto*/
+static void __pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_3__dealloc__(PyObject *__pyx_v_self) {
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
+  __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
+  __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_2__dealloc__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+static void __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_2__dealloc__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self) {
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("__dealloc__", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":381
+ * 
+ * 	def __dealloc__(self):
+ * 		Py_DECREF(self._window)             # <<<<<<<<<<<<<<
+ * 
+ * 	def clear(self, color):
+*/
+  __pyx_t_1 = ((PyObject *)__pyx_v_self->_window);
+  __Pyx_INCREF(__pyx_t_1);
+  Py_DECREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":380
+ * 		Py_INCREF(window)
+ * 
+ * 	def __dealloc__(self):             # <<<<<<<<<<<<<<
+ * 		Py_DECREF(self._window)
+ * 
+*/
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":383
+ * 		Py_DECREF(self._window)
+ * 
+ * 	def clear(self, color):             # <<<<<<<<<<<<<<
+ * 		"""Clear the client area with an RGBA color tuple."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_5clear(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_6Canvas_4clear, "Clear the client area with an RGBA color tuple.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_5clear = {"clear", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_5clear, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_6Canvas_4clear};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_5clear(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_color = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("clear (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_color,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 383, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 383, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "clear", 0) < (0)) __PYX_ERR(0, 383, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("clear", 1, 1, 1, i); __PYX_ERR(0, 383, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 383, __pyx_L3_error)
+    }
+    __pyx_v_color = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("clear", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 383, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.clear", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_4clear(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_v_self), __pyx_v_color);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_4clear(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, PyObject *__pyx_v_color) {
+  PyObject *__pyx_v_rgba = 0;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("clear", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":385
+ * 	def clear(self, color):
+ * 		"""Clear the client area with an RGBA color tuple."""
+ * 		cdef tuple rgba = _normalize_rgba(color)             # <<<<<<<<<<<<<<
+ * 		self._window._canvas_clear(rgba)
+ * 
+*/
+  __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_v_color); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 385, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_rgba = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":386
+ * 		"""Clear the client area with an RGBA color tuple."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
+ * 		self._window._canvas_clear(rgba)             # <<<<<<<<<<<<<<
+ * 
+ * 	def fill_rect(self, float x, float y, float width, float height, color):
+*/
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->_window->__pyx_vtab)->_canvas_clear(__pyx_v_self->_window, __pyx_v_rgba); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 386, __pyx_L1_error)
+
+  /* "nice_titlebar/_win32_titlebar.pyx":383
+ * 		Py_DECREF(self._window)
+ * 
+ * 	def clear(self, color):             # <<<<<<<<<<<<<<
+ * 		"""Clear the client area with an RGBA color tuple."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.clear", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_rgba);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":388
+ * 		self._window._canvas_clear(rgba)
+ * 
+ * 	def fill_rect(self, float x, float y, float width, float height, color):             # <<<<<<<<<<<<<<
+ * 		"""Fill a rectangle at (x, y, width, height) with RGBA color."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_7fill_rect(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_6Canvas_6fill_rect, "Fill a rectangle at (x, y, width, height) with RGBA color.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_7fill_rect = {"fill_rect", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_7fill_rect, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_6Canvas_6fill_rect};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_7fill_rect(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  float __pyx_v_x;
+  float __pyx_v_y;
+  float __pyx_v_width;
+  float __pyx_v_height;
+  PyObject *__pyx_v_color = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[5] = {0,0,0,0,0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("fill_rect (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x,&__pyx_mstate_global->__pyx_n_u_y,&__pyx_mstate_global->__pyx_n_u_width,&__pyx_mstate_global->__pyx_n_u_height,&__pyx_mstate_global->__pyx_n_u_color,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 388, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  5:
+        values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 388, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  4:
+        values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 388, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  3:
+        values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 388, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  2:
+        values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 388, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 388, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "fill_rect", 0) < (0)) __PYX_ERR(0, 388, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 5; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("fill_rect", 1, 5, 5, i); __PYX_ERR(0, 388, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 5)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 388, __pyx_L3_error)
+      values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 388, __pyx_L3_error)
+      values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 388, __pyx_L3_error)
+      values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 388, __pyx_L3_error)
+      values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 388, __pyx_L3_error)
+    }
+    __pyx_v_x = __Pyx_PyFloat_AsFloat(values[0]); if (unlikely((__pyx_v_x == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 388, __pyx_L3_error)
+    __pyx_v_y = __Pyx_PyFloat_AsFloat(values[1]); if (unlikely((__pyx_v_y == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 388, __pyx_L3_error)
+    __pyx_v_width = __Pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_width == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 388, __pyx_L3_error)
+    __pyx_v_height = __Pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_height == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 388, __pyx_L3_error)
+    __pyx_v_color = values[4];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("fill_rect", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 388, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.fill_rect", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_6fill_rect(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_v_self), __pyx_v_x, __pyx_v_y, __pyx_v_width, __pyx_v_height, __pyx_v_color);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_6fill_rect(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, float __pyx_v_x, float __pyx_v_y, float __pyx_v_width, float __pyx_v_height, PyObject *__pyx_v_color) {
+  PyObject *__pyx_v_rgba = 0;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("fill_rect", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":390
+ * 	def fill_rect(self, float x, float y, float width, float height, color):
+ * 		"""Fill a rectangle at (x, y, width, height) with RGBA color."""
+ * 		cdef tuple rgba = _normalize_rgba(color)             # <<<<<<<<<<<<<<
+ * 		self._window._canvas_fill_rect(x, y, width, height, rgba)
+ * 
+*/
+  __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_v_color); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_rgba = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":391
+ * 		"""Fill a rectangle at (x, y, width, height) with RGBA color."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
+ * 		self._window._canvas_fill_rect(x, y, width, height, rgba)             # <<<<<<<<<<<<<<
+ * 
+ * 
+*/
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->_window->__pyx_vtab)->_canvas_fill_rect(__pyx_v_self->_window, __pyx_v_x, __pyx_v_y, __pyx_v_width, __pyx_v_height, __pyx_v_rgba); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 391, __pyx_L1_error)
+
+  /* "nice_titlebar/_win32_titlebar.pyx":388
+ * 		self._window._canvas_clear(rgba)
+ * 
+ * 	def fill_rect(self, float x, float y, float width, float height, color):             # <<<<<<<<<<<<<<
+ * 		"""Fill a rectangle at (x, y, width, height) with RGBA color."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.fill_rect", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_rgba);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "(tree fragment)":1
+ * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_9__reduce_cython__(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_9__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_9__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_9__reduce_cython__(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  if (unlikely(__pyx_nargs > 0)) { __Pyx_RaiseArgtupleInvalid("__reduce_cython__", 1, 0, 0, __pyx_nargs); return NULL; }
+  const Py_ssize_t __pyx_kwds_len = unlikely(__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+  if (unlikely(__pyx_kwds_len < 0)) return NULL;
+  if (unlikely(__pyx_kwds_len > 0)) {__Pyx_RejectKeywords("__reduce_cython__", __pyx_kwds); return NULL;}
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_8__reduce_cython__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_8__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__reduce_cython__", 0);
+
+  /* "(tree fragment)":2
+ * def __reduce_cython__(self):
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"             # <<<<<<<<<<<<<<
+ * def __setstate_cython__(self, __pyx_state):
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+*/
+  __Pyx_Raise(((PyObject *)(((PyTypeObject*)PyExc_TypeError))), __pyx_mstate_global->__pyx_kp_u_no_default___reduce___due_to_non, 0, 0);
+  __PYX_ERR(1, 2, __pyx_L1_error)
+
+  /* "(tree fragment)":1
+ * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):
+*/
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "(tree fragment)":3
+ * def __reduce_cython__(self):
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_11__setstate_cython__(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_11__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_11__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_11__setstate_cython__(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  CYTHON_UNUSED PyObject *__pyx_v___pyx_state = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_pyx_state,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(1, 3, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(1, 3, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "__setstate_cython__", 0) < (0)) __PYX_ERR(1, 3, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("__setstate_cython__", 1, 1, 1, i); __PYX_ERR(1, 3, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(1, 3, __pyx_L3_error)
+    }
+    __pyx_v___pyx_state = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("__setstate_cython__", 1, 1, 1, __pyx_nargs); __PYX_ERR(1, 3, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_10__setstate_cython__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_v_self), __pyx_v___pyx_state);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_6Canvas_10__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__setstate_cython__", 0);
+
+  /* "(tree fragment)":4
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"             # <<<<<<<<<<<<<<
+*/
+  __Pyx_Raise(((PyObject *)(((PyTypeObject*)PyExc_TypeError))), __pyx_mstate_global->__pyx_kp_u_no_default___reduce___due_to_non, 0, 0);
+  __PYX_ERR(1, 4, __pyx_L1_error)
+
+  /* "(tree fragment)":3
+ * def __reduce_cython__(self):
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+*/
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.Canvas.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":394
  * 
  * 
  * cdef inline COLORREF _rgb_color(int r, int g, int b):             # <<<<<<<<<<<<<<
@@ -2997,7 +3795,7 @@ return 0;
 static CYTHON_INLINE COLORREF __pyx_f_13nice_titlebar_15_win32_titlebar__rgb_color(int __pyx_v_r, int __pyx_v_g, int __pyx_v_b) {
   COLORREF __pyx_r;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":340
+  /* "nice_titlebar/_win32_titlebar.pyx":396
  * cdef inline COLORREF _rgb_color(int r, int g, int b):
  * 	# This packs RGB for SetTextColor.
  * 	return <COLORREF>((b << 16) | (g << 8) | r)             # <<<<<<<<<<<<<<
@@ -3007,7 +3805,7 @@ static CYTHON_INLINE COLORREF __pyx_f_13nice_titlebar_15_win32_titlebar__rgb_col
   __pyx_r = ((COLORREF)(((__pyx_v_b << 16) | (__pyx_v_g << 8)) | __pyx_v_r));
   goto __pyx_L0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":338
+  /* "nice_titlebar/_win32_titlebar.pyx":394
  * 
  * 
  * cdef inline COLORREF _rgb_color(int r, int g, int b):             # <<<<<<<<<<<<<<
@@ -3020,7 +3818,7 @@ static CYTHON_INLINE COLORREF __pyx_f_13nice_titlebar_15_win32_titlebar__rgb_col
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":343
+/* "nice_titlebar/_win32_titlebar.pyx":399
  * 
  * 
  * cdef inline tuple _normalize_rgba(object color):             # <<<<<<<<<<<<<<
@@ -3054,7 +3852,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_normalize_rgba", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":345
+  /* "nice_titlebar/_win32_titlebar.pyx":401
  * cdef inline tuple _normalize_rgba(object color):
  * 	# This converts Python tuples to reliable RGBA ints.
  * 	cdef int r = 0             # <<<<<<<<<<<<<<
@@ -3063,7 +3861,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
 */
   __pyx_v_r = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":346
+  /* "nice_titlebar/_win32_titlebar.pyx":402
  * 	# This converts Python tuples to reliable RGBA ints.
  * 	cdef int r = 0
  * 	cdef int g = 0             # <<<<<<<<<<<<<<
@@ -3072,7 +3870,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
 */
   __pyx_v_g = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":347
+  /* "nice_titlebar/_win32_titlebar.pyx":403
  * 	cdef int r = 0
  * 	cdef int g = 0
  * 	cdef int b = 0             # <<<<<<<<<<<<<<
@@ -3081,7 +3879,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
 */
   __pyx_v_b = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":348
+  /* "nice_titlebar/_win32_titlebar.pyx":404
  * 	cdef int g = 0
  * 	cdef int b = 0
  * 	cdef int a = 255             # <<<<<<<<<<<<<<
@@ -3090,7 +3888,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
 */
   __pyx_v_a = 0xFF;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":349
+  /* "nice_titlebar/_win32_titlebar.pyx":405
  * 	cdef int b = 0
  * 	cdef int a = 255
  * 	if color is None:             # <<<<<<<<<<<<<<
@@ -3100,7 +3898,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
   __pyx_t_1 = (__pyx_v_color == Py_None);
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":350
+    /* "nice_titlebar/_win32_titlebar.pyx":406
  * 	cdef int a = 255
  * 	if color is None:
  * 		return (0, 0, 0, 255)             # <<<<<<<<<<<<<<
@@ -3112,7 +3910,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     __pyx_r = __pyx_mstate_global->__pyx_tuple[0];
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":349
+    /* "nice_titlebar/_win32_titlebar.pyx":405
  * 	cdef int b = 0
  * 	cdef int a = 255
  * 	if color is None:             # <<<<<<<<<<<<<<
@@ -3121,18 +3919,18 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":351
+  /* "nice_titlebar/_win32_titlebar.pyx":407
  * 	if color is None:
  * 		return (0, 0, 0, 255)
  * 	if len(color) == 3:             # <<<<<<<<<<<<<<
  * 		r, g, b = color
  * 	elif len(color) == 4:
 */
-  __pyx_t_2 = PyObject_Length(__pyx_v_color); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 351, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_v_color); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 407, __pyx_L1_error)
   __pyx_t_1 = (__pyx_t_2 == 3);
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":352
+    /* "nice_titlebar/_win32_titlebar.pyx":408
  * 		return (0, 0, 0, 255)
  * 	if len(color) == 3:
  * 		r, g, b = color             # <<<<<<<<<<<<<<
@@ -3145,7 +3943,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 352, __pyx_L1_error)
+        __PYX_ERR(0, 408, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3157,26 +3955,26 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
         __Pyx_INCREF(__pyx_t_5);
       } else {
         __pyx_t_3 = __Pyx_PyList_GetItemRefFast(sequence, 0, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 352, __pyx_L1_error)
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 408, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_3);
         __pyx_t_4 = __Pyx_PyList_GetItemRefFast(sequence, 1, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 352, __pyx_L1_error)
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 408, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_4);
         __pyx_t_5 = __Pyx_PyList_GetItemRefFast(sequence, 2, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 352, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 408, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_5);
       }
       #else
-      __pyx_t_3 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 352, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 408, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 352, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 408, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 352, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 408, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       #endif
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_6 = PyObject_GetIter(__pyx_v_color); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 352, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetIter(__pyx_v_color); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 408, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6);
       index = 0; __pyx_t_3 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_3)) goto __pyx_L5_unpacking_failed;
@@ -3185,7 +3983,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
       __Pyx_GOTREF(__pyx_t_4);
       index = 2; __pyx_t_5 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_5)) goto __pyx_L5_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_5);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 3) < (0)) __PYX_ERR(0, 352, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 3) < (0)) __PYX_ERR(0, 408, __pyx_L1_error)
       __pyx_t_7 = NULL;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       goto __pyx_L6_unpacking_done;
@@ -3193,20 +3991,20 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_t_7 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 352, __pyx_L1_error)
+      __PYX_ERR(0, 408, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 408, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 408, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_5); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_5); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 408, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_r = __pyx_t_8;
     __pyx_v_g = __pyx_t_9;
     __pyx_v_b = __pyx_t_10;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":351
+    /* "nice_titlebar/_win32_titlebar.pyx":407
  * 	if color is None:
  * 		return (0, 0, 0, 255)
  * 	if len(color) == 3:             # <<<<<<<<<<<<<<
@@ -3216,18 +4014,18 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     goto __pyx_L4;
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":353
+  /* "nice_titlebar/_win32_titlebar.pyx":409
  * 	if len(color) == 3:
  * 		r, g, b = color
  * 	elif len(color) == 4:             # <<<<<<<<<<<<<<
  * 		r, g, b, a = color
  * 	else:
 */
-  __pyx_t_2 = PyObject_Length(__pyx_v_color); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 353, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_v_color); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 409, __pyx_L1_error)
   __pyx_t_1 = (__pyx_t_2 == 4);
   if (likely(__pyx_t_1)) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":354
+    /* "nice_titlebar/_win32_titlebar.pyx":410
  * 		r, g, b = color
  * 	elif len(color) == 4:
  * 		r, g, b, a = color             # <<<<<<<<<<<<<<
@@ -3240,7 +4038,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
       if (unlikely(size != 4)) {
         if (size > 4) __Pyx_RaiseTooManyValuesError(4);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 354, __pyx_L1_error)
+        __PYX_ERR(0, 410, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3254,16 +4052,16 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
         __Pyx_INCREF(__pyx_t_6);
       } else {
         __pyx_t_5 = __Pyx_PyList_GetItemRefFast(sequence, 0, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 354, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 410, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_5);
         __pyx_t_4 = __Pyx_PyList_GetItemRefFast(sequence, 1, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 354, __pyx_L1_error)
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 410, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_4);
         __pyx_t_3 = __Pyx_PyList_GetItemRefFast(sequence, 2, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 354, __pyx_L1_error)
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 410, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_3);
         __pyx_t_6 = __Pyx_PyList_GetItemRefFast(sequence, 3, __Pyx_ReferenceSharing_SharedReference);
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 354, __pyx_L1_error)
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 410, __pyx_L1_error)
         __Pyx_XGOTREF(__pyx_t_6);
       }
       #else
@@ -3271,7 +4069,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
         Py_ssize_t i;
         PyObject** temps[4] = {&__pyx_t_5,&__pyx_t_4,&__pyx_t_3,&__pyx_t_6};
         for (i=0; i < 4; i++) {
-          PyObject* item = __Pyx_PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 354, __pyx_L1_error)
+          PyObject* item = __Pyx_PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 410, __pyx_L1_error)
           __Pyx_GOTREF(item);
           *(temps[i]) = item;
         }
@@ -3280,7 +4078,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     } else {
       Py_ssize_t index = -1;
       PyObject** temps[4] = {&__pyx_t_5,&__pyx_t_4,&__pyx_t_3,&__pyx_t_6};
-      __pyx_t_11 = PyObject_GetIter(__pyx_v_color); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 354, __pyx_L1_error)
+      __pyx_t_11 = PyObject_GetIter(__pyx_v_color); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 410, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __pyx_t_7 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_11);
       for (index=0; index < 4; index++) {
@@ -3288,7 +4086,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
         __Pyx_GOTREF(item);
         *(temps[index]) = item;
       }
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_11), 4) < (0)) __PYX_ERR(0, 354, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_11), 4) < (0)) __PYX_ERR(0, 410, __pyx_L1_error)
       __pyx_t_7 = NULL;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       goto __pyx_L8_unpacking_done;
@@ -3296,23 +4094,23 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __pyx_t_7 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 354, __pyx_L1_error)
+      __PYX_ERR(0, 410, __pyx_L1_error)
       __pyx_L8_unpacking_done:;
     }
-    __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_5); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_5); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 410, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 410, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 410, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_12 = __Pyx_PyLong_As_int(__pyx_t_6); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyLong_As_int(__pyx_t_6); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 410, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_v_r = __pyx_t_10;
     __pyx_v_g = __pyx_t_9;
     __pyx_v_b = __pyx_t_8;
     __pyx_v_a = __pyx_t_12;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":353
+    /* "nice_titlebar/_win32_titlebar.pyx":409
  * 	if len(color) == 3:
  * 		r, g, b = color
  * 	elif len(color) == 4:             # <<<<<<<<<<<<<<
@@ -3322,7 +4120,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     goto __pyx_L4;
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":356
+  /* "nice_titlebar/_win32_titlebar.pyx":412
  * 		r, g, b, a = color
  * 	else:
  * 		raise ValueError("Color must be RGB or RGBA.")             # <<<<<<<<<<<<<<
@@ -3336,16 +4134,16 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
       PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_mstate_global->__pyx_kp_u_Color_must_be_RGB_or_RGBA};
       __pyx_t_6 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_ValueError)), __pyx_callargs+__pyx_t_13, (2-__pyx_t_13) | (__pyx_t_13*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 356, __pyx_L1_error)
+      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 412, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
     }
     __Pyx_Raise(__pyx_t_6, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __PYX_ERR(0, 356, __pyx_L1_error)
+    __PYX_ERR(0, 412, __pyx_L1_error)
   }
   __pyx_L4:;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":357
+  /* "nice_titlebar/_win32_titlebar.pyx":413
  * 	else:
  * 		raise ValueError("Color must be RGB or RGBA.")
  * 	return (int(r), int(g), int(b), int(a))             # <<<<<<<<<<<<<<
@@ -3354,7 +4152,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
 */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_3 = NULL;
-  __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_r); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_r); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_13 = 1;
   {
@@ -3362,11 +4160,11 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     __pyx_t_6 = __Pyx_PyObject_FastCall((PyObject*)(&PyLong_Type), __pyx_callargs+__pyx_t_13, (2-__pyx_t_13) | (__pyx_t_13*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 357, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 413, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
   }
   __pyx_t_3 = NULL;
-  __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_g); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_g); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_13 = 1;
   {
@@ -3374,11 +4172,11 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     __pyx_t_4 = __Pyx_PyObject_FastCall((PyObject*)(&PyLong_Type), __pyx_callargs+__pyx_t_13, (2-__pyx_t_13) | (__pyx_t_13*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 413, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
   }
   __pyx_t_3 = NULL;
-  __pyx_t_11 = __Pyx_PyLong_From_int(__pyx_v_b); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyLong_From_int(__pyx_v_b); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __pyx_t_13 = 1;
   {
@@ -3386,11 +4184,11 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     __pyx_t_5 = __Pyx_PyObject_FastCall((PyObject*)(&PyLong_Type), __pyx_callargs+__pyx_t_13, (2-__pyx_t_13) | (__pyx_t_13*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 357, __pyx_L1_error)
+    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 413, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
   }
   __pyx_t_3 = NULL;
-  __pyx_t_14 = __Pyx_PyLong_From_int(__pyx_v_a); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_14 = __Pyx_PyLong_From_int(__pyx_v_a); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_14);
   __pyx_t_13 = 1;
   {
@@ -3398,19 +4196,19 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
     __pyx_t_11 = __Pyx_PyObject_FastCall((PyObject*)(&PyLong_Type), __pyx_callargs+__pyx_t_13, (2-__pyx_t_13) | (__pyx_t_13*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 357, __pyx_L1_error)
+    if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 413, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
   }
-  __pyx_t_14 = PyTuple_New(4); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_14 = PyTuple_New(4); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 413, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_14);
   __Pyx_GIVEREF(__pyx_t_6);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_6) != (0)) __PYX_ERR(0, 357, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_6) != (0)) __PYX_ERR(0, 413, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_4) != (0)) __PYX_ERR(0, 357, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_4) != (0)) __PYX_ERR(0, 413, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_5);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 2, __pyx_t_5) != (0)) __PYX_ERR(0, 357, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 2, __pyx_t_5) != (0)) __PYX_ERR(0, 413, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_11);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 3, __pyx_t_11) != (0)) __PYX_ERR(0, 357, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 3, __pyx_t_11) != (0)) __PYX_ERR(0, 413, __pyx_L1_error);
   __pyx_t_6 = 0;
   __pyx_t_4 = 0;
   __pyx_t_5 = 0;
@@ -3419,7 +4217,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
   __pyx_t_14 = 0;
   goto __pyx_L0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":343
+  /* "nice_titlebar/_win32_titlebar.pyx":399
  * 
  * 
  * cdef inline tuple _normalize_rgba(object color):             # <<<<<<<<<<<<<<
@@ -3443,7 +4241,7 @@ static CYTHON_INLINE PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar__normal
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":381
+/* "nice_titlebar/_win32_titlebar.pyx":444
  * 	cdef NtbD2DContext _d2d
  * 
  * 	def __cinit__(self):             # <<<<<<<<<<<<<<
@@ -3485,7 +4283,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":383
+  /* "nice_titlebar/_win32_titlebar.pyx":446
  * 	def __cinit__(self):
  * 		# This initializes safe defaults before Python init runs.
  * 		self.created = False             # <<<<<<<<<<<<<<
@@ -3494,7 +4292,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->created = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":384
+  /* "nice_titlebar/_win32_titlebar.pyx":447
  * 		# This initializes safe defaults before Python init runs.
  * 		self.created = False
  * 		self._hwnd = <HWND>0             # <<<<<<<<<<<<<<
@@ -3503,7 +4301,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->_hwnd = ((HWND)0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":385
+  /* "nice_titlebar/_win32_titlebar.pyx":448
  * 		self.created = False
  * 		self._hwnd = <HWND>0
  * 		self._width = 800             # <<<<<<<<<<<<<<
@@ -3512,7 +4310,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->_width = 0x320;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":386
+  /* "nice_titlebar/_win32_titlebar.pyx":449
  * 		self._hwnd = <HWND>0
  * 		self._width = 800
  * 		self._height = 500             # <<<<<<<<<<<<<<
@@ -3521,7 +4319,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->_height = 0x1F4;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":387
+  /* "nice_titlebar/_win32_titlebar.pyx":450
  * 		self._width = 800
  * 		self._height = 500
  * 		self._title = "Nice Titlebar"             # <<<<<<<<<<<<<<
@@ -3534,7 +4332,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __Pyx_DECREF(__pyx_v_self->_title);
   __pyx_v_self->_title = __pyx_mstate_global->__pyx_kp_u_Nice_Titlebar;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":388
+  /* "nice_titlebar/_win32_titlebar.pyx":451
  * 		self._height = 500
  * 		self._title = "Nice Titlebar"
  * 		self._titlebar_height = 34             # <<<<<<<<<<<<<<
@@ -3543,7 +4341,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->_titlebar_height = 34;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":389
+  /* "nice_titlebar/_win32_titlebar.pyx":452
  * 		self._title = "Nice Titlebar"
  * 		self._titlebar_height = 34
  * 		self._titlebar_bg = (24, 24, 24, 255)             # <<<<<<<<<<<<<<
@@ -3556,7 +4354,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __Pyx_DECREF(__pyx_v_self->_titlebar_bg);
   __pyx_v_self->_titlebar_bg = __pyx_mstate_global->__pyx_tuple[1];
 
-  /* "nice_titlebar/_win32_titlebar.pyx":390
+  /* "nice_titlebar/_win32_titlebar.pyx":453
  * 		self._titlebar_height = 34
  * 		self._titlebar_bg = (24, 24, 24, 255)
  * 		self._titlebar_text = (240, 240, 240, 255)             # <<<<<<<<<<<<<<
@@ -3569,7 +4367,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __Pyx_DECREF(__pyx_v_self->_titlebar_text);
   __pyx_v_self->_titlebar_text = __pyx_mstate_global->__pyx_tuple[2];
 
-  /* "nice_titlebar/_win32_titlebar.pyx":391
+  /* "nice_titlebar/_win32_titlebar.pyx":454
  * 		self._titlebar_bg = (24, 24, 24, 255)
  * 		self._titlebar_text = (240, 240, 240, 255)
  * 		self._client_bg = (30, 30, 34, 255)             # <<<<<<<<<<<<<<
@@ -3582,14 +4380,14 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __Pyx_DECREF(__pyx_v_self->_client_bg);
   __pyx_v_self->_client_bg = __pyx_mstate_global->__pyx_tuple[3];
 
-  /* "nice_titlebar/_win32_titlebar.pyx":392
+  /* "nice_titlebar/_win32_titlebar.pyx":455
  * 		self._titlebar_text = (240, 240, 240, 255)
  * 		self._client_bg = (30, 30, 34, 255)
  * 		self._buttons = []             # <<<<<<<<<<<<<<
  * 		self._button_rects = []
  * 		self._close_callback = None
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 455, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_buttons);
@@ -3597,14 +4395,14 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __pyx_v_self->_buttons = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":393
+  /* "nice_titlebar/_win32_titlebar.pyx":456
  * 		self._client_bg = (30, 30, 34, 255)
  * 		self._buttons = []
  * 		self._button_rects = []             # <<<<<<<<<<<<<<
  * 		self._close_callback = None
  * 		self._close_owner = None
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 456, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_button_rects);
@@ -3612,12 +4410,12 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __pyx_v_self->_button_rects = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":394
+  /* "nice_titlebar/_win32_titlebar.pyx":457
  * 		self._buttons = []
  * 		self._button_rects = []
  * 		self._close_callback = None             # <<<<<<<<<<<<<<
  * 		self._close_owner = None
- * 		self._hover_index = -1
+ * 		self._owner = None
 */
   __Pyx_INCREF(Py_None);
   __Pyx_GIVEREF(Py_None);
@@ -3625,12 +4423,12 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __Pyx_DECREF(__pyx_v_self->_close_callback);
   __pyx_v_self->_close_callback = Py_None;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":395
+  /* "nice_titlebar/_win32_titlebar.pyx":458
  * 		self._button_rects = []
  * 		self._close_callback = None
  * 		self._close_owner = None             # <<<<<<<<<<<<<<
- * 		self._hover_index = -1
- * 		self._transparent = False
+ * 		self._owner = None
+ * 		self._paint_callback = None
 */
   __Pyx_INCREF(Py_None);
   __Pyx_GIVEREF(Py_None);
@@ -3638,17 +4436,108 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   __Pyx_DECREF(__pyx_v_self->_close_owner);
   __pyx_v_self->_close_owner = Py_None;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":396
+  /* "nice_titlebar/_win32_titlebar.pyx":459
  * 		self._close_callback = None
  * 		self._close_owner = None
+ * 		self._owner = None             # <<<<<<<<<<<<<<
+ * 		self._paint_callback = None
+ * 		self._mouse_move_cb = None
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_owner);
+  __Pyx_DECREF(__pyx_v_self->_owner);
+  __pyx_v_self->_owner = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":460
+ * 		self._close_owner = None
+ * 		self._owner = None
+ * 		self._paint_callback = None             # <<<<<<<<<<<<<<
+ * 		self._mouse_move_cb = None
+ * 		self._mouse_down_cb = None
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_paint_callback);
+  __Pyx_DECREF(__pyx_v_self->_paint_callback);
+  __pyx_v_self->_paint_callback = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":461
+ * 		self._owner = None
+ * 		self._paint_callback = None
+ * 		self._mouse_move_cb = None             # <<<<<<<<<<<<<<
+ * 		self._mouse_down_cb = None
+ * 		self._mouse_up_cb = None
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_mouse_move_cb);
+  __Pyx_DECREF(__pyx_v_self->_mouse_move_cb);
+  __pyx_v_self->_mouse_move_cb = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":462
+ * 		self._paint_callback = None
+ * 		self._mouse_move_cb = None
+ * 		self._mouse_down_cb = None             # <<<<<<<<<<<<<<
+ * 		self._mouse_up_cb = None
+ * 		self._key_down_cb = None
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_mouse_down_cb);
+  __Pyx_DECREF(__pyx_v_self->_mouse_down_cb);
+  __pyx_v_self->_mouse_down_cb = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":463
+ * 		self._mouse_move_cb = None
+ * 		self._mouse_down_cb = None
+ * 		self._mouse_up_cb = None             # <<<<<<<<<<<<<<
+ * 		self._key_down_cb = None
+ * 		self._char_cb = None
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_mouse_up_cb);
+  __Pyx_DECREF(__pyx_v_self->_mouse_up_cb);
+  __pyx_v_self->_mouse_up_cb = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":464
+ * 		self._mouse_down_cb = None
+ * 		self._mouse_up_cb = None
+ * 		self._key_down_cb = None             # <<<<<<<<<<<<<<
+ * 		self._char_cb = None
+ * 		self._hover_index = -1
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_key_down_cb);
+  __Pyx_DECREF(__pyx_v_self->_key_down_cb);
+  __pyx_v_self->_key_down_cb = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":465
+ * 		self._mouse_up_cb = None
+ * 		self._key_down_cb = None
+ * 		self._char_cb = None             # <<<<<<<<<<<<<<
+ * 		self._hover_index = -1
+ * 		self._transparent = False
+*/
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->_char_cb);
+  __Pyx_DECREF(__pyx_v_self->_char_cb);
+  __pyx_v_self->_char_cb = Py_None;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":466
+ * 		self._key_down_cb = None
+ * 		self._char_cb = None
  * 		self._hover_index = -1             # <<<<<<<<<<<<<<
  * 		self._transparent = False
  * 		self._opacity = 1.0
 */
   __pyx_v_self->_hover_index = -1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":397
- * 		self._close_owner = None
+  /* "nice_titlebar/_win32_titlebar.pyx":467
+ * 		self._char_cb = None
  * 		self._hover_index = -1
  * 		self._transparent = False             # <<<<<<<<<<<<<<
  * 		self._opacity = 1.0
@@ -3656,7 +4545,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->_transparent = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":398
+  /* "nice_titlebar/_win32_titlebar.pyx":468
  * 		self._hover_index = -1
  * 		self._transparent = False
  * 		self._opacity = 1.0             # <<<<<<<<<<<<<<
@@ -3665,7 +4554,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
 */
   __pyx_v_self->_opacity = 1.0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":381
+  /* "nice_titlebar/_win32_titlebar.pyx":444
  * 	cdef NtbD2DContext _d2d
  * 
  * 	def __cinit__(self):             # <<<<<<<<<<<<<<
@@ -3685,7 +4574,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow___cinit__(s
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":400
+/* "nice_titlebar/_win32_titlebar.pyx":470
  * 		self._opacity = 1.0
  * 
  * 	def __init__(self, int width, int height, str title, int titlebar_height, bint transparent, float opacity):             # <<<<<<<<<<<<<<
@@ -3724,67 +4613,67 @@ static int __pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_3__init__(P
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_width,&__pyx_mstate_global->__pyx_n_u_height,&__pyx_mstate_global->__pyx_n_u_title,&__pyx_mstate_global->__pyx_n_u_titlebar_height,&__pyx_mstate_global->__pyx_n_u_transparent,&__pyx_mstate_global->__pyx_n_u_opacity,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_VARARGS(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 400, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 470, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  6:
         values[5] = __Pyx_ArgRef_VARARGS(__pyx_args, 5);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 400, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 470, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  5:
         values[4] = __Pyx_ArgRef_VARARGS(__pyx_args, 4);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 400, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 470, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  4:
         values[3] = __Pyx_ArgRef_VARARGS(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 400, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 470, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_VARARGS(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 400, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 470, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_VARARGS(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 400, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 470, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_VARARGS(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 400, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 470, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "__init__", 0) < (0)) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "__init__", 0) < (0)) __PYX_ERR(0, 470, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 6; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, i); __PYX_ERR(0, 400, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, i); __PYX_ERR(0, 470, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 6)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_VARARGS(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 470, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_VARARGS(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 470, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_VARARGS(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 470, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_VARARGS(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 470, __pyx_L3_error)
       values[4] = __Pyx_ArgRef_VARARGS(__pyx_args, 4);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 470, __pyx_L3_error)
       values[5] = __Pyx_ArgRef_VARARGS(__pyx_args, 5);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 400, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 470, __pyx_L3_error)
     }
-    __pyx_v_width = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_width == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 400, __pyx_L3_error)
-    __pyx_v_height = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_height == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 400, __pyx_L3_error)
+    __pyx_v_width = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_width == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 470, __pyx_L3_error)
+    __pyx_v_height = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_height == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 470, __pyx_L3_error)
     __pyx_v_title = ((PyObject*)values[2]);
-    __pyx_v_titlebar_height = __Pyx_PyLong_As_int(values[3]); if (unlikely((__pyx_v_titlebar_height == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 400, __pyx_L3_error)
-    __pyx_v_transparent = __Pyx_PyObject_IsTrue(values[4]); if (unlikely((__pyx_v_transparent == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 400, __pyx_L3_error)
-    __pyx_v_opacity = __Pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_opacity == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 400, __pyx_L3_error)
+    __pyx_v_titlebar_height = __Pyx_PyLong_As_int(values[3]); if (unlikely((__pyx_v_titlebar_height == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 470, __pyx_L3_error)
+    __pyx_v_transparent = __Pyx_PyObject_IsTrue(values[4]); if (unlikely((__pyx_v_transparent == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 470, __pyx_L3_error)
+    __pyx_v_opacity = __Pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_opacity == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 470, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, __pyx_nargs); __PYX_ERR(0, 400, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, __pyx_nargs); __PYX_ERR(0, 470, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3795,7 +4684,7 @@ static int __pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_3__init__(P
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_title), (&PyUnicode_Type), 1, "title", 1))) __PYX_ERR(0, 400, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_title), (&PyUnicode_Type), 1, "title", 1))) __PYX_ERR(0, 470, __pyx_L1_error)
   __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_width, __pyx_v_height, __pyx_v_title, __pyx_v_titlebar_height, __pyx_v_transparent, __pyx_v_opacity);
 
   /* function exit code */
@@ -3820,7 +4709,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":402
+  /* "nice_titlebar/_win32_titlebar.pyx":472
  * 	def __init__(self, int width, int height, str title, int titlebar_height, bint transparent, float opacity):
  * 		"""Store constructor arguments used for native window creation."""
  * 		self._width = width             # <<<<<<<<<<<<<<
@@ -3829,7 +4718,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
 */
   __pyx_v_self->_width = __pyx_v_width;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":403
+  /* "nice_titlebar/_win32_titlebar.pyx":473
  * 		"""Store constructor arguments used for native window creation."""
  * 		self._width = width
  * 		self._height = height             # <<<<<<<<<<<<<<
@@ -3838,7 +4727,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
 */
   __pyx_v_self->_height = __pyx_v_height;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":404
+  /* "nice_titlebar/_win32_titlebar.pyx":474
  * 		self._width = width
  * 		self._height = height
  * 		self._title = title             # <<<<<<<<<<<<<<
@@ -3851,7 +4740,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
   __Pyx_DECREF(__pyx_v_self->_title);
   __pyx_v_self->_title = __pyx_v_title;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":405
+  /* "nice_titlebar/_win32_titlebar.pyx":475
  * 		self._height = height
  * 		self._title = title
  * 		self._titlebar_height = titlebar_height             # <<<<<<<<<<<<<<
@@ -3860,7 +4749,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
 */
   __pyx_v_self->_titlebar_height = __pyx_v_titlebar_height;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":406
+  /* "nice_titlebar/_win32_titlebar.pyx":476
  * 		self._title = title
  * 		self._titlebar_height = titlebar_height
  * 		self._transparent = transparent             # <<<<<<<<<<<<<<
@@ -3869,7 +4758,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
 */
   __pyx_v_self->_transparent = __pyx_v_transparent;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":407
+  /* "nice_titlebar/_win32_titlebar.pyx":477
  * 		self._titlebar_height = titlebar_height
  * 		self._transparent = transparent
  * 		self._opacity = opacity             # <<<<<<<<<<<<<<
@@ -3878,7 +4767,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
 */
   __pyx_v_self->_opacity = __pyx_v_opacity;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":400
+  /* "nice_titlebar/_win32_titlebar.pyx":470
  * 		self._opacity = 1.0
  * 
  * 	def __init__(self, int width, int height, str title, int titlebar_height, bint transparent, float opacity):             # <<<<<<<<<<<<<<
@@ -3892,7 +4781,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__(s
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":409
+/* "nice_titlebar/_win32_titlebar.pyx":479
  * 		self._opacity = opacity
  * 
  * 	def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -3915,7 +4804,7 @@ static void __pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_5__dealloc
 
 static void __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_4__dealloc__(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
 
-  /* "nice_titlebar/_win32_titlebar.pyx":411
+  /* "nice_titlebar/_win32_titlebar.pyx":481
  * 	def __dealloc__(self):
  * 		# This ensures D2D resources are released when object is destroyed.
  * 		ntb_d2d_release(&self._d2d)             # <<<<<<<<<<<<<<
@@ -3924,7 +4813,7 @@ static void __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_4__dealloc
 */
   ntb_d2d_release((&__pyx_v_self->_d2d));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":409
+  /* "nice_titlebar/_win32_titlebar.pyx":479
  * 		self._opacity = opacity
  * 
  * 	def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -3935,7 +4824,7 @@ static void __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_4__dealloc
   /* function exit code */
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":413
+/* "nice_titlebar/_win32_titlebar.pyx":483
  * 		ntb_d2d_release(&self._d2d)
  * 
  * 	def configure_titlebar(self, int height, tuple bg, tuple text_color, str font_family, float font_size, list buttons):             # <<<<<<<<<<<<<<
@@ -3988,67 +4877,67 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_height,&__pyx_mstate_global->__pyx_n_u_bg,&__pyx_mstate_global->__pyx_n_u_text_color,&__pyx_mstate_global->__pyx_n_u_font_family,&__pyx_mstate_global->__pyx_n_u_font_size,&__pyx_mstate_global->__pyx_n_u_buttons,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 413, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 483, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  6:
         values[5] = __Pyx_ArgRef_FASTCALL(__pyx_args, 5);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 413, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 483, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  5:
         values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 413, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 483, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 413, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 483, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 413, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 483, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 413, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 483, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 413, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 483, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "configure_titlebar", 0) < (0)) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "configure_titlebar", 0) < (0)) __PYX_ERR(0, 483, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 6; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("configure_titlebar", 1, 6, 6, i); __PYX_ERR(0, 413, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("configure_titlebar", 1, 6, 6, i); __PYX_ERR(0, 483, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 6)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 483, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 483, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 483, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 483, __pyx_L3_error)
       values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 483, __pyx_L3_error)
       values[5] = __Pyx_ArgRef_FASTCALL(__pyx_args, 5);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 413, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[5])) __PYX_ERR(0, 483, __pyx_L3_error)
     }
-    __pyx_v_height = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_height == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 413, __pyx_L3_error)
+    __pyx_v_height = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_height == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 483, __pyx_L3_error)
     __pyx_v_bg = ((PyObject*)values[1]);
     __pyx_v_text_color = ((PyObject*)values[2]);
     __pyx_v_font_family = ((PyObject*)values[3]);
-    __pyx_v_font_size = __Pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_font_size == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 413, __pyx_L3_error)
+    __pyx_v_font_size = __Pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_font_size == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 483, __pyx_L3_error)
     __pyx_v_buttons = ((PyObject*)values[5]);
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("configure_titlebar", 1, 6, 6, __pyx_nargs); __PYX_ERR(0, 413, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("configure_titlebar", 1, 6, 6, __pyx_nargs); __PYX_ERR(0, 483, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4059,10 +4948,10 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_bg), (&PyTuple_Type), 1, "bg", 1))) __PYX_ERR(0, 413, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_text_color), (&PyTuple_Type), 1, "text_color", 1))) __PYX_ERR(0, 413, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_font_family), (&PyUnicode_Type), 1, "font_family", 1))) __PYX_ERR(0, 413, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_buttons), (&PyList_Type), 1, "buttons", 1))) __PYX_ERR(0, 413, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_bg), (&PyTuple_Type), 1, "bg", 1))) __PYX_ERR(0, 483, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_text_color), (&PyTuple_Type), 1, "text_color", 1))) __PYX_ERR(0, 483, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_font_family), (&PyUnicode_Type), 1, "font_family", 1))) __PYX_ERR(0, 483, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_buttons), (&PyList_Type), 1, "buttons", 1))) __PYX_ERR(0, 483, __pyx_L1_error)
   __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6configure_titlebar(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_height, __pyx_v_bg, __pyx_v_text_color, __pyx_v_font_family, __pyx_v_font_size, __pyx_v_buttons);
 
   /* function exit code */
@@ -4091,7 +4980,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("configure_titlebar", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":415
+  /* "nice_titlebar/_win32_titlebar.pyx":485
  * 	def configure_titlebar(self, int height, tuple bg, tuple text_color, str font_family, float font_size, list buttons):
  * 		"""Update titlebar style and request repaint."""
  * 		self._titlebar_height = height             # <<<<<<<<<<<<<<
@@ -4100,14 +4989,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
 */
   __pyx_v_self->_titlebar_height = __pyx_v_height;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":416
+  /* "nice_titlebar/_win32_titlebar.pyx":486
  * 		"""Update titlebar style and request repaint."""
  * 		self._titlebar_height = height
  * 		self._titlebar_bg = _normalize_rgba(bg)             # <<<<<<<<<<<<<<
  * 		self._titlebar_text = _normalize_rgba(text_color)
  * 		self._buttons = list(buttons)
 */
-  __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_v_bg); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 416, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_v_bg); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 486, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_titlebar_bg);
@@ -4115,14 +5004,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
   __pyx_v_self->_titlebar_bg = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":417
+  /* "nice_titlebar/_win32_titlebar.pyx":487
  * 		self._titlebar_height = height
  * 		self._titlebar_bg = _normalize_rgba(bg)
  * 		self._titlebar_text = _normalize_rgba(text_color)             # <<<<<<<<<<<<<<
  * 		self._buttons = list(buttons)
  * 		self._layout_buttons()
 */
-  __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_v_text_color); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 417, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_v_text_color); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 487, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_titlebar_text);
@@ -4130,14 +5019,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
   __pyx_v_self->_titlebar_text = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":418
+  /* "nice_titlebar/_win32_titlebar.pyx":488
  * 		self._titlebar_bg = _normalize_rgba(bg)
  * 		self._titlebar_text = _normalize_rgba(text_color)
  * 		self._buttons = list(buttons)             # <<<<<<<<<<<<<<
  * 		self._layout_buttons()
  * 		self._invalidate()
 */
-  __pyx_t_1 = PySequence_List(__pyx_v_buttons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_1 = PySequence_List(__pyx_v_buttons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 488, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_buttons);
@@ -4145,25 +5034,25 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
   __pyx_v_self->_buttons = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":419
+  /* "nice_titlebar/_win32_titlebar.pyx":489
  * 		self._titlebar_text = _normalize_rgba(text_color)
  * 		self._buttons = list(buttons)
  * 		self._layout_buttons()             # <<<<<<<<<<<<<<
  * 		self._invalidate()
  * 
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_layout_buttons(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 419, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_layout_buttons(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 489, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":420
+  /* "nice_titlebar/_win32_titlebar.pyx":490
  * 		self._buttons = list(buttons)
  * 		self._layout_buttons()
  * 		self._invalidate()             # <<<<<<<<<<<<<<
  * 
  * 	def set_client_background(self, int r, int g, int b, int a):
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 420, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 490, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":413
+  /* "nice_titlebar/_win32_titlebar.pyx":483
  * 		ntb_d2d_release(&self._d2d)
  * 
  * 	def configure_titlebar(self, int height, tuple bg, tuple text_color, str font_family, float font_size, list buttons):             # <<<<<<<<<<<<<<
@@ -4184,7 +5073,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_6conf
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":422
+/* "nice_titlebar/_win32_titlebar.pyx":492
  * 		self._invalidate()
  * 
  * 	def set_client_background(self, int r, int g, int b, int a):             # <<<<<<<<<<<<<<
@@ -4235,53 +5124,53 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_r,&__pyx_mstate_global->__pyx_n_u_g,&__pyx_mstate_global->__pyx_n_u_b,&__pyx_mstate_global->__pyx_n_u_a,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 422, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 492, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 422, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 492, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 422, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 492, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 422, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 492, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 422, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 492, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_client_background", 0) < (0)) __PYX_ERR(0, 422, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_client_background", 0) < (0)) __PYX_ERR(0, 492, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 4; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_client_background", 1, 4, 4, i); __PYX_ERR(0, 422, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_client_background", 1, 4, 4, i); __PYX_ERR(0, 492, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 4)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 422, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 492, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 422, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 492, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 422, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 492, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 422, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 492, __pyx_L3_error)
     }
-    __pyx_v_r = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_r == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 422, __pyx_L3_error)
-    __pyx_v_g = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_g == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 422, __pyx_L3_error)
-    __pyx_v_b = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_b == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 422, __pyx_L3_error)
-    __pyx_v_a = __Pyx_PyLong_As_int(values[3]); if (unlikely((__pyx_v_a == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 422, __pyx_L3_error)
+    __pyx_v_r = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_r == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 492, __pyx_L3_error)
+    __pyx_v_g = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_g == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 492, __pyx_L3_error)
+    __pyx_v_b = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_b == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 492, __pyx_L3_error)
+    __pyx_v_a = __Pyx_PyLong_As_int(values[3]); if (unlikely((__pyx_v_a == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 492, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_client_background", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 422, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_client_background", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 492, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4315,31 +5204,31 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_8set_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_client_background", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":424
+  /* "nice_titlebar/_win32_titlebar.pyx":494
  * 	def set_client_background(self, int r, int g, int b, int a):
  * 		"""Update client area background color."""
  * 		self._client_bg = (r, g, b, a)             # <<<<<<<<<<<<<<
  * 		self._invalidate()
  * 
 */
-  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 424, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_v_g); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 424, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_v_g); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyLong_From_int(__pyx_v_b); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 424, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyLong_From_int(__pyx_v_b); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_a); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 424, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_a); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 424, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 424, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 494, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 424, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 494, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_3);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_3) != (0)) __PYX_ERR(0, 424, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_3) != (0)) __PYX_ERR(0, 494, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 3, __pyx_t_4) != (0)) __PYX_ERR(0, 424, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 3, __pyx_t_4) != (0)) __PYX_ERR(0, 494, __pyx_L1_error);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
@@ -4350,16 +5239,16 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_8set_
   __pyx_v_self->_client_bg = ((PyObject*)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":425
+  /* "nice_titlebar/_win32_titlebar.pyx":495
  * 		"""Update client area background color."""
  * 		self._client_bg = (r, g, b, a)
  * 		self._invalidate()             # <<<<<<<<<<<<<<
  * 
  * 	def set_title(self, str value):
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 425, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 495, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":422
+  /* "nice_titlebar/_win32_titlebar.pyx":492
  * 		self._invalidate()
  * 
  * 	def set_client_background(self, int r, int g, int b, int a):             # <<<<<<<<<<<<<<
@@ -4384,7 +5273,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_8set_
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":427
+/* "nice_titlebar/_win32_titlebar.pyx":497
  * 		self._invalidate()
  * 
  * 	def set_title(self, str value):             # <<<<<<<<<<<<<<
@@ -4432,32 +5321,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_value,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 427, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 497, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 427, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 497, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_title", 0) < (0)) __PYX_ERR(0, 427, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_title", 0) < (0)) __PYX_ERR(0, 497, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_title", 1, 1, 1, i); __PYX_ERR(0, 427, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_title", 1, 1, 1, i); __PYX_ERR(0, 497, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 427, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 497, __pyx_L3_error)
     }
     __pyx_v_value = ((PyObject*)values[0]);
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_title", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 427, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_title", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 497, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4468,7 +5357,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_value), (&PyUnicode_Type), 1, "value", 1))) __PYX_ERR(0, 427, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_value), (&PyUnicode_Type), 1, "value", 1))) __PYX_ERR(0, 497, __pyx_L1_error)
   __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set_title(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_value);
 
   /* function exit code */
@@ -4500,7 +5389,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_title", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":430
+  /* "nice_titlebar/_win32_titlebar.pyx":500
  * 		"""Update title text in native window and local state."""
  * 		cdef bytes title_bytes
  * 		self._title = value             # <<<<<<<<<<<<<<
@@ -4513,7 +5402,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set
   __Pyx_DECREF(__pyx_v_self->_title);
   __pyx_v_self->_title = __pyx_v_value;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":431
+  /* "nice_titlebar/_win32_titlebar.pyx":501
  * 		cdef bytes title_bytes
  * 		self._title = value
  * 		if self._hwnd != <HWND>0:             # <<<<<<<<<<<<<<
@@ -4523,7 +5412,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set
   __pyx_t_1 = (__pyx_v_self->_hwnd != ((HWND)0));
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":432
+    /* "nice_titlebar/_win32_titlebar.pyx":502
  * 		self._title = value
  * 		if self._hwnd != <HWND>0:
  * 			title_bytes = value.encode("utf-8", "replace")             # <<<<<<<<<<<<<<
@@ -4532,24 +5421,24 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set
 */
     if (unlikely(__pyx_v_value == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "encode");
-      __PYX_ERR(0, 432, __pyx_L1_error)
+      __PYX_ERR(0, 502, __pyx_L1_error)
     }
-    __pyx_t_2 = PyUnicode_AsEncodedString(__pyx_v_value, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 432, __pyx_L1_error)
+    __pyx_t_2 = PyUnicode_AsEncodedString(__pyx_v_value, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_title_bytes = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":433
+    /* "nice_titlebar/_win32_titlebar.pyx":503
  * 		if self._hwnd != <HWND>0:
  * 			title_bytes = value.encode("utf-8", "replace")
  * 			SetWindowTextA(self._hwnd, <const char*>title_bytes)             # <<<<<<<<<<<<<<
  * 		self._invalidate()
  * 
 */
-    __pyx_t_3 = __Pyx_PyBytes_AsString(__pyx_v_title_bytes); if (unlikely((!__pyx_t_3) && PyErr_Occurred())) __PYX_ERR(0, 433, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyBytes_AsString(__pyx_v_title_bytes); if (unlikely((!__pyx_t_3) && PyErr_Occurred())) __PYX_ERR(0, 503, __pyx_L1_error)
     (void)(SetWindowTextA(__pyx_v_self->_hwnd, ((char const *)__pyx_t_3)));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":431
+    /* "nice_titlebar/_win32_titlebar.pyx":501
  * 		cdef bytes title_bytes
  * 		self._title = value
  * 		if self._hwnd != <HWND>0:             # <<<<<<<<<<<<<<
@@ -4558,16 +5447,16 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":434
+  /* "nice_titlebar/_win32_titlebar.pyx":504
  * 			title_bytes = value.encode("utf-8", "replace")
  * 			SetWindowTextA(self._hwnd, <const char*>title_bytes)
  * 		self._invalidate()             # <<<<<<<<<<<<<<
  * 
  * 	def register_close_callback(self, object callback, object owner):
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 434, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 504, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":427
+  /* "nice_titlebar/_win32_titlebar.pyx":497
  * 		self._invalidate()
  * 
  * 	def set_title(self, str value):             # <<<<<<<<<<<<<<
@@ -4589,7 +5478,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":436
+/* "nice_titlebar/_win32_titlebar.pyx":506
  * 		self._invalidate()
  * 
  * 	def register_close_callback(self, object callback, object owner):             # <<<<<<<<<<<<<<
@@ -4638,39 +5527,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_callback,&__pyx_mstate_global->__pyx_n_u_owner,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 436, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 506, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 436, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 506, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 436, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 506, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "register_close_callback", 0) < (0)) __PYX_ERR(0, 436, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "register_close_callback", 0) < (0)) __PYX_ERR(0, 506, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("register_close_callback", 1, 2, 2, i); __PYX_ERR(0, 436, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("register_close_callback", 1, 2, 2, i); __PYX_ERR(0, 506, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 436, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 506, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 436, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 506, __pyx_L3_error)
     }
     __pyx_v_callback = values[0];
     __pyx_v_owner = values[1];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("register_close_callback", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 436, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("register_close_callback", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 506, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4696,7 +5585,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_12reg
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("register_close_callback", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":438
+  /* "nice_titlebar/_win32_titlebar.pyx":508
  * 	def register_close_callback(self, object callback, object owner):
  * 		"""Register Python callback invoked when the window is destroyed."""
  * 		self._close_callback = callback             # <<<<<<<<<<<<<<
@@ -4709,12 +5598,12 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_12reg
   __Pyx_DECREF(__pyx_v_self->_close_callback);
   __pyx_v_self->_close_callback = __pyx_v_callback;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":439
+  /* "nice_titlebar/_win32_titlebar.pyx":509
  * 		"""Register Python callback invoked when the window is destroyed."""
  * 		self._close_callback = callback
  * 		self._close_owner = owner             # <<<<<<<<<<<<<<
  * 
- * 	def show(self):
+ * 	def set_owner(self, object owner):
 */
   __Pyx_INCREF(__pyx_v_owner);
   __Pyx_GIVEREF(__pyx_v_owner);
@@ -4722,7 +5611,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_12reg
   __Pyx_DECREF(__pyx_v_self->_close_owner);
   __pyx_v_self->_close_owner = __pyx_v_owner;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":436
+  /* "nice_titlebar/_win32_titlebar.pyx":506
  * 		self._invalidate()
  * 
  * 	def register_close_callback(self, object callback, object owner):             # <<<<<<<<<<<<<<
@@ -4737,8 +5626,855 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_12reg
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":441
+/* "nice_titlebar/_win32_titlebar.pyx":511
  * 		self._close_owner = owner
+ * 
+ * 	def set_owner(self, object owner):             # <<<<<<<<<<<<<<
+ * 		"""Store the high-level Python Window object for callbacks."""
+ * 		self._owner = owner
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15set_owner(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_14set_owner, "Store the high-level Python Window object for callbacks.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_15set_owner = {"set_owner", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15set_owner, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_14set_owner};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15set_owner(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_owner = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_owner (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_owner,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 511, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 511, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_owner", 0) < (0)) __PYX_ERR(0, 511, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_owner", 1, 1, 1, i); __PYX_ERR(0, 511, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 511, __pyx_L3_error)
+    }
+    __pyx_v_owner = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("set_owner", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 511, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow.set_owner", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14set_owner(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_owner);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14set_owner(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_owner) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_owner", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":513
+ * 	def set_owner(self, object owner):
+ * 		"""Store the high-level Python Window object for callbacks."""
+ * 		self._owner = owner             # <<<<<<<<<<<<<<
+ * 
+ * 	def set_paint_callback(self, object callback):
+*/
+  __Pyx_INCREF(__pyx_v_owner);
+  __Pyx_GIVEREF(__pyx_v_owner);
+  __Pyx_GOTREF(__pyx_v_self->_owner);
+  __Pyx_DECREF(__pyx_v_self->_owner);
+  __pyx_v_self->_owner = __pyx_v_owner;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":511
+ * 		self._close_owner = owner
+ * 
+ * 	def set_owner(self, object owner):             # <<<<<<<<<<<<<<
+ * 		"""Store the high-level Python Window object for callbacks."""
+ * 		self._owner = owner
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":515
+ * 		self._owner = owner
+ * 
+ * 	def set_paint_callback(self, object callback):             # <<<<<<<<<<<<<<
+ * 		"""Register a Python paint callback: (window, canvas) -> None."""
+ * 		self._paint_callback = callback
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17set_paint_callback(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_16set_paint_callback, "Register a Python paint callback: (window, canvas) -> None.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_17set_paint_callback = {"set_paint_callback", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17set_paint_callback, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_16set_paint_callback};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17set_paint_callback(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_callback = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_paint_callback (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_callback,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 515, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 515, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_paint_callback", 0) < (0)) __PYX_ERR(0, 515, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_paint_callback", 1, 1, 1, i); __PYX_ERR(0, 515, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 515, __pyx_L3_error)
+    }
+    __pyx_v_callback = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("set_paint_callback", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 515, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow.set_paint_callback", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16set_paint_callback(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_callback);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16set_paint_callback(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_callback) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_paint_callback", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":517
+ * 	def set_paint_callback(self, object callback):
+ * 		"""Register a Python paint callback: (window, canvas) -> None."""
+ * 		self._paint_callback = callback             # <<<<<<<<<<<<<<
+ * 
+ * 	def set_mouse_callbacks(self, object move_cb, object down_cb, object up_cb):
+*/
+  __Pyx_INCREF(__pyx_v_callback);
+  __Pyx_GIVEREF(__pyx_v_callback);
+  __Pyx_GOTREF(__pyx_v_self->_paint_callback);
+  __Pyx_DECREF(__pyx_v_self->_paint_callback);
+  __pyx_v_self->_paint_callback = __pyx_v_callback;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":515
+ * 		self._owner = owner
+ * 
+ * 	def set_paint_callback(self, object callback):             # <<<<<<<<<<<<<<
+ * 		"""Register a Python paint callback: (window, canvas) -> None."""
+ * 		self._paint_callback = callback
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":519
+ * 		self._paint_callback = callback
+ * 
+ * 	def set_mouse_callbacks(self, object move_cb, object down_cb, object up_cb):             # <<<<<<<<<<<<<<
+ * 		"""Register Python mouse callbacks: (window, x, y) -> None."""
+ * 		self._mouse_move_cb = move_cb
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19set_mouse_callbacks(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_18set_mouse_callbacks, "Register Python mouse callbacks: (window, x, y) -> None.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_19set_mouse_callbacks = {"set_mouse_callbacks", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19set_mouse_callbacks, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_18set_mouse_callbacks};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19set_mouse_callbacks(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_move_cb = 0;
+  PyObject *__pyx_v_down_cb = 0;
+  PyObject *__pyx_v_up_cb = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[3] = {0,0,0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_mouse_callbacks (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_move_cb,&__pyx_mstate_global->__pyx_n_u_down_cb,&__pyx_mstate_global->__pyx_n_u_up_cb,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 519, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  3:
+        values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 519, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  2:
+        values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 519, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 519, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_mouse_callbacks", 0) < (0)) __PYX_ERR(0, 519, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_mouse_callbacks", 1, 3, 3, i); __PYX_ERR(0, 519, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 3)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 519, __pyx_L3_error)
+      values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 519, __pyx_L3_error)
+      values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 519, __pyx_L3_error)
+    }
+    __pyx_v_move_cb = values[0];
+    __pyx_v_down_cb = values[1];
+    __pyx_v_up_cb = values[2];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("set_mouse_callbacks", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 519, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow.set_mouse_callbacks", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18set_mouse_callbacks(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_move_cb, __pyx_v_down_cb, __pyx_v_up_cb);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18set_mouse_callbacks(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_move_cb, PyObject *__pyx_v_down_cb, PyObject *__pyx_v_up_cb) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_mouse_callbacks", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":521
+ * 	def set_mouse_callbacks(self, object move_cb, object down_cb, object up_cb):
+ * 		"""Register Python mouse callbacks: (window, x, y) -> None."""
+ * 		self._mouse_move_cb = move_cb             # <<<<<<<<<<<<<<
+ * 		self._mouse_down_cb = down_cb
+ * 		self._mouse_up_cb = up_cb
+*/
+  __Pyx_INCREF(__pyx_v_move_cb);
+  __Pyx_GIVEREF(__pyx_v_move_cb);
+  __Pyx_GOTREF(__pyx_v_self->_mouse_move_cb);
+  __Pyx_DECREF(__pyx_v_self->_mouse_move_cb);
+  __pyx_v_self->_mouse_move_cb = __pyx_v_move_cb;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":522
+ * 		"""Register Python mouse callbacks: (window, x, y) -> None."""
+ * 		self._mouse_move_cb = move_cb
+ * 		self._mouse_down_cb = down_cb             # <<<<<<<<<<<<<<
+ * 		self._mouse_up_cb = up_cb
+ * 
+*/
+  __Pyx_INCREF(__pyx_v_down_cb);
+  __Pyx_GIVEREF(__pyx_v_down_cb);
+  __Pyx_GOTREF(__pyx_v_self->_mouse_down_cb);
+  __Pyx_DECREF(__pyx_v_self->_mouse_down_cb);
+  __pyx_v_self->_mouse_down_cb = __pyx_v_down_cb;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":523
+ * 		self._mouse_move_cb = move_cb
+ * 		self._mouse_down_cb = down_cb
+ * 		self._mouse_up_cb = up_cb             # <<<<<<<<<<<<<<
+ * 
+ * 	def set_key_callbacks(self, object key_down_cb, object char_cb):
+*/
+  __Pyx_INCREF(__pyx_v_up_cb);
+  __Pyx_GIVEREF(__pyx_v_up_cb);
+  __Pyx_GOTREF(__pyx_v_self->_mouse_up_cb);
+  __Pyx_DECREF(__pyx_v_self->_mouse_up_cb);
+  __pyx_v_self->_mouse_up_cb = __pyx_v_up_cb;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":519
+ * 		self._paint_callback = callback
+ * 
+ * 	def set_mouse_callbacks(self, object move_cb, object down_cb, object up_cb):             # <<<<<<<<<<<<<<
+ * 		"""Register Python mouse callbacks: (window, x, y) -> None."""
+ * 		self._mouse_move_cb = move_cb
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":525
+ * 		self._mouse_up_cb = up_cb
+ * 
+ * 	def set_key_callbacks(self, object key_down_cb, object char_cb):             # <<<<<<<<<<<<<<
+ * 		"""Register Python keyboard callbacks."""
+ * 		self._key_down_cb = key_down_cb
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21set_key_callbacks(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_20set_key_callbacks, "Register Python keyboard callbacks.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_21set_key_callbacks = {"set_key_callbacks", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21set_key_callbacks, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_20set_key_callbacks};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21set_key_callbacks(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_key_down_cb = 0;
+  PyObject *__pyx_v_char_cb = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[2] = {0,0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_key_callbacks (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_key_down_cb,&__pyx_mstate_global->__pyx_n_u_char_cb,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 525, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  2:
+        values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 525, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 525, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_key_callbacks", 0) < (0)) __PYX_ERR(0, 525, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_key_callbacks", 1, 2, 2, i); __PYX_ERR(0, 525, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 2)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 525, __pyx_L3_error)
+      values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 525, __pyx_L3_error)
+    }
+    __pyx_v_key_down_cb = values[0];
+    __pyx_v_char_cb = values[1];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("set_key_callbacks", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 525, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow.set_key_callbacks", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20set_key_callbacks(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v_key_down_cb, __pyx_v_char_cb);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20set_key_callbacks(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_key_down_cb, PyObject *__pyx_v_char_cb) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_key_callbacks", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":527
+ * 	def set_key_callbacks(self, object key_down_cb, object char_cb):
+ * 		"""Register Python keyboard callbacks."""
+ * 		self._key_down_cb = key_down_cb             # <<<<<<<<<<<<<<
+ * 		self._char_cb = char_cb
+ * 
+*/
+  __Pyx_INCREF(__pyx_v_key_down_cb);
+  __Pyx_GIVEREF(__pyx_v_key_down_cb);
+  __Pyx_GOTREF(__pyx_v_self->_key_down_cb);
+  __Pyx_DECREF(__pyx_v_self->_key_down_cb);
+  __pyx_v_self->_key_down_cb = __pyx_v_key_down_cb;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":528
+ * 		"""Register Python keyboard callbacks."""
+ * 		self._key_down_cb = key_down_cb
+ * 		self._char_cb = char_cb             # <<<<<<<<<<<<<<
+ * 
+ * 	def invalidate(self):
+*/
+  __Pyx_INCREF(__pyx_v_char_cb);
+  __Pyx_GIVEREF(__pyx_v_char_cb);
+  __Pyx_GOTREF(__pyx_v_self->_char_cb);
+  __Pyx_DECREF(__pyx_v_self->_char_cb);
+  __pyx_v_self->_char_cb = __pyx_v_char_cb;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":525
+ * 		self._mouse_up_cb = up_cb
+ * 
+ * 	def set_key_callbacks(self, object key_down_cb, object char_cb):             # <<<<<<<<<<<<<<
+ * 		"""Register Python keyboard callbacks."""
+ * 		self._key_down_cb = key_down_cb
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":530
+ * 		self._char_cb = char_cb
+ * 
+ * 	def invalidate(self):             # <<<<<<<<<<<<<<
+ * 		"""Public wrapper to request a full repaint from Python."""
+ * 		self._invalidate()
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_23invalidate(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_22invalidate, "Public wrapper to request a full repaint from Python.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_23invalidate = {"invalidate", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_23invalidate, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_22invalidate};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_23invalidate(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("invalidate (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  if (unlikely(__pyx_nargs > 0)) { __Pyx_RaiseArgtupleInvalid("invalidate", 1, 0, 0, __pyx_nargs); return NULL; }
+  const Py_ssize_t __pyx_kwds_len = unlikely(__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+  if (unlikely(__pyx_kwds_len < 0)) return NULL;
+  if (unlikely(__pyx_kwds_len > 0)) {__Pyx_RejectKeywords("invalidate", __pyx_kwds); return NULL;}
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_22invalidate(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_22invalidate(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("invalidate", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":532
+ * 	def invalidate(self):
+ * 		"""Public wrapper to request a full repaint from Python."""
+ * 		self._invalidate()             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef void _canvas_clear(self, tuple rgba):
+*/
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 532, __pyx_L1_error)
+
+  /* "nice_titlebar/_win32_titlebar.pyx":530
+ * 		self._char_cb = char_cb
+ * 
+ * 	def invalidate(self):             # <<<<<<<<<<<<<<
+ * 		"""Public wrapper to request a full repaint from Python."""
+ * 		self._invalidate()
+*/
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow.invalidate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":534
+ * 		self._invalidate()
+ * 
+ * 	cdef void _canvas_clear(self, tuple rgba):             # <<<<<<<<<<<<<<
+ * 		"""Clear the current render target with an RGBA color."""
+ * 		ntb_d2d_clear(&self._d2d, rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)
+*/
+
+static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__canvas_clear(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, PyObject *__pyx_v_rgba) {
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  float __pyx_t_2;
+  float __pyx_t_3;
+  float __pyx_t_4;
+  float __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("_canvas_clear", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":536
+ * 	cdef void _canvas_clear(self, tuple rgba):
+ * 		"""Clear the current render target with an RGBA color."""
+ * 		ntb_d2d_clear(&self._d2d, rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef void _canvas_fill_rect(self, float x, float y, float width, float height, tuple rgba):
+*/
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 536, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_2 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 536, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 536, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_4 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 536, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_5 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  ntb_d2d_clear((&__pyx_v_self->_d2d), __pyx_t_2, __pyx_t_3, __pyx_t_4, __pyx_t_5);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":534
+ * 		self._invalidate()
+ * 
+ * 	cdef void _canvas_clear(self, tuple rgba):             # <<<<<<<<<<<<<<
+ * 		"""Clear the current render target with an RGBA color."""
+ * 		ntb_d2d_clear(&self._d2d, rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)
+*/
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._canvas_clear", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":538
+ * 		ntb_d2d_clear(&self._d2d, rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)
+ * 
+ * 	cdef void _canvas_fill_rect(self, float x, float y, float width, float height, tuple rgba):             # <<<<<<<<<<<<<<
+ * 		"""Fill a rectangle using the current render target."""
+ * 		ntb_d2d_fill_rect(
+*/
+
+static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__canvas_fill_rect(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, float __pyx_v_x, float __pyx_v_y, float __pyx_v_width, float __pyx_v_height, PyObject *__pyx_v_rgba) {
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  float __pyx_t_2;
+  float __pyx_t_3;
+  float __pyx_t_4;
+  float __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("_canvas_fill_rect", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":546
+ * 			x + width,
+ * 			y + height,
+ * 			rgba[0] / 255.0,             # <<<<<<<<<<<<<<
+ * 			rgba[1] / 255.0,
+ * 			rgba[2] / 255.0,
+*/
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 546, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 546, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_2 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 546, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":547
+ * 			y + height,
+ * 			rgba[0] / 255.0,
+ * 			rgba[1] / 255.0,             # <<<<<<<<<<<<<<
+ * 			rgba[2] / 255.0,
+ * 			rgba[3] / 255.0,
+*/
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 547, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 547, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 547, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":548
+ * 			rgba[0] / 255.0,
+ * 			rgba[1] / 255.0,
+ * 			rgba[2] / 255.0,             # <<<<<<<<<<<<<<
+ * 			rgba[3] / 255.0,
+ * 		)
+*/
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 548, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 548, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_4 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 548, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":549
+ * 			rgba[1] / 255.0,
+ * 			rgba[2] / 255.0,
+ * 			rgba[3] / 255.0,             # <<<<<<<<<<<<<<
+ * 		)
+ * 
+*/
+  if (unlikely(__pyx_v_rgba == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 549, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_rgba, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 549, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_5 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 549, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":540
+ * 	cdef void _canvas_fill_rect(self, float x, float y, float width, float height, tuple rgba):
+ * 		"""Fill a rectangle using the current render target."""
+ * 		ntb_d2d_fill_rect(             # <<<<<<<<<<<<<<
+ * 			&self._d2d,
+ * 			x,
+*/
+  ntb_d2d_fill_rect((&__pyx_v_self->_d2d), __pyx_v_x, __pyx_v_y, (__pyx_v_x + __pyx_v_width), (__pyx_v_y + __pyx_v_height), __pyx_t_2, __pyx_t_3, __pyx_t_4, __pyx_t_5);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":538
+ * 		ntb_d2d_clear(&self._d2d, rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)
+ * 
+ * 	cdef void _canvas_fill_rect(self, float x, float y, float width, float height, tuple rgba):             # <<<<<<<<<<<<<<
+ * 		"""Fill a rectangle using the current render target."""
+ * 		ntb_d2d_fill_rect(
+*/
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._canvas_fill_rect", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":552
+ * 		)
  * 
  * 	def show(self):             # <<<<<<<<<<<<<<
  * 		"""Create and show the window if not already created."""
@@ -4746,16 +6482,16 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_12reg
 */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15show(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_25show(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_14show, "Create and show the window if not already created.");
-static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_15show = {"show", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15show, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_14show};
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15show(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_24show, "Create and show the window if not already created.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_25show = {"show", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_25show, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_24show};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_25show(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -4781,14 +6517,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   const Py_ssize_t __pyx_kwds_len = unlikely(__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
   if (unlikely(__pyx_kwds_len < 0)) return NULL;
   if (unlikely(__pyx_kwds_len > 0)) {__Pyx_RejectKeywords("show", __pyx_kwds); return NULL;}
-  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14show(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_24show(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14show(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_24show(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
   int __pyx_v_alpha;
   PyObject *__pyx_v_title_bytes = 0;
   DWORD __pyx_v_style;
@@ -4807,7 +6543,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("show", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":443
+  /* "nice_titlebar/_win32_titlebar.pyx":554
  * 	def show(self):
  * 		"""Create and show the window if not already created."""
  * 		cdef int alpha = 255             # <<<<<<<<<<<<<<
@@ -4816,7 +6552,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   __pyx_v_alpha = 0xFF;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":445
+  /* "nice_titlebar/_win32_titlebar.pyx":556
  * 		cdef int alpha = 255
  * 		cdef bytes title_bytes
  * 		if self.created:             # <<<<<<<<<<<<<<
@@ -4825,7 +6561,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   if (__pyx_v_self->created) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":446
+    /* "nice_titlebar/_win32_titlebar.pyx":557
  * 		cdef bytes title_bytes
  * 		if self.created:
  * 			return             # <<<<<<<<<<<<<<
@@ -4836,7 +6572,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":445
+    /* "nice_titlebar/_win32_titlebar.pyx":556
  * 		cdef int alpha = 255
  * 		cdef bytes title_bytes
  * 		if self.created:             # <<<<<<<<<<<<<<
@@ -4845,16 +6581,16 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":447
+  /* "nice_titlebar/_win32_titlebar.pyx":558
  * 		if self.created:
  * 			return
  * 		self._register_window_class()             # <<<<<<<<<<<<<<
  * 		cdef DWORD style = WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE
  * 		cdef DWORD ex_style = WS_EX_APPWINDOW
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_register_window_class(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 447, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_register_window_class(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 558, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":448
+  /* "nice_titlebar/_win32_titlebar.pyx":559
  * 			return
  * 		self._register_window_class()
  * 		cdef DWORD style = WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE             # <<<<<<<<<<<<<<
@@ -4863,7 +6599,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   __pyx_v_style = (((((__pyx_v_13nice_titlebar_15_win32_titlebar_WS_POPUP | __pyx_v_13nice_titlebar_15_win32_titlebar_WS_THICKFRAME) | __pyx_v_13nice_titlebar_15_win32_titlebar_WS_SYSMENU) | __pyx_v_13nice_titlebar_15_win32_titlebar_WS_MINIMIZEBOX) | __pyx_v_13nice_titlebar_15_win32_titlebar_WS_MAXIMIZEBOX) | __pyx_v_13nice_titlebar_15_win32_titlebar_WS_VISIBLE);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":449
+  /* "nice_titlebar/_win32_titlebar.pyx":560
  * 		self._register_window_class()
  * 		cdef DWORD style = WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE
  * 		cdef DWORD ex_style = WS_EX_APPWINDOW             # <<<<<<<<<<<<<<
@@ -4872,7 +6608,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   __pyx_v_ex_style = __pyx_v_13nice_titlebar_15_win32_titlebar_WS_EX_APPWINDOW;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":450
+  /* "nice_titlebar/_win32_titlebar.pyx":561
  * 		cdef DWORD style = WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE
  * 		cdef DWORD ex_style = WS_EX_APPWINDOW
  * 		if self._transparent or self._opacity < 1.0:             # <<<<<<<<<<<<<<
@@ -4889,7 +6625,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
   __pyx_L5_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":451
+    /* "nice_titlebar/_win32_titlebar.pyx":562
  * 		cdef DWORD ex_style = WS_EX_APPWINDOW
  * 		if self._transparent or self._opacity < 1.0:
  * 			ex_style |= WS_EX_LAYERED             # <<<<<<<<<<<<<<
@@ -4898,7 +6634,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
     __pyx_v_ex_style = (__pyx_v_ex_style | __pyx_v_13nice_titlebar_15_win32_titlebar_WS_EX_LAYERED);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":450
+    /* "nice_titlebar/_win32_titlebar.pyx":561
  * 		cdef DWORD style = WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE
  * 		cdef DWORD ex_style = WS_EX_APPWINDOW
  * 		if self._transparent or self._opacity < 1.0:             # <<<<<<<<<<<<<<
@@ -4907,7 +6643,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":452
+  /* "nice_titlebar/_win32_titlebar.pyx":563
  * 		if self._transparent or self._opacity < 1.0:
  * 			ex_style |= WS_EX_LAYERED
  * 		title_bytes = self._title.encode("utf-8", "replace")             # <<<<<<<<<<<<<<
@@ -4916,14 +6652,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   if (unlikely(__pyx_v_self->_title == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "encode");
-    __PYX_ERR(0, 452, __pyx_L1_error)
+    __PYX_ERR(0, 563, __pyx_L1_error)
   }
-  __pyx_t_3 = PyUnicode_AsEncodedString(__pyx_v_self->_title, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 452, __pyx_L1_error)
+  __pyx_t_3 = PyUnicode_AsEncodedString(__pyx_v_self->_title, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 563, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_title_bytes = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":455
+  /* "nice_titlebar/_win32_titlebar.pyx":566
  * 		self._hwnd = CreateWindowExA(
  * 			ex_style,
  * 			<const char*>_CLASS_NAME,             # <<<<<<<<<<<<<<
@@ -4932,20 +6668,20 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   if (unlikely(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
-    __PYX_ERR(0, 455, __pyx_L1_error)
+    __PYX_ERR(0, 566, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_PyBytes_AsString(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyBytes_AsString(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 566, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":456
+  /* "nice_titlebar/_win32_titlebar.pyx":567
  * 			ex_style,
  * 			<const char*>_CLASS_NAME,
  * 			<const char*>title_bytes,             # <<<<<<<<<<<<<<
  * 			style,
  * 			CW_USEDEFAULT,
 */
-  __pyx_t_5 = __Pyx_PyBytes_AsString(__pyx_v_title_bytes); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 456, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyBytes_AsString(__pyx_v_title_bytes); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 567, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":453
+  /* "nice_titlebar/_win32_titlebar.pyx":564
  * 			ex_style |= WS_EX_LAYERED
  * 		title_bytes = self._title.encode("utf-8", "replace")
  * 		self._hwnd = CreateWindowExA(             # <<<<<<<<<<<<<<
@@ -4954,7 +6690,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   __pyx_v_self->_hwnd = CreateWindowExA(__pyx_v_ex_style, ((char const *)__pyx_t_4), ((char const *)__pyx_t_5), __pyx_v_style, __pyx_v_13nice_titlebar_15_win32_titlebar_CW_USEDEFAULT, __pyx_v_13nice_titlebar_15_win32_titlebar_CW_USEDEFAULT, __pyx_v_self->_width, __pyx_v_self->_height, ((HWND)0), ((HMENU)0), GetModuleHandleA(((char const *)0)), ((void *)0));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":467
+  /* "nice_titlebar/_win32_titlebar.pyx":578
  * 			<void*>0,
  * 		)
  * 		if self._hwnd == <HWND>0:             # <<<<<<<<<<<<<<
@@ -4964,7 +6700,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
   __pyx_t_1 = (__pyx_v_self->_hwnd == ((HWND)0));
   if (unlikely(__pyx_t_1)) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":468
+    /* "nice_titlebar/_win32_titlebar.pyx":579
  * 		)
  * 		if self._hwnd == <HWND>0:
  * 			raise RuntimeError("CreateWindowExW failed.")             # <<<<<<<<<<<<<<
@@ -4977,14 +6713,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_mstate_global->__pyx_kp_u_CreateWindowExW_failed};
       __pyx_t_3 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_RuntimeError)), __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 468, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 579, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
     }
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 468, __pyx_L1_error)
+    __PYX_ERR(0, 579, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":467
+    /* "nice_titlebar/_win32_titlebar.pyx":578
  * 			<void*>0,
  * 		)
  * 		if self._hwnd == <HWND>0:             # <<<<<<<<<<<<<<
@@ -4993,7 +6729,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":469
+  /* "nice_titlebar/_win32_titlebar.pyx":580
  * 		if self._hwnd == <HWND>0:
  * 			raise RuntimeError("CreateWindowExW failed.")
  * 		_WINDOWS[<uintptr_t>self._hwnd] = self             # <<<<<<<<<<<<<<
@@ -5002,14 +6738,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   if (unlikely(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 469, __pyx_L1_error)
+    __PYX_ERR(0, 580, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_self->_hwnd)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_self->_hwnd)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 580, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (unlikely((PyDict_SetItem(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, __pyx_t_3, ((PyObject *)__pyx_v_self)) < 0))) __PYX_ERR(0, 469, __pyx_L1_error)
+  if (unlikely((PyDict_SetItem(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, __pyx_t_3, ((PyObject *)__pyx_v_self)) < 0))) __PYX_ERR(0, 580, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":470
+  /* "nice_titlebar/_win32_titlebar.pyx":581
  * 			raise RuntimeError("CreateWindowExW failed.")
  * 		_WINDOWS[<uintptr_t>self._hwnd] = self
  * 		Py_INCREF(self)             # <<<<<<<<<<<<<<
@@ -5018,7 +6754,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   Py_INCREF(((PyObject *)__pyx_v_self));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":471
+  /* "nice_titlebar/_win32_titlebar.pyx":582
  * 		_WINDOWS[<uintptr_t>self._hwnd] = self
  * 		Py_INCREF(self)
  * 		if self._transparent or self._opacity < 1.0:             # <<<<<<<<<<<<<<
@@ -5035,7 +6771,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
   __pyx_L9_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":472
+    /* "nice_titlebar/_win32_titlebar.pyx":583
  * 		Py_INCREF(self)
  * 		if self._transparent or self._opacity < 1.0:
  * 			alpha = <int>(self._opacity * 255.0)             # <<<<<<<<<<<<<<
@@ -5044,7 +6780,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
     __pyx_v_alpha = ((int)(__pyx_v_self->_opacity * 255.0));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":473
+    /* "nice_titlebar/_win32_titlebar.pyx":584
  * 		if self._transparent or self._opacity < 1.0:
  * 			alpha = <int>(self._opacity * 255.0)
  * 			if alpha < 0:             # <<<<<<<<<<<<<<
@@ -5054,7 +6790,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
     __pyx_t_1 = (__pyx_v_alpha < 0);
     if (__pyx_t_1) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":474
+      /* "nice_titlebar/_win32_titlebar.pyx":585
  * 			alpha = <int>(self._opacity * 255.0)
  * 			if alpha < 0:
  * 				alpha = 0             # <<<<<<<<<<<<<<
@@ -5063,7 +6799,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
       __pyx_v_alpha = 0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":473
+      /* "nice_titlebar/_win32_titlebar.pyx":584
  * 		if self._transparent or self._opacity < 1.0:
  * 			alpha = <int>(self._opacity * 255.0)
  * 			if alpha < 0:             # <<<<<<<<<<<<<<
@@ -5073,7 +6809,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
       goto __pyx_L11;
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":475
+    /* "nice_titlebar/_win32_titlebar.pyx":586
  * 			if alpha < 0:
  * 				alpha = 0
  * 			elif alpha > 255:             # <<<<<<<<<<<<<<
@@ -5083,7 +6819,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
     __pyx_t_1 = (__pyx_v_alpha > 0xFF);
     if (__pyx_t_1) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":476
+      /* "nice_titlebar/_win32_titlebar.pyx":587
  * 				alpha = 0
  * 			elif alpha > 255:
  * 				alpha = 255             # <<<<<<<<<<<<<<
@@ -5092,7 +6828,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
       __pyx_v_alpha = 0xFF;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":475
+      /* "nice_titlebar/_win32_titlebar.pyx":586
  * 			if alpha < 0:
  * 				alpha = 0
  * 			elif alpha > 255:             # <<<<<<<<<<<<<<
@@ -5102,7 +6838,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
     }
     __pyx_L11:;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":477
+    /* "nice_titlebar/_win32_titlebar.pyx":588
  * 			elif alpha > 255:
  * 				alpha = 255
  * 			SetLayeredWindowAttributes(self._hwnd, 0, <unsigned char>alpha, LWA_ALPHA)             # <<<<<<<<<<<<<<
@@ -5111,7 +6847,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
     (void)(SetLayeredWindowAttributes(__pyx_v_self->_hwnd, 0, ((unsigned char)__pyx_v_alpha), __pyx_v_13nice_titlebar_15_win32_titlebar_LWA_ALPHA));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":471
+    /* "nice_titlebar/_win32_titlebar.pyx":582
  * 		_WINDOWS[<uintptr_t>self._hwnd] = self
  * 		Py_INCREF(self)
  * 		if self._transparent or self._opacity < 1.0:             # <<<<<<<<<<<<<<
@@ -5120,16 +6856,16 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":478
+  /* "nice_titlebar/_win32_titlebar.pyx":589
  * 				alpha = 255
  * 			SetLayeredWindowAttributes(self._hwnd, 0, <unsigned char>alpha, LWA_ALPHA)
  * 		self._layout_buttons()             # <<<<<<<<<<<<<<
  * 		if ntb_d2d_init(self._hwnd, &self._d2d) != 0:
  * 			raise RuntimeError("Direct2D initialization failed.")
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_layout_buttons(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 478, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_layout_buttons(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 589, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":479
+  /* "nice_titlebar/_win32_titlebar.pyx":590
  * 			SetLayeredWindowAttributes(self._hwnd, 0, <unsigned char>alpha, LWA_ALPHA)
  * 		self._layout_buttons()
  * 		if ntb_d2d_init(self._hwnd, &self._d2d) != 0:             # <<<<<<<<<<<<<<
@@ -5139,7 +6875,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
   __pyx_t_1 = (ntb_d2d_init(__pyx_v_self->_hwnd, (&__pyx_v_self->_d2d)) != 0);
   if (unlikely(__pyx_t_1)) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":480
+    /* "nice_titlebar/_win32_titlebar.pyx":591
  * 		self._layout_buttons()
  * 		if ntb_d2d_init(self._hwnd, &self._d2d) != 0:
  * 			raise RuntimeError("Direct2D initialization failed.")             # <<<<<<<<<<<<<<
@@ -5152,14 +6888,14 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_mstate_global->__pyx_kp_u_Direct2D_initialization_failed};
       __pyx_t_3 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_RuntimeError)), __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 480, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 591, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
     }
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 480, __pyx_L1_error)
+    __PYX_ERR(0, 591, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":479
+    /* "nice_titlebar/_win32_titlebar.pyx":590
  * 			SetLayeredWindowAttributes(self._hwnd, 0, <unsigned char>alpha, LWA_ALPHA)
  * 		self._layout_buttons()
  * 		if ntb_d2d_init(self._hwnd, &self._d2d) != 0:             # <<<<<<<<<<<<<<
@@ -5168,7 +6904,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":481
+  /* "nice_titlebar/_win32_titlebar.pyx":592
  * 		if ntb_d2d_init(self._hwnd, &self._d2d) != 0:
  * 			raise RuntimeError("Direct2D initialization failed.")
  * 		ShowWindow(self._hwnd, SW_SHOW)             # <<<<<<<<<<<<<<
@@ -5177,7 +6913,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   (void)(ShowWindow(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_SW_SHOW));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":482
+  /* "nice_titlebar/_win32_titlebar.pyx":593
  * 			raise RuntimeError("Direct2D initialization failed.")
  * 		ShowWindow(self._hwnd, SW_SHOW)
  * 		UpdateWindow(self._hwnd)             # <<<<<<<<<<<<<<
@@ -5186,7 +6922,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   (void)(UpdateWindow(__pyx_v_self->_hwnd));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":483
+  /* "nice_titlebar/_win32_titlebar.pyx":594
  * 		ShowWindow(self._hwnd, SW_SHOW)
  * 		UpdateWindow(self._hwnd)
  * 		self.created = True             # <<<<<<<<<<<<<<
@@ -5195,17 +6931,17 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
   __pyx_v_self->created = 1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":484
+  /* "nice_titlebar/_win32_titlebar.pyx":595
  * 		UpdateWindow(self._hwnd)
  * 		self.created = True
  * 		self._invalidate()             # <<<<<<<<<<<<<<
  * 
  * 	def close(self):
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 484, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 595, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":441
- * 		self._close_owner = owner
+  /* "nice_titlebar/_win32_titlebar.pyx":552
+ * 		)
  * 
  * 	def show(self):             # <<<<<<<<<<<<<<
  * 		"""Create and show the window if not already created."""
@@ -5227,7 +6963,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":486
+/* "nice_titlebar/_win32_titlebar.pyx":597
  * 		self._invalidate()
  * 
  * 	def close(self):             # <<<<<<<<<<<<<<
@@ -5236,16 +6972,16 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_14sho
 */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17close(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_27close(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_16close, "Destroy the native window if it exists.");
-static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_17close = {"close", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17close, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_16close};
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17close(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_26close, "Destroy the native window if it exists.");
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_27close = {"close", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_27close, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_26close};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_27close(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -5271,20 +7007,20 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   const Py_ssize_t __pyx_kwds_len = unlikely(__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
   if (unlikely(__pyx_kwds_len < 0)) return NULL;
   if (unlikely(__pyx_kwds_len > 0)) {__Pyx_RejectKeywords("close", __pyx_kwds); return NULL;}
-  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16close(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_26close(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16close(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_26close(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("close", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":488
+  /* "nice_titlebar/_win32_titlebar.pyx":599
  * 	def close(self):
  * 		"""Destroy the native window if it exists."""
  * 		if self._hwnd != <HWND>0:             # <<<<<<<<<<<<<<
@@ -5294,7 +7030,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16clo
   __pyx_t_1 = (__pyx_v_self->_hwnd != ((HWND)0));
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":489
+    /* "nice_titlebar/_win32_titlebar.pyx":600
  * 		"""Destroy the native window if it exists."""
  * 		if self._hwnd != <HWND>0:
  * 			DestroyWindow(self._hwnd)             # <<<<<<<<<<<<<<
@@ -5303,7 +7039,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16clo
 */
     (void)(DestroyWindow(__pyx_v_self->_hwnd));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":488
+    /* "nice_titlebar/_win32_titlebar.pyx":599
  * 	def close(self):
  * 		"""Destroy the native window if it exists."""
  * 		if self._hwnd != <HWND>0:             # <<<<<<<<<<<<<<
@@ -5312,7 +7048,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16clo
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":486
+  /* "nice_titlebar/_win32_titlebar.pyx":597
  * 		self._invalidate()
  * 
  * 	def close(self):             # <<<<<<<<<<<<<<
@@ -5327,7 +7063,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_16clo
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":491
+/* "nice_titlebar/_win32_titlebar.pyx":602
  * 			DestroyWindow(self._hwnd)
  * 
  * 	cdef void _register_window_class(self):             # <<<<<<<<<<<<<<
@@ -5348,7 +7084,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_register_window_class", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":494
+  /* "nice_titlebar/_win32_titlebar.pyx":605
  * 		# This registers the Win32 class exactly once per process.
  * 		global _CLASS_REGISTERED
  * 		if _CLASS_REGISTERED:             # <<<<<<<<<<<<<<
@@ -5357,7 +7093,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
   if (__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_REGISTERED) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":495
+    /* "nice_titlebar/_win32_titlebar.pyx":606
  * 		global _CLASS_REGISTERED
  * 		if _CLASS_REGISTERED:
  * 			return             # <<<<<<<<<<<<<<
@@ -5366,7 +7102,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":494
+    /* "nice_titlebar/_win32_titlebar.pyx":605
  * 		# This registers the Win32 class exactly once per process.
  * 		global _CLASS_REGISTERED
  * 		if _CLASS_REGISTERED:             # <<<<<<<<<<<<<<
@@ -5375,7 +7111,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":501
+  /* "nice_titlebar/_win32_titlebar.pyx":612
  * 			<void*>_wnd_proc,
  * 			GetModuleHandleA(<const char*>0),
  * 			<const char*>_CLASS_NAME,             # <<<<<<<<<<<<<<
@@ -5384,11 +7120,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
   if (unlikely(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
-    __PYX_ERR(0, 501, __pyx_L1_error)
+    __PYX_ERR(0, 612, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyBytes_AsString(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 501, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBytes_AsString(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 612, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":497
+  /* "nice_titlebar/_win32_titlebar.pyx":608
  * 			return
  * 		cdef WNDCLASSEXA cls
  * 		ntb_init_wndclass(             # <<<<<<<<<<<<<<
@@ -5397,7 +7133,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
   ntb_init_wndclass((&__pyx_v_cls), ((void *)__pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc), GetModuleHandleA(((char const *)0)), ((char const *)__pyx_t_1));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":503
+  /* "nice_titlebar/_win32_titlebar.pyx":614
  * 			<const char*>_CLASS_NAME,
  * 		)
  * 		if RegisterClassExA(&cls) == 0:             # <<<<<<<<<<<<<<
@@ -5407,7 +7143,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
   __pyx_t_2 = (RegisterClassExA((&__pyx_v_cls)) == 0);
   if (unlikely(__pyx_t_2)) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":504
+    /* "nice_titlebar/_win32_titlebar.pyx":615
  * 		)
  * 		if RegisterClassExA(&cls) == 0:
  * 			raise RuntimeError("RegisterClassExW failed.")             # <<<<<<<<<<<<<<
@@ -5420,14 +7156,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
       PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_mstate_global->__pyx_kp_u_RegisterClassExW_failed};
       __pyx_t_3 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_RuntimeError)), __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 504, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 615, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
     }
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 504, __pyx_L1_error)
+    __PYX_ERR(0, 615, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":503
+    /* "nice_titlebar/_win32_titlebar.pyx":614
  * 			<const char*>_CLASS_NAME,
  * 		)
  * 		if RegisterClassExA(&cls) == 0:             # <<<<<<<<<<<<<<
@@ -5436,7 +7172,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":505
+  /* "nice_titlebar/_win32_titlebar.pyx":616
  * 		if RegisterClassExA(&cls) == 0:
  * 			raise RuntimeError("RegisterClassExW failed.")
  * 		_CLASS_REGISTERED = True             # <<<<<<<<<<<<<<
@@ -5445,7 +7181,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_REGISTERED = 1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":491
+  /* "nice_titlebar/_win32_titlebar.pyx":602
  * 			DestroyWindow(self._hwnd)
  * 
  * 	cdef void _register_window_class(self):             # <<<<<<<<<<<<<<
@@ -5463,7 +7199,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_w
   __Pyx_RefNannyFinishContext();
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":507
+/* "nice_titlebar/_win32_titlebar.pyx":618
  * 		_CLASS_REGISTERED = True
  * 
  * 	cdef void _layout_buttons(self):             # <<<<<<<<<<<<<<
@@ -5493,7 +7229,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_layout_buttons", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":509
+  /* "nice_titlebar/_win32_titlebar.pyx":620
  * 	cdef void _layout_buttons(self):
  * 		# This computes button rectangles from right to left.
  * 		cdef int right_edge = self._width             # <<<<<<<<<<<<<<
@@ -5503,7 +7239,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
   __pyx_t_1 = __pyx_v_self->_width;
   __pyx_v_right_edge = __pyx_t_1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":510
+  /* "nice_titlebar/_win32_titlebar.pyx":621
  * 		# This computes button rectangles from right to left.
  * 		cdef int right_edge = self._width
  * 		cdef int idx = 0             # <<<<<<<<<<<<<<
@@ -5512,7 +7248,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
 */
   __pyx_v_idx = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":511
+  /* "nice_titlebar/_win32_titlebar.pyx":622
  * 		cdef int right_edge = self._width
  * 		cdef int idx = 0
  * 		cdef int width = 46             # <<<<<<<<<<<<<<
@@ -5521,19 +7257,19 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
 */
   __pyx_v_width = 46;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":512
+  /* "nice_titlebar/_win32_titlebar.pyx":623
  * 		cdef int idx = 0
  * 		cdef int width = 46
  * 		cdef list rects = []             # <<<<<<<<<<<<<<
  * 		for idx in range(len(self._buttons) - 1, -1, -1):
  * 			try:
 */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 512, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 623, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_rects = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":513
+  /* "nice_titlebar/_win32_titlebar.pyx":624
  * 		cdef int width = 46
  * 		cdef list rects = []
  * 		for idx in range(len(self._buttons) - 1, -1, -1):             # <<<<<<<<<<<<<<
@@ -5544,14 +7280,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
   __Pyx_INCREF(__pyx_t_2);
   if (unlikely(__pyx_t_2 == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 513, __pyx_L1_error)
+    __PYX_ERR(0, 624, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_PyList_GET_SIZE(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 513, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyList_GET_SIZE(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 624, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   for (__pyx_t_1 = (__pyx_t_3 - 1); __pyx_t_1 > -1; __pyx_t_1-=1) {
     __pyx_v_idx = __pyx_t_1;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":514
+    /* "nice_titlebar/_win32_titlebar.pyx":625
  * 		cdef list rects = []
  * 		for idx in range(len(self._buttons) - 1, -1, -1):
  * 			try:             # <<<<<<<<<<<<<<
@@ -5567,7 +7303,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
       __Pyx_XGOTREF(__pyx_t_6);
       /*try:*/ {
 
-        /* "nice_titlebar/_win32_titlebar.pyx":515
+        /* "nice_titlebar/_win32_titlebar.pyx":626
  * 		for idx in range(len(self._buttons) - 1, -1, -1):
  * 			try:
  * 				width = int(self._buttons[idx].get("width", 46))             # <<<<<<<<<<<<<<
@@ -5576,21 +7312,21 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
 */
         if (unlikely(__pyx_v_self->_buttons == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 515, __pyx_L5_error)
+          __PYX_ERR(0, 626, __pyx_L5_error)
         }
-        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx), __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 515, __pyx_L5_error)
+        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx), __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 626, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_mstate_global->__pyx_tuple[4], NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 515, __pyx_L5_error)
+        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_mstate_global->__pyx_tuple[4], NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 626, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __pyx_t_2 = __Pyx_PyNumber_Int(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 515, __pyx_L5_error)
+        __pyx_t_2 = __Pyx_PyNumber_Int(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 626, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 515, __pyx_L5_error)
+        __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 626, __pyx_L5_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_v_width = __pyx_t_8;
 
-        /* "nice_titlebar/_win32_titlebar.pyx":514
+        /* "nice_titlebar/_win32_titlebar.pyx":625
  * 		cdef list rects = []
  * 		for idx in range(len(self._buttons) - 1, -1, -1):
  * 			try:             # <<<<<<<<<<<<<<
@@ -5606,7 +7342,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":516
+      /* "nice_titlebar/_win32_titlebar.pyx":627
  * 			try:
  * 				width = int(self._buttons[idx].get("width", 46))
  * 			except Exception:             # <<<<<<<<<<<<<<
@@ -5617,7 +7353,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
       if (__pyx_t_8) {
         __Pyx_ErrRestore(0,0,0);
 
-        /* "nice_titlebar/_win32_titlebar.pyx":517
+        /* "nice_titlebar/_win32_titlebar.pyx":628
  * 				width = int(self._buttons[idx].get("width", 46))
  * 			except Exception:
  * 				width = 46             # <<<<<<<<<<<<<<
@@ -5629,7 +7365,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
       }
       goto __pyx_L7_except_error;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":514
+      /* "nice_titlebar/_win32_titlebar.pyx":625
  * 		cdef list rects = []
  * 		for idx in range(len(self._buttons) - 1, -1, -1):
  * 			try:             # <<<<<<<<<<<<<<
@@ -5650,37 +7386,37 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
       __pyx_L12_try_end:;
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":518
+    /* "nice_titlebar/_win32_titlebar.pyx":629
  * 			except Exception:
  * 				width = 46
  * 			rects.insert(0, (right_edge - width, 0, right_edge, self._titlebar_height))             # <<<<<<<<<<<<<<
  * 			right_edge -= width
  * 		self._button_rects = rects
 */
-    __pyx_t_2 = __Pyx_PyLong_From_int((__pyx_v_right_edge - __pyx_v_width)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyLong_From_int((__pyx_v_right_edge - __pyx_v_width)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 629, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = __Pyx_PyLong_From_int(__pyx_v_right_edge); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyLong_From_int(__pyx_v_right_edge); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 629, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_9 = __Pyx_PyLong_From_int(__pyx_v_self->_titlebar_height); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyLong_From_int(__pyx_v_self->_titlebar_height); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 629, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_10 = PyTuple_New(4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 629, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_GIVEREF(__pyx_t_2);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_2) != (0)) __PYX_ERR(0, 518, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_2) != (0)) __PYX_ERR(0, 629, __pyx_L1_error);
     __Pyx_INCREF(__pyx_mstate_global->__pyx_int_0);
     __Pyx_GIVEREF(__pyx_mstate_global->__pyx_int_0);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_mstate_global->__pyx_int_0) != (0)) __PYX_ERR(0, 518, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_mstate_global->__pyx_int_0) != (0)) __PYX_ERR(0, 629, __pyx_L1_error);
     __Pyx_GIVEREF(__pyx_t_7);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_t_7) != (0)) __PYX_ERR(0, 518, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_t_7) != (0)) __PYX_ERR(0, 629, __pyx_L1_error);
     __Pyx_GIVEREF(__pyx_t_9);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 3, __pyx_t_9) != (0)) __PYX_ERR(0, 518, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 3, __pyx_t_9) != (0)) __PYX_ERR(0, 629, __pyx_L1_error);
     __pyx_t_2 = 0;
     __pyx_t_7 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_11 = PyList_Insert(__pyx_v_rects, 0, __pyx_t_10); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_11 = PyList_Insert(__pyx_v_rects, 0, __pyx_t_10); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 629, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":519
+    /* "nice_titlebar/_win32_titlebar.pyx":630
  * 				width = 46
  * 			rects.insert(0, (right_edge - width, 0, right_edge, self._titlebar_height))
  * 			right_edge -= width             # <<<<<<<<<<<<<<
@@ -5690,7 +7426,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
     __pyx_v_right_edge = (__pyx_v_right_edge - __pyx_v_width);
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":520
+  /* "nice_titlebar/_win32_titlebar.pyx":631
  * 			rects.insert(0, (right_edge - width, 0, right_edge, self._titlebar_height))
  * 			right_edge -= width
  * 		self._button_rects = rects             # <<<<<<<<<<<<<<
@@ -5703,7 +7439,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
   __Pyx_DECREF(__pyx_v_self->_button_rects);
   __pyx_v_self->_button_rects = __pyx_v_rects;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":507
+  /* "nice_titlebar/_win32_titlebar.pyx":618
  * 		_CLASS_REGISTERED = True
  * 
  * 	cdef void _layout_buttons(self):             # <<<<<<<<<<<<<<
@@ -5724,7 +7460,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
   __Pyx_RefNannyFinishContext();
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":522
+/* "nice_titlebar/_win32_titlebar.pyx":633
  * 		self._button_rects = rects
  * 
  * 	cdef void _invalidate(self):             # <<<<<<<<<<<<<<
@@ -5735,7 +7471,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_but
 static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
   int __pyx_t_1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":524
+  /* "nice_titlebar/_win32_titlebar.pyx":635
  * 	cdef void _invalidate(self):
  * 		# This requests a repaint when the native handle exists.
  * 		if self._hwnd != <HWND>0:             # <<<<<<<<<<<<<<
@@ -5745,16 +7481,16 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate
   __pyx_t_1 = (__pyx_v_self->_hwnd != ((HWND)0));
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":525
+    /* "nice_titlebar/_win32_titlebar.pyx":636
  * 		# This requests a repaint when the native handle exists.
  * 		if self._hwnd != <HWND>0:
  * 			InvalidateRect(self._hwnd, <RECT*>0, 0)             # <<<<<<<<<<<<<<
  * 
- * 	cdef int _hit_test(self, int x, int y):
+ * 	cdef void _invalidate_button(self, int idx):
 */
     (void)(InvalidateRect(__pyx_v_self->_hwnd, ((RECT *)0), 0));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":524
+    /* "nice_titlebar/_win32_titlebar.pyx":635
  * 	cdef void _invalidate(self):
  * 		# This requests a repaint when the native handle exists.
  * 		if self._hwnd != <HWND>0:             # <<<<<<<<<<<<<<
@@ -5763,7 +7499,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":522
+  /* "nice_titlebar/_win32_titlebar.pyx":633
  * 		self._button_rects = rects
  * 
  * 	cdef void _invalidate(self):             # <<<<<<<<<<<<<<
@@ -5774,8 +7510,211 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate
   /* function exit code */
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":527
+/* "nice_titlebar/_win32_titlebar.pyx":638
  * 			InvalidateRect(self._hwnd, <RECT*>0, 0)
+ * 
+ * 	cdef void _invalidate_button(self, int idx):             # <<<<<<<<<<<<<<
+ * 		# This requests a repaint for a single button rectangle.
+ * 		cdef RECT r
+*/
+
+static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate_button(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, int __pyx_v_idx) {
+  RECT __pyx_v_r;
+  PyObject *__pyx_v_rect = 0;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  Py_ssize_t __pyx_t_4;
+  int __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("_invalidate_button", 0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":642
+ * 		cdef RECT r
+ * 		cdef tuple rect
+ * 		if self._hwnd == <HWND>0:             # <<<<<<<<<<<<<<
+ * 			return
+ * 		if idx < 0 or idx >= len(self._button_rects):
+*/
+  __pyx_t_1 = (__pyx_v_self->_hwnd == ((HWND)0));
+  if (__pyx_t_1) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":643
+ * 		cdef tuple rect
+ * 		if self._hwnd == <HWND>0:
+ * 			return             # <<<<<<<<<<<<<<
+ * 		if idx < 0 or idx >= len(self._button_rects):
+ * 			self._invalidate()
+*/
+    goto __pyx_L0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":642
+ * 		cdef RECT r
+ * 		cdef tuple rect
+ * 		if self._hwnd == <HWND>0:             # <<<<<<<<<<<<<<
+ * 			return
+ * 		if idx < 0 or idx >= len(self._button_rects):
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":644
+ * 		if self._hwnd == <HWND>0:
+ * 			return
+ * 		if idx < 0 or idx >= len(self._button_rects):             # <<<<<<<<<<<<<<
+ * 			self._invalidate()
+ * 			return
+*/
+  __pyx_t_2 = (__pyx_v_idx < 0);
+  if (!__pyx_t_2) {
+  } else {
+    __pyx_t_1 = __pyx_t_2;
+    goto __pyx_L5_bool_binop_done;
+  }
+  __pyx_t_3 = __pyx_v_self->_button_rects;
+  __Pyx_INCREF(__pyx_t_3);
+  if (unlikely(__pyx_t_3 == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+    __PYX_ERR(0, 644, __pyx_L1_error)
+  }
+  __pyx_t_4 = __Pyx_PyList_GET_SIZE(__pyx_t_3); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 644, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_2 = (__pyx_v_idx >= __pyx_t_4);
+  __pyx_t_1 = __pyx_t_2;
+  __pyx_L5_bool_binop_done:;
+  if (__pyx_t_1) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":645
+ * 			return
+ * 		if idx < 0 or idx >= len(self._button_rects):
+ * 			self._invalidate()             # <<<<<<<<<<<<<<
+ * 			return
+ * 		rect = self._button_rects[idx]
+*/
+    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_invalidate(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 645, __pyx_L1_error)
+
+    /* "nice_titlebar/_win32_titlebar.pyx":646
+ * 		if idx < 0 or idx >= len(self._button_rects):
+ * 			self._invalidate()
+ * 			return             # <<<<<<<<<<<<<<
+ * 		rect = self._button_rects[idx]
+ * 		r.left = rect[0]
+*/
+    goto __pyx_L0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":644
+ * 		if self._hwnd == <HWND>0:
+ * 			return
+ * 		if idx < 0 or idx >= len(self._button_rects):             # <<<<<<<<<<<<<<
+ * 			self._invalidate()
+ * 			return
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":647
+ * 			self._invalidate()
+ * 			return
+ * 		rect = self._button_rects[idx]             # <<<<<<<<<<<<<<
+ * 		r.left = rect[0]
+ * 		r.top = rect[1]
+*/
+  if (unlikely(__pyx_v_self->_button_rects == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 647, __pyx_L1_error)
+  }
+  __pyx_t_3 = __Pyx_PyList_GET_ITEM(__pyx_v_self->_button_rects, __pyx_v_idx);
+  __Pyx_INCREF(__pyx_t_3);
+  if (!(likely(PyTuple_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_3))) __PYX_ERR(0, 647, __pyx_L1_error)
+  __pyx_v_rect = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":648
+ * 			return
+ * 		rect = self._button_rects[idx]
+ * 		r.left = rect[0]             # <<<<<<<<<<<<<<
+ * 		r.top = rect[1]
+ * 		r.right = rect[2]
+*/
+  if (unlikely(__pyx_v_rect == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 648, __pyx_L1_error)
+  }
+  __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 0)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 648, __pyx_L1_error)
+  __pyx_v_r.left = __pyx_t_5;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":649
+ * 		rect = self._button_rects[idx]
+ * 		r.left = rect[0]
+ * 		r.top = rect[1]             # <<<<<<<<<<<<<<
+ * 		r.right = rect[2]
+ * 		r.bottom = rect[3]
+*/
+  if (unlikely(__pyx_v_rect == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 649, __pyx_L1_error)
+  }
+  __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 1)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 649, __pyx_L1_error)
+  __pyx_v_r.top = __pyx_t_5;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":650
+ * 		r.left = rect[0]
+ * 		r.top = rect[1]
+ * 		r.right = rect[2]             # <<<<<<<<<<<<<<
+ * 		r.bottom = rect[3]
+ * 		InvalidateRect(self._hwnd, &r, 0)
+*/
+  if (unlikely(__pyx_v_rect == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 650, __pyx_L1_error)
+  }
+  __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 2)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 650, __pyx_L1_error)
+  __pyx_v_r.right = __pyx_t_5;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":651
+ * 		r.top = rect[1]
+ * 		r.right = rect[2]
+ * 		r.bottom = rect[3]             # <<<<<<<<<<<<<<
+ * 		InvalidateRect(self._hwnd, &r, 0)
+ * 
+*/
+  if (unlikely(__pyx_v_rect == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 651, __pyx_L1_error)
+  }
+  __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 3)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 651, __pyx_L1_error)
+  __pyx_v_r.bottom = __pyx_t_5;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":652
+ * 		r.right = rect[2]
+ * 		r.bottom = rect[3]
+ * 		InvalidateRect(self._hwnd, &r, 0)             # <<<<<<<<<<<<<<
+ * 
+ * 	cdef int _hit_test(self, int x, int y):
+*/
+  (void)(InvalidateRect(__pyx_v_self->_hwnd, (&__pyx_v_r), 0));
+
+  /* "nice_titlebar/_win32_titlebar.pyx":638
+ * 			InvalidateRect(self._hwnd, <RECT*>0, 0)
+ * 
+ * 	cdef void _invalidate_button(self, int idx):             # <<<<<<<<<<<<<<
+ * 		# This requests a repaint for a single button rectangle.
+ * 		cdef RECT r
+*/
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._invalidate_button", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_rect);
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "nice_titlebar/_win32_titlebar.pyx":654
+ * 		InvalidateRect(self._hwnd, &r, 0)
  * 
  * 	cdef int _hit_test(self, int x, int y):             # <<<<<<<<<<<<<<
  * 		# This returns non-client hit-test codes for drag/resize.
@@ -5797,26 +7736,26 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":530
+  /* "nice_titlebar/_win32_titlebar.pyx":657
  * 		# This returns non-client hit-test codes for drag/resize.
  * 		cdef RECT rect
- * 		cdef int border = 8             # <<<<<<<<<<<<<<
+ * 		cdef int border = 5             # <<<<<<<<<<<<<<
  * 		cdef int left = 0
  * 		cdef int top = 0
 */
-  __pyx_v_border = 8;
+  __pyx_v_border = 5;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":531
+  /* "nice_titlebar/_win32_titlebar.pyx":658
  * 		cdef RECT rect
- * 		cdef int border = 8
+ * 		cdef int border = 5
  * 		cdef int left = 0             # <<<<<<<<<<<<<<
  * 		cdef int top = 0
  * 		cdef int width = 0
 */
   __pyx_v_left = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":532
- * 		cdef int border = 8
+  /* "nice_titlebar/_win32_titlebar.pyx":659
+ * 		cdef int border = 5
  * 		cdef int left = 0
  * 		cdef int top = 0             # <<<<<<<<<<<<<<
  * 		cdef int width = 0
@@ -5824,7 +7763,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_top = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":533
+  /* "nice_titlebar/_win32_titlebar.pyx":660
  * 		cdef int left = 0
  * 		cdef int top = 0
  * 		cdef int width = 0             # <<<<<<<<<<<<<<
@@ -5833,7 +7772,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_width = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":534
+  /* "nice_titlebar/_win32_titlebar.pyx":661
  * 		cdef int top = 0
  * 		cdef int width = 0
  * 		cdef int height = 0             # <<<<<<<<<<<<<<
@@ -5842,7 +7781,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_height = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":535
+  /* "nice_titlebar/_win32_titlebar.pyx":662
  * 		cdef int width = 0
  * 		cdef int height = 0
  * 		GetWindowRect(self._hwnd, &rect)             # <<<<<<<<<<<<<<
@@ -5851,7 +7790,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   (void)(GetWindowRect(__pyx_v_self->_hwnd, (&__pyx_v_rect)));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":536
+  /* "nice_titlebar/_win32_titlebar.pyx":663
  * 		cdef int height = 0
  * 		GetWindowRect(self._hwnd, &rect)
  * 		left = rect.left             # <<<<<<<<<<<<<<
@@ -5861,7 +7800,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_1 = __pyx_v_rect.left;
   __pyx_v_left = __pyx_t_1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":537
+  /* "nice_titlebar/_win32_titlebar.pyx":664
  * 		GetWindowRect(self._hwnd, &rect)
  * 		left = rect.left
  * 		top = rect.top             # <<<<<<<<<<<<<<
@@ -5871,7 +7810,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_1 = __pyx_v_rect.top;
   __pyx_v_top = __pyx_t_1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":538
+  /* "nice_titlebar/_win32_titlebar.pyx":665
  * 		left = rect.left
  * 		top = rect.top
  * 		width = rect.right - rect.left             # <<<<<<<<<<<<<<
@@ -5880,7 +7819,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_width = (__pyx_v_rect.right - __pyx_v_rect.left);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":539
+  /* "nice_titlebar/_win32_titlebar.pyx":666
  * 		top = rect.top
  * 		width = rect.right - rect.left
  * 		height = rect.bottom - rect.top             # <<<<<<<<<<<<<<
@@ -5889,7 +7828,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_height = (__pyx_v_rect.bottom - __pyx_v_rect.top);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":540
+  /* "nice_titlebar/_win32_titlebar.pyx":667
  * 		width = rect.right - rect.left
  * 		height = rect.bottom - rect.top
  * 		x -= left             # <<<<<<<<<<<<<<
@@ -5898,7 +7837,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_x = (__pyx_v_x - __pyx_v_left);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":541
+  /* "nice_titlebar/_win32_titlebar.pyx":668
  * 		height = rect.bottom - rect.top
  * 		x -= left
  * 		y -= top             # <<<<<<<<<<<<<<
@@ -5907,7 +7846,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   __pyx_v_y = (__pyx_v_y - __pyx_v_top);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":542
+  /* "nice_titlebar/_win32_titlebar.pyx":669
  * 		x -= left
  * 		y -= top
  * 		if x < border and y < border:             # <<<<<<<<<<<<<<
@@ -5925,7 +7864,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":543
+    /* "nice_titlebar/_win32_titlebar.pyx":670
  * 		y -= top
  * 		if x < border and y < border:
  * 			return HTTOPLEFT             # <<<<<<<<<<<<<<
@@ -5935,7 +7874,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTTOPLEFT;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":542
+    /* "nice_titlebar/_win32_titlebar.pyx":669
  * 		x -= left
  * 		y -= top
  * 		if x < border and y < border:             # <<<<<<<<<<<<<<
@@ -5944,7 +7883,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":544
+  /* "nice_titlebar/_win32_titlebar.pyx":671
  * 		if x < border and y < border:
  * 			return HTTOPLEFT
  * 		if x >= width - border and y < border:             # <<<<<<<<<<<<<<
@@ -5962,7 +7901,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":545
+    /* "nice_titlebar/_win32_titlebar.pyx":672
  * 			return HTTOPLEFT
  * 		if x >= width - border and y < border:
  * 			return HTTOPRIGHT             # <<<<<<<<<<<<<<
@@ -5972,7 +7911,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTTOPRIGHT;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":544
+    /* "nice_titlebar/_win32_titlebar.pyx":671
  * 		if x < border and y < border:
  * 			return HTTOPLEFT
  * 		if x >= width - border and y < border:             # <<<<<<<<<<<<<<
@@ -5981,7 +7920,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":546
+  /* "nice_titlebar/_win32_titlebar.pyx":673
  * 		if x >= width - border and y < border:
  * 			return HTTOPRIGHT
  * 		if x < border and y >= height - border:             # <<<<<<<<<<<<<<
@@ -5999,7 +7938,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_L10_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":547
+    /* "nice_titlebar/_win32_titlebar.pyx":674
  * 			return HTTOPRIGHT
  * 		if x < border and y >= height - border:
  * 			return HTBOTTOMLEFT             # <<<<<<<<<<<<<<
@@ -6009,7 +7948,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTBOTTOMLEFT;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":546
+    /* "nice_titlebar/_win32_titlebar.pyx":673
  * 		if x >= width - border and y < border:
  * 			return HTTOPRIGHT
  * 		if x < border and y >= height - border:             # <<<<<<<<<<<<<<
@@ -6018,7 +7957,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":548
+  /* "nice_titlebar/_win32_titlebar.pyx":675
  * 		if x < border and y >= height - border:
  * 			return HTBOTTOMLEFT
  * 		if x >= width - border and y >= height - border:             # <<<<<<<<<<<<<<
@@ -6036,7 +7975,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_L13_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":549
+    /* "nice_titlebar/_win32_titlebar.pyx":676
  * 			return HTBOTTOMLEFT
  * 		if x >= width - border and y >= height - border:
  * 			return HTBOTTOMRIGHT             # <<<<<<<<<<<<<<
@@ -6046,7 +7985,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTBOTTOMRIGHT;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":548
+    /* "nice_titlebar/_win32_titlebar.pyx":675
  * 		if x < border and y >= height - border:
  * 			return HTBOTTOMLEFT
  * 		if x >= width - border and y >= height - border:             # <<<<<<<<<<<<<<
@@ -6055,7 +7994,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":550
+  /* "nice_titlebar/_win32_titlebar.pyx":677
  * 		if x >= width - border and y >= height - border:
  * 			return HTBOTTOMRIGHT
  * 		if y < border:             # <<<<<<<<<<<<<<
@@ -6065,7 +8004,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_2 = (__pyx_v_y < __pyx_v_border);
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":551
+    /* "nice_titlebar/_win32_titlebar.pyx":678
  * 			return HTBOTTOMRIGHT
  * 		if y < border:
  * 			return HTTOP             # <<<<<<<<<<<<<<
@@ -6075,7 +8014,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTTOP;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":550
+    /* "nice_titlebar/_win32_titlebar.pyx":677
  * 		if x >= width - border and y >= height - border:
  * 			return HTBOTTOMRIGHT
  * 		if y < border:             # <<<<<<<<<<<<<<
@@ -6084,7 +8023,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":552
+  /* "nice_titlebar/_win32_titlebar.pyx":679
  * 		if y < border:
  * 			return HTTOP
  * 		if y >= height - border:             # <<<<<<<<<<<<<<
@@ -6094,7 +8033,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_2 = (__pyx_v_y >= (__pyx_v_height - __pyx_v_border));
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":553
+    /* "nice_titlebar/_win32_titlebar.pyx":680
  * 			return HTTOP
  * 		if y >= height - border:
  * 			return HTBOTTOM             # <<<<<<<<<<<<<<
@@ -6104,7 +8043,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTBOTTOM;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":552
+    /* "nice_titlebar/_win32_titlebar.pyx":679
  * 		if y < border:
  * 			return HTTOP
  * 		if y >= height - border:             # <<<<<<<<<<<<<<
@@ -6113,7 +8052,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":554
+  /* "nice_titlebar/_win32_titlebar.pyx":681
  * 		if y >= height - border:
  * 			return HTBOTTOM
  * 		if x < border:             # <<<<<<<<<<<<<<
@@ -6123,7 +8062,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_2 = (__pyx_v_x < __pyx_v_border);
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":555
+    /* "nice_titlebar/_win32_titlebar.pyx":682
  * 			return HTBOTTOM
  * 		if x < border:
  * 			return HTLEFT             # <<<<<<<<<<<<<<
@@ -6133,7 +8072,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTLEFT;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":554
+    /* "nice_titlebar/_win32_titlebar.pyx":681
  * 		if y >= height - border:
  * 			return HTBOTTOM
  * 		if x < border:             # <<<<<<<<<<<<<<
@@ -6142,7 +8081,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":556
+  /* "nice_titlebar/_win32_titlebar.pyx":683
  * 		if x < border:
  * 			return HTLEFT
  * 		if x >= width - border:             # <<<<<<<<<<<<<<
@@ -6152,7 +8091,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_2 = (__pyx_v_x >= (__pyx_v_width - __pyx_v_border));
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":557
+    /* "nice_titlebar/_win32_titlebar.pyx":684
  * 			return HTLEFT
  * 		if x >= width - border:
  * 			return HTRIGHT             # <<<<<<<<<<<<<<
@@ -6162,7 +8101,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTRIGHT;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":556
+    /* "nice_titlebar/_win32_titlebar.pyx":683
  * 		if x < border:
  * 			return HTLEFT
  * 		if x >= width - border:             # <<<<<<<<<<<<<<
@@ -6171,7 +8110,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":558
+  /* "nice_titlebar/_win32_titlebar.pyx":685
  * 		if x >= width - border:
  * 			return HTRIGHT
  * 		if y < self._titlebar_height:             # <<<<<<<<<<<<<<
@@ -6181,18 +8120,18 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_t_2 = (__pyx_v_y < __pyx_v_self->_titlebar_height);
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":559
+    /* "nice_titlebar/_win32_titlebar.pyx":686
  * 			return HTRIGHT
  * 		if y < self._titlebar_height:
  * 			if self._button_hit(x, y) >= 0:             # <<<<<<<<<<<<<<
  * 				return HTCLIENT
  * 			return HTCAPTION
 */
-    __pyx_t_1 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_button_hit(__pyx_v_self, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 559, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_button_hit(__pyx_v_self, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 686, __pyx_L1_error)
     __pyx_t_2 = (__pyx_t_1 >= 0);
     if (__pyx_t_2) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":560
+      /* "nice_titlebar/_win32_titlebar.pyx":687
  * 		if y < self._titlebar_height:
  * 			if self._button_hit(x, y) >= 0:
  * 				return HTCLIENT             # <<<<<<<<<<<<<<
@@ -6202,7 +8141,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
       __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTCLIENT;
       goto __pyx_L0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":559
+      /* "nice_titlebar/_win32_titlebar.pyx":686
  * 			return HTRIGHT
  * 		if y < self._titlebar_height:
  * 			if self._button_hit(x, y) >= 0:             # <<<<<<<<<<<<<<
@@ -6211,7 +8150,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":561
+    /* "nice_titlebar/_win32_titlebar.pyx":688
  * 			if self._button_hit(x, y) >= 0:
  * 				return HTCLIENT
  * 			return HTCAPTION             # <<<<<<<<<<<<<<
@@ -6221,7 +8160,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
     __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTCAPTION;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":558
+    /* "nice_titlebar/_win32_titlebar.pyx":685
  * 		if x >= width - border:
  * 			return HTRIGHT
  * 		if y < self._titlebar_height:             # <<<<<<<<<<<<<<
@@ -6230,7 +8169,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":562
+  /* "nice_titlebar/_win32_titlebar.pyx":689
  * 				return HTCLIENT
  * 			return HTCAPTION
  * 		return HTCLIENT             # <<<<<<<<<<<<<<
@@ -6240,8 +8179,8 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   __pyx_r = __pyx_v_13nice_titlebar_15_win32_titlebar_HTCLIENT;
   goto __pyx_L0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":527
- * 			InvalidateRect(self._hwnd, <RECT*>0, 0)
+  /* "nice_titlebar/_win32_titlebar.pyx":654
+ * 		InvalidateRect(self._hwnd, &r, 0)
  * 
  * 	cdef int _hit_test(self, int x, int y):             # <<<<<<<<<<<<<<
  * 		# This returns non-client hit-test codes for drag/resize.
@@ -6256,7 +8195,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test(st
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":564
+/* "nice_titlebar/_win32_titlebar.pyx":691
  * 		return HTCLIENT
  * 
  * 	cdef int _button_hit(self, int x, int y):             # <<<<<<<<<<<<<<
@@ -6281,7 +8220,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_button_hit", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":566
+  /* "nice_titlebar/_win32_titlebar.pyx":693
  * 	cdef int _button_hit(self, int x, int y):
  * 		# This checks if a point is inside any titlebar button.
  * 		cdef int idx = 0             # <<<<<<<<<<<<<<
@@ -6290,7 +8229,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
 */
   __pyx_v_idx = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":568
+  /* "nice_titlebar/_win32_titlebar.pyx":695
  * 		cdef int idx = 0
  * 		cdef tuple rect
  * 		for idx, rect in enumerate(self._button_rects):             # <<<<<<<<<<<<<<
@@ -6304,87 +8243,87 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
     {
       Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_2);
       #if !CYTHON_ASSUME_SAFE_SIZE
-      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 568, __pyx_L1_error)
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 695, __pyx_L1_error)
       #endif
       if (__pyx_t_3 >= __pyx_temp) break;
     }
     __pyx_t_4 = __Pyx_PyList_GetItemRefFast(__pyx_t_2, __pyx_t_3, __Pyx_ReferenceSharing_OwnStrongReference);
     ++__pyx_t_3;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 568, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 695, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (!(likely(PyTuple_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_4))) __PYX_ERR(0, 568, __pyx_L1_error)
+    if (!(likely(PyTuple_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_4))) __PYX_ERR(0, 695, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_rect, ((PyObject*)__pyx_t_4));
     __pyx_t_4 = 0;
     __pyx_v_idx = __pyx_t_1;
     __pyx_t_1 = (__pyx_t_1 + 1);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":569
+    /* "nice_titlebar/_win32_titlebar.pyx":696
  * 		cdef tuple rect
  * 		for idx, rect in enumerate(self._button_rects):
  * 			if x >= rect[0] and x < rect[2] and y >= rect[1] and y < rect[3]:             # <<<<<<<<<<<<<<
  * 				return idx
  * 		return -1
 */
-    __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 569, __pyx_L1_error)
+      __PYX_ERR(0, 696, __pyx_L1_error)
     }
-    __pyx_t_6 = PyObject_RichCompare(__pyx_t_4, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 0), Py_GE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_6 = PyObject_RichCompare(__pyx_t_4, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 0), Py_GE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     if (__pyx_t_7) {
     } else {
       __pyx_t_5 = __pyx_t_7;
       goto __pyx_L6_bool_binop_done;
     }
-    __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 569, __pyx_L1_error)
+      __PYX_ERR(0, 696, __pyx_L1_error)
     }
-    __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 2), Py_LT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 2), Py_LT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     if (__pyx_t_7) {
     } else {
       __pyx_t_5 = __pyx_t_7;
       goto __pyx_L6_bool_binop_done;
     }
-    __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 569, __pyx_L1_error)
+      __PYX_ERR(0, 696, __pyx_L1_error)
     }
-    __pyx_t_6 = PyObject_RichCompare(__pyx_t_4, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 1), Py_GE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_6 = PyObject_RichCompare(__pyx_t_4, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 1), Py_GE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     if (__pyx_t_7) {
     } else {
       __pyx_t_5 = __pyx_t_7;
       goto __pyx_L6_bool_binop_done;
     }
-    __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 569, __pyx_L1_error)
+      __PYX_ERR(0, 696, __pyx_L1_error)
     }
-    __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 3), Py_LT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 3), Py_LT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 569, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 696, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_5 = __pyx_t_7;
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_5) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":570
+      /* "nice_titlebar/_win32_titlebar.pyx":697
  * 		for idx, rect in enumerate(self._button_rects):
  * 			if x >= rect[0] and x < rect[2] and y >= rect[1] and y < rect[3]:
  * 				return idx             # <<<<<<<<<<<<<<
@@ -6395,7 +8334,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       goto __pyx_L0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":569
+      /* "nice_titlebar/_win32_titlebar.pyx":696
  * 		cdef tuple rect
  * 		for idx, rect in enumerate(self._button_rects):
  * 			if x >= rect[0] and x < rect[2] and y >= rect[1] and y < rect[3]:             # <<<<<<<<<<<<<<
@@ -6404,7 +8343,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":568
+    /* "nice_titlebar/_win32_titlebar.pyx":695
  * 		cdef int idx = 0
  * 		cdef tuple rect
  * 		for idx, rect in enumerate(self._button_rects):             # <<<<<<<<<<<<<<
@@ -6414,7 +8353,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":571
+  /* "nice_titlebar/_win32_titlebar.pyx":698
  * 			if x >= rect[0] and x < rect[2] and y >= rect[1] and y < rect[3]:
  * 				return idx
  * 		return -1             # <<<<<<<<<<<<<<
@@ -6424,7 +8363,7 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
   __pyx_r = -1;
   goto __pyx_L0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":564
+  /* "nice_titlebar/_win32_titlebar.pyx":691
  * 		return HTCLIENT
  * 
  * 	cdef int _button_hit(self, int x, int y):             # <<<<<<<<<<<<<<
@@ -6445,11 +8384,11 @@ static int __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit(
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":573
+/* "nice_titlebar/_win32_titlebar.pyx":700
  * 		return -1
  * 
  * 	cdef void _draw(self):             # <<<<<<<<<<<<<<
- * 		# This draws titlebar and client backgrounds with Direct2D.
+ * 		# This draws titlebar, client background, buttons, and delegates to Python canvas.
  * 		cdef RECT rect
 */
 
@@ -6463,6 +8402,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   PyObject *__pyx_v_btn_hover = 0;
   int __pyx_v_idx;
   PyObject *__pyx_v_button_rect = 0;
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *__pyx_v_canvas = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -6471,21 +8411,25 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   float __pyx_t_5;
   float __pyx_t_6;
   int __pyx_t_7;
-  Py_ssize_t __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  size_t __pyx_t_9;
   PyObject *__pyx_t_10 = NULL;
-  size_t __pyx_t_11;
-  float __pyx_t_12;
-  float __pyx_t_13;
-  float __pyx_t_14;
-  float __pyx_t_15;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_13 = NULL;
+  int __pyx_t_14;
+  Py_ssize_t __pyx_t_15;
+  float __pyx_t_16;
+  float __pyx_t_17;
+  float __pyx_t_18;
+  float __pyx_t_19;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_draw", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":576
- * 		# This draws titlebar and client backgrounds with Direct2D.
+  /* "nice_titlebar/_win32_titlebar.pyx":703
+ * 		# This draws titlebar, client background, buttons, and delegates to Python canvas.
  * 		cdef RECT rect
  * 		cdef int width = 0             # <<<<<<<<<<<<<<
  * 		cdef int height = 0
@@ -6493,7 +8437,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   __pyx_v_width = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":577
+  /* "nice_titlebar/_win32_titlebar.pyx":704
  * 		cdef RECT rect
  * 		cdef int width = 0
  * 		cdef int height = 0             # <<<<<<<<<<<<<<
@@ -6502,7 +8446,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   __pyx_v_height = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":578
+  /* "nice_titlebar/_win32_titlebar.pyx":705
  * 		cdef int width = 0
  * 		cdef int height = 0
  * 		cdef tuple bg = self._titlebar_bg             # <<<<<<<<<<<<<<
@@ -6514,7 +8458,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   __pyx_v_bg = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":579
+  /* "nice_titlebar/_win32_titlebar.pyx":706
  * 		cdef int height = 0
  * 		cdef tuple bg = self._titlebar_bg
  * 		cdef tuple client = self._client_bg             # <<<<<<<<<<<<<<
@@ -6526,7 +8470,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   __pyx_v_client = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":584
+  /* "nice_titlebar/_win32_titlebar.pyx":711
  * 		cdef int idx
  * 		cdef tuple button_rect
  * 		GetClientRect(self._hwnd, &rect)             # <<<<<<<<<<<<<<
@@ -6535,7 +8479,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   (void)(GetClientRect(__pyx_v_self->_hwnd, (&__pyx_v_rect)));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":585
+  /* "nice_titlebar/_win32_titlebar.pyx":712
  * 		cdef tuple button_rect
  * 		GetClientRect(self._hwnd, &rect)
  * 		width = rect.right - rect.left             # <<<<<<<<<<<<<<
@@ -6544,7 +8488,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   __pyx_v_width = (__pyx_v_rect.right - __pyx_v_rect.left);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":586
+  /* "nice_titlebar/_win32_titlebar.pyx":713
  * 		GetClientRect(self._hwnd, &rect)
  * 		width = rect.right - rect.left
  * 		height = rect.bottom - rect.top             # <<<<<<<<<<<<<<
@@ -6553,7 +8497,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   __pyx_v_height = (__pyx_v_rect.bottom - __pyx_v_rect.top);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":587
+  /* "nice_titlebar/_win32_titlebar.pyx":714
  * 		width = rect.right - rect.left
  * 		height = rect.bottom - rect.top
  * 		if ntb_d2d_resize(&self._d2d, <unsigned int>width, <unsigned int>height) != 0:             # <<<<<<<<<<<<<<
@@ -6563,7 +8507,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   __pyx_t_2 = (ntb_d2d_resize((&__pyx_v_self->_d2d), ((unsigned int)__pyx_v_width), ((unsigned int)__pyx_v_height)) != 0);
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":588
+    /* "nice_titlebar/_win32_titlebar.pyx":715
  * 		height = rect.bottom - rect.top
  * 		if ntb_d2d_resize(&self._d2d, <unsigned int>width, <unsigned int>height) != 0:
  * 			return             # <<<<<<<<<<<<<<
@@ -6572,7 +8516,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":587
+    /* "nice_titlebar/_win32_titlebar.pyx":714
  * 		width = rect.right - rect.left
  * 		height = rect.bottom - rect.top
  * 		if ntb_d2d_resize(&self._d2d, <unsigned int>width, <unsigned int>height) != 0:             # <<<<<<<<<<<<<<
@@ -6581,7 +8525,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":589
+  /* "nice_titlebar/_win32_titlebar.pyx":716
  * 		if ntb_d2d_resize(&self._d2d, <unsigned int>width, <unsigned int>height) != 0:
  * 			return
  * 		if ntb_d2d_begin(&self._d2d) != 0:             # <<<<<<<<<<<<<<
@@ -6591,7 +8535,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   __pyx_t_2 = (ntb_d2d_begin((&__pyx_v_self->_d2d)) != 0);
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":590
+    /* "nice_titlebar/_win32_titlebar.pyx":717
  * 			return
  * 		if ntb_d2d_begin(&self._d2d) != 0:
  * 			return             # <<<<<<<<<<<<<<
@@ -6600,7 +8544,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":589
+    /* "nice_titlebar/_win32_titlebar.pyx":716
  * 		if ntb_d2d_resize(&self._d2d, <unsigned int>width, <unsigned int>height) != 0:
  * 			return
  * 		if ntb_d2d_begin(&self._d2d) != 0:             # <<<<<<<<<<<<<<
@@ -6609,7 +8553,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":591
+  /* "nice_titlebar/_win32_titlebar.pyx":718
  * 		if ntb_d2d_begin(&self._d2d) != 0:
  * 			return
  * 		ntb_d2d_clear(&self._d2d, client[0] / 255.0, client[1] / 255.0, client[2] / 255.0, client[3] / 255.0)             # <<<<<<<<<<<<<<
@@ -6618,39 +8562,39 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   if (unlikely(__pyx_v_client == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 591, __pyx_L1_error)
+    __PYX_ERR(0, 718, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (unlikely(__pyx_v_client == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 591, __pyx_L1_error)
+    __PYX_ERR(0, 718, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (unlikely(__pyx_v_client == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 591, __pyx_L1_error)
+    __PYX_ERR(0, 718, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (unlikely(__pyx_v_client == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 591, __pyx_L1_error)
+    __PYX_ERR(0, 718, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_client, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 718, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   ntb_d2d_clear((&__pyx_v_self->_d2d), __pyx_t_3, __pyx_t_4, __pyx_t_5, __pyx_t_6);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":598
+  /* "nice_titlebar/_win32_titlebar.pyx":725
  * 			<float>width,
  * 			<float>self._titlebar_height,
  * 			bg[0] / 255.0,             # <<<<<<<<<<<<<<
@@ -6659,14 +8603,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   if (unlikely(__pyx_v_bg == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 598, __pyx_L1_error)
+    __PYX_ERR(0, 725, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 598, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 725, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 598, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 725, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":599
+  /* "nice_titlebar/_win32_titlebar.pyx":726
  * 			<float>self._titlebar_height,
  * 			bg[0] / 255.0,
  * 			bg[1] / 255.0,             # <<<<<<<<<<<<<<
@@ -6675,14 +8619,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   if (unlikely(__pyx_v_bg == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 599, __pyx_L1_error)
+    __PYX_ERR(0, 726, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 599, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 726, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 599, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 726, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":600
+  /* "nice_titlebar/_win32_titlebar.pyx":727
  * 			bg[0] / 255.0,
  * 			bg[1] / 255.0,
  * 			bg[2] / 255.0,             # <<<<<<<<<<<<<<
@@ -6691,30 +8635,30 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   if (unlikely(__pyx_v_bg == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 600, __pyx_L1_error)
+    __PYX_ERR(0, 727, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 600, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 727, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 600, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 727, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":601
+  /* "nice_titlebar/_win32_titlebar.pyx":728
  * 			bg[1] / 255.0,
  * 			bg[2] / 255.0,
  * 			bg[3] / 255.0,             # <<<<<<<<<<<<<<
  * 		)
- * 		for idx, button_rect in enumerate(self._button_rects):
+ * 		# Allow Python-side drawing into the client area via a canvas before we
 */
   if (unlikely(__pyx_v_bg == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 601, __pyx_L1_error)
+    __PYX_ERR(0, 728, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 601, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_bg, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 728, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 601, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 728, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":592
+  /* "nice_titlebar/_win32_titlebar.pyx":719
  * 			return
  * 		ntb_d2d_clear(&self._d2d, client[0] / 255.0, client[1] / 255.0, client[2] / 255.0, client[3] / 255.0)
  * 		ntb_d2d_fill_rect(             # <<<<<<<<<<<<<<
@@ -6723,36 +8667,207 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   ntb_d2d_fill_rect((&__pyx_v_self->_d2d), 0.0, 0.0, ((float)__pyx_v_width), ((float)__pyx_v_self->_titlebar_height), __pyx_t_6, __pyx_t_5, __pyx_t_4, __pyx_t_3);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":603
- * 			bg[3] / 255.0,
- * 		)
+  /* "nice_titlebar/_win32_titlebar.pyx":732
+ * 		# Allow Python-side drawing into the client area via a canvas before we
+ * 		# render titlebar buttons on top.
+ * 		if self._paint_callback is not None and self._owner is not None:             # <<<<<<<<<<<<<<
+ * 			canvas = Canvas(self)
+ * 			try:
+*/
+  __pyx_t_7 = (__pyx_v_self->_paint_callback != Py_None);
+  if (__pyx_t_7) {
+  } else {
+    __pyx_t_2 = __pyx_t_7;
+    goto __pyx_L6_bool_binop_done;
+  }
+  __pyx_t_7 = (__pyx_v_self->_owner != Py_None);
+  __pyx_t_2 = __pyx_t_7;
+  __pyx_L6_bool_binop_done:;
+  if (__pyx_t_2) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":733
+ * 		# render titlebar buttons on top.
+ * 		if self._paint_callback is not None and self._owner is not None:
+ * 			canvas = Canvas(self)             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				self._paint_callback(self._owner, canvas)
+*/
+    __pyx_t_8 = NULL;
+    __pyx_t_9 = 1;
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_8, ((PyObject *)__pyx_v_self)};
+      __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 733, __pyx_L1_error)
+      __Pyx_GOTREF((PyObject *)__pyx_t_1);
+    }
+    __pyx_v_canvas = ((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)__pyx_t_1);
+    __pyx_t_1 = 0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":734
+ * 		if self._paint_callback is not None and self._owner is not None:
+ * 			canvas = Canvas(self)
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				self._paint_callback(self._owner, canvas)
+ * 			except Exception:
+*/
+    {
+      __Pyx_PyThreadState_declare
+      __Pyx_PyThreadState_assign
+      __Pyx_ExceptionSave(&__pyx_t_10, &__pyx_t_11, &__pyx_t_12);
+      __Pyx_XGOTREF(__pyx_t_10);
+      __Pyx_XGOTREF(__pyx_t_11);
+      __Pyx_XGOTREF(__pyx_t_12);
+      /*try:*/ {
+
+        /* "nice_titlebar/_win32_titlebar.pyx":735
+ * 			canvas = Canvas(self)
+ * 			try:
+ * 				self._paint_callback(self._owner, canvas)             # <<<<<<<<<<<<<<
+ * 			except Exception:
+ * 				PyErr_Clear()
+*/
+        __pyx_t_8 = NULL;
+        __Pyx_INCREF(__pyx_v_self->_paint_callback);
+        __pyx_t_13 = __pyx_v_self->_paint_callback; 
+        __pyx_t_9 = 1;
+        #if CYTHON_UNPACK_METHODS
+        if (likely(PyMethod_Check(__pyx_t_13))) {
+          __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_13);
+          assert(__pyx_t_8);
+          PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_13);
+          __Pyx_INCREF(__pyx_t_8);
+          __Pyx_INCREF(__pyx__function);
+          __Pyx_DECREF_SET(__pyx_t_13, __pyx__function);
+          __pyx_t_9 = 0;
+        }
+        #endif
+        {
+          PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_self->_owner, ((PyObject *)__pyx_v_canvas)};
+          __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_13, __pyx_callargs+__pyx_t_9, (3-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 735, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_1);
+        }
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":734
+ * 		if self._paint_callback is not None and self._owner is not None:
+ * 			canvas = Canvas(self)
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				self._paint_callback(self._owner, canvas)
+ * 			except Exception:
+*/
+      }
+      __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+      goto __pyx_L13_try_end;
+      __pyx_L8_error:;
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+      /* "nice_titlebar/_win32_titlebar.pyx":736
+ * 			try:
+ * 				self._paint_callback(self._owner, canvas)
+ * 			except Exception:             # <<<<<<<<<<<<<<
+ * 				PyErr_Clear()
+ * 			del canvas
+*/
+      __pyx_t_14 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+      if (__pyx_t_14) {
+        __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._draw", __pyx_clineno, __pyx_lineno, __pyx_filename);
+        if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_13, &__pyx_t_8) < 0) __PYX_ERR(0, 736, __pyx_L10_except_error)
+        __Pyx_XGOTREF(__pyx_t_1);
+        __Pyx_XGOTREF(__pyx_t_13);
+        __Pyx_XGOTREF(__pyx_t_8);
+
+        /* "nice_titlebar/_win32_titlebar.pyx":737
+ * 				self._paint_callback(self._owner, canvas)
+ * 			except Exception:
+ * 				PyErr_Clear()             # <<<<<<<<<<<<<<
+ * 			del canvas
+ * 
+*/
+        PyErr_Clear();
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        goto __pyx_L9_exception_handled;
+      }
+      goto __pyx_L10_except_error;
+
+      /* "nice_titlebar/_win32_titlebar.pyx":734
+ * 		if self._paint_callback is not None and self._owner is not None:
+ * 			canvas = Canvas(self)
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				self._paint_callback(self._owner, canvas)
+ * 			except Exception:
+*/
+      __pyx_L10_except_error:;
+      __Pyx_XGIVEREF(__pyx_t_10);
+      __Pyx_XGIVEREF(__pyx_t_11);
+      __Pyx_XGIVEREF(__pyx_t_12);
+      __Pyx_ExceptionReset(__pyx_t_10, __pyx_t_11, __pyx_t_12);
+      goto __pyx_L1_error;
+      __pyx_L9_exception_handled:;
+      __Pyx_XGIVEREF(__pyx_t_10);
+      __Pyx_XGIVEREF(__pyx_t_11);
+      __Pyx_XGIVEREF(__pyx_t_12);
+      __Pyx_ExceptionReset(__pyx_t_10, __pyx_t_11, __pyx_t_12);
+      __pyx_L13_try_end:;
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":738
+ * 			except Exception:
+ * 				PyErr_Clear()
+ * 			del canvas             # <<<<<<<<<<<<<<
+ * 
+ * 		for idx, button_rect in enumerate(self._button_rects):
+*/
+    __Pyx_DECREF((PyObject *)__pyx_v_canvas); __pyx_v_canvas = 0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":732
+ * 		# Allow Python-side drawing into the client area via a canvas before we
+ * 		# render titlebar buttons on top.
+ * 		if self._paint_callback is not None and self._owner is not None:             # <<<<<<<<<<<<<<
+ * 			canvas = Canvas(self)
+ * 			try:
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":740
+ * 			del canvas
+ * 
  * 		for idx, button_rect in enumerate(self._button_rects):             # <<<<<<<<<<<<<<
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
 */
-  __pyx_t_7 = 0;
-  __pyx_t_1 = __pyx_v_self->_button_rects; __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_8 = 0;
+  __pyx_t_14 = 0;
+  __pyx_t_8 = __pyx_v_self->_button_rects; __Pyx_INCREF(__pyx_t_8);
+  __pyx_t_15 = 0;
   for (;;) {
     {
-      Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
+      Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_8);
       #if !CYTHON_ASSUME_SAFE_SIZE
-      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 603, __pyx_L1_error)
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 740, __pyx_L1_error)
       #endif
-      if (__pyx_t_8 >= __pyx_temp) break;
+      if (__pyx_t_15 >= __pyx_temp) break;
     }
-    __pyx_t_9 = __Pyx_PyList_GetItemRefFast(__pyx_t_1, __pyx_t_8, __Pyx_ReferenceSharing_OwnStrongReference);
-    ++__pyx_t_8;
-    if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 603, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    if (!(likely(PyTuple_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_9))) __PYX_ERR(0, 603, __pyx_L1_error)
-    __Pyx_XDECREF_SET(__pyx_v_button_rect, ((PyObject*)__pyx_t_9));
-    __pyx_t_9 = 0;
-    __pyx_v_idx = __pyx_t_7;
-    __pyx_t_7 = (__pyx_t_7 + 1);
+    __pyx_t_13 = __Pyx_PyList_GetItemRefFast(__pyx_t_8, __pyx_t_15, __Pyx_ReferenceSharing_OwnStrongReference);
+    ++__pyx_t_15;
+    if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 740, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    if (!(likely(PyTuple_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_13))) __PYX_ERR(0, 740, __pyx_L1_error)
+    __Pyx_XDECREF_SET(__pyx_v_button_rect, ((PyObject*)__pyx_t_13));
+    __pyx_t_13 = 0;
+    __pyx_v_idx = __pyx_t_14;
+    __pyx_t_14 = (__pyx_t_14 + 1);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":604
- * 		)
+    /* "nice_titlebar/_win32_titlebar.pyx":741
+ * 
  * 		for idx, button_rect in enumerate(self._button_rects):
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))             # <<<<<<<<<<<<<<
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
@@ -6760,20 +8875,20 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_self->_buttons == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 604, __pyx_L1_error)
+      __PYX_ERR(0, 741, __pyx_L1_error)
     }
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx), __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 604, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_mstate_global->__pyx_tuple[6], NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 604, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 604, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_btn_bg, ((PyObject*)__pyx_t_9));
-    __pyx_t_9 = 0;
+    __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx), __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 741, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[6], NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 741, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+    __pyx_t_13 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_t_1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 741, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_btn_bg, ((PyObject*)__pyx_t_13));
+    __pyx_t_13 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":605
+    /* "nice_titlebar/_win32_titlebar.pyx":742
  * 		for idx, button_rect in enumerate(self._button_rects):
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))             # <<<<<<<<<<<<<<
@@ -6782,25 +8897,25 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_self->_buttons == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 605, __pyx_L1_error)
+      __PYX_ERR(0, 742, __pyx_L1_error)
     }
-    __pyx_t_10 = __Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx);
-    __Pyx_INCREF(__pyx_t_10);
-    __pyx_t_11 = 0;
+    __pyx_t_1 = __Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx);
+    __Pyx_INCREF(__pyx_t_1);
+    __pyx_t_9 = 0;
     {
-      PyObject *__pyx_callargs[3] = {__pyx_t_10, __pyx_mstate_global->__pyx_n_u_hover, __pyx_v_btn_bg};
-      __pyx_t_9 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_11, (3-__pyx_t_11) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 605, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_9);
+      PyObject *__pyx_callargs[3] = {__pyx_t_1, __pyx_mstate_global->__pyx_n_u_hover, __pyx_v_btn_bg};
+      __pyx_t_13 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_9, (3-__pyx_t_9) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 742, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_13);
     }
-    __pyx_t_10 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 605, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_btn_hover, ((PyObject*)__pyx_t_10));
-    __pyx_t_10 = 0;
+    __pyx_t_1 = __pyx_f_13nice_titlebar_15_win32_titlebar__normalize_rgba(__pyx_t_13); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 742, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_btn_hover, ((PyObject*)__pyx_t_1));
+    __pyx_t_1 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":606
+    /* "nice_titlebar/_win32_titlebar.pyx":743
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
  * 			if idx == self._hover_index:             # <<<<<<<<<<<<<<
@@ -6810,7 +8925,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
     __pyx_t_2 = (__pyx_v_idx == __pyx_v_self->_hover_index);
     if (__pyx_t_2) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":607
+      /* "nice_titlebar/_win32_titlebar.pyx":744
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
  * 			if idx == self._hover_index:
  * 				btn_bg = btn_hover             # <<<<<<<<<<<<<<
@@ -6820,7 +8935,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
       __Pyx_INCREF(__pyx_v_btn_hover);
       __Pyx_DECREF_SET(__pyx_v_btn_bg, __pyx_v_btn_hover);
 
-      /* "nice_titlebar/_win32_titlebar.pyx":606
+      /* "nice_titlebar/_win32_titlebar.pyx":743
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
  * 			if idx == self._hover_index:             # <<<<<<<<<<<<<<
@@ -6829,7 +8944,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":610
+    /* "nice_titlebar/_win32_titlebar.pyx":747
  * 			ntb_d2d_fill_rect(
  * 				&self._d2d,
  * 				<float>button_rect[0],             # <<<<<<<<<<<<<<
@@ -6838,11 +8953,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_button_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 610, __pyx_L1_error)
+      __PYX_ERR(0, 747, __pyx_L1_error)
     }
-    __pyx_t_3 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 0)); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 610, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 0)); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 747, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":611
+    /* "nice_titlebar/_win32_titlebar.pyx":748
  * 				&self._d2d,
  * 				<float>button_rect[0],
  * 				<float>button_rect[1],             # <<<<<<<<<<<<<<
@@ -6851,11 +8966,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_button_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 611, __pyx_L1_error)
+      __PYX_ERR(0, 748, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 1)); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 611, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 1)); if (unlikely((__pyx_t_4 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 748, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":612
+    /* "nice_titlebar/_win32_titlebar.pyx":749
  * 				<float>button_rect[0],
  * 				<float>button_rect[1],
  * 				<float>button_rect[2],             # <<<<<<<<<<<<<<
@@ -6864,11 +8979,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_button_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 612, __pyx_L1_error)
+      __PYX_ERR(0, 749, __pyx_L1_error)
     }
-    __pyx_t_5 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 2)); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 612, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 2)); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 749, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":613
+    /* "nice_titlebar/_win32_titlebar.pyx":750
  * 				<float>button_rect[1],
  * 				<float>button_rect[2],
  * 				<float>button_rect[3],             # <<<<<<<<<<<<<<
@@ -6877,11 +8992,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_button_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 613, __pyx_L1_error)
+      __PYX_ERR(0, 750, __pyx_L1_error)
     }
-    __pyx_t_6 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 3)); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 613, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyFloat_AsFloat(__Pyx_PyTuple_GET_ITEM(__pyx_v_button_rect, 3)); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 750, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":614
+    /* "nice_titlebar/_win32_titlebar.pyx":751
  * 				<float>button_rect[2],
  * 				<float>button_rect[3],
  * 				btn_bg[0] / 255.0,             # <<<<<<<<<<<<<<
@@ -6890,14 +9005,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_btn_bg == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 614, __pyx_L1_error)
+      __PYX_ERR(0, 751, __pyx_L1_error)
     }
-    __pyx_t_10 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 614, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_12 = __Pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_12 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 614, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 0), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 751, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_16 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 751, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":615
+    /* "nice_titlebar/_win32_titlebar.pyx":752
  * 				<float>button_rect[3],
  * 				btn_bg[0] / 255.0,
  * 				btn_bg[1] / 255.0,             # <<<<<<<<<<<<<<
@@ -6906,14 +9021,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_btn_bg == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 615, __pyx_L1_error)
+      __PYX_ERR(0, 752, __pyx_L1_error)
     }
-    __pyx_t_10 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 615, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_13 = __Pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 615, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 1), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 752, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_17 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_17 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 752, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":616
+    /* "nice_titlebar/_win32_titlebar.pyx":753
  * 				btn_bg[0] / 255.0,
  * 				btn_bg[1] / 255.0,
  * 				btn_bg[2] / 255.0,             # <<<<<<<<<<<<<<
@@ -6922,14 +9037,14 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_btn_bg == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 616, __pyx_L1_error)
+      __PYX_ERR(0, 753, __pyx_L1_error)
     }
-    __pyx_t_10 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 616, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_14 = __Pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_14 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 616, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 2), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 753, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_18 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_18 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 753, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":617
+    /* "nice_titlebar/_win32_titlebar.pyx":754
  * 				btn_bg[1] / 255.0,
  * 				btn_bg[2] / 255.0,
  * 				btn_bg[3] / 255.0,             # <<<<<<<<<<<<<<
@@ -6938,33 +9053,33 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
     if (unlikely(__pyx_v_btn_bg == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 617, __pyx_L1_error)
+      __PYX_ERR(0, 754, __pyx_L1_error)
     }
-    __pyx_t_10 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 617, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_15 = __Pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_15 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 617, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_1 = __Pyx_PyFloat_TrueDivideObjC(__Pyx_PyTuple_GET_ITEM(__pyx_v_btn_bg, 3), __pyx_mstate_global->__pyx_float_255_0, 255.0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 754, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_19 = __Pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_19 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 754, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":608
+    /* "nice_titlebar/_win32_titlebar.pyx":745
  * 			if idx == self._hover_index:
  * 				btn_bg = btn_hover
  * 			ntb_d2d_fill_rect(             # <<<<<<<<<<<<<<
  * 				&self._d2d,
  * 				<float>button_rect[0],
 */
-    ntb_d2d_fill_rect((&__pyx_v_self->_d2d), ((float)__pyx_t_3), ((float)__pyx_t_4), ((float)__pyx_t_5), ((float)__pyx_t_6), __pyx_t_12, __pyx_t_13, __pyx_t_14, __pyx_t_15);
+    ntb_d2d_fill_rect((&__pyx_v_self->_d2d), ((float)__pyx_t_3), ((float)__pyx_t_4), ((float)__pyx_t_5), ((float)__pyx_t_6), __pyx_t_16, __pyx_t_17, __pyx_t_18, __pyx_t_19);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":603
- * 			bg[3] / 255.0,
- * 		)
+    /* "nice_titlebar/_win32_titlebar.pyx":740
+ * 			del canvas
+ * 
  * 		for idx, button_rect in enumerate(self._button_rects):             # <<<<<<<<<<<<<<
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
 */
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":619
+  /* "nice_titlebar/_win32_titlebar.pyx":756
  * 				btn_bg[3] / 255.0,
  * 			)
  * 		ntb_d2d_end(&self._d2d)             # <<<<<<<<<<<<<<
@@ -6973,20 +9088,20 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 */
   (void)(ntb_d2d_end((&__pyx_v_self->_d2d)));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":620
+  /* "nice_titlebar/_win32_titlebar.pyx":757
  * 			)
  * 		ntb_d2d_end(&self._d2d)
  * 		self._draw_text_overlay()             # <<<<<<<<<<<<<<
  * 
  * 	cdef void _draw_text_overlay(self):
 */
-  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_draw_text_overlay(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 620, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_draw_text_overlay(__pyx_v_self); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 757, __pyx_L1_error)
 
-  /* "nice_titlebar/_win32_titlebar.pyx":573
+  /* "nice_titlebar/_win32_titlebar.pyx":700
  * 		return -1
  * 
  * 	cdef void _draw(self):             # <<<<<<<<<<<<<<
- * 		# This draws titlebar and client backgrounds with Direct2D.
+ * 		# This draws titlebar, client background, buttons, and delegates to Python canvas.
  * 		cdef RECT rect
 */
 
@@ -6994,8 +9109,8 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_13);
   __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._draw", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_bg);
@@ -7003,10 +9118,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
   __Pyx_XDECREF(__pyx_v_btn_bg);
   __Pyx_XDECREF(__pyx_v_btn_hover);
   __Pyx_XDECREF(__pyx_v_button_rect);
+  __Pyx_XDECREF((PyObject *)__pyx_v_canvas);
   __Pyx_RefNannyFinishContext();
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":622
+/* "nice_titlebar/_win32_titlebar.pyx":759
  * 		self._draw_text_overlay()
  * 
  * 	cdef void _draw_text_overlay(self):             # <<<<<<<<<<<<<<
@@ -7016,6 +9132,8 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw(struc
 
 static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_overlay(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
   HDC __pyx_v_dc;
+  HFONT __pyx_v_hFont;
+  HGDIOBJ __pyx_v_oldFont;
   RECT __pyx_v_text_rect;
   PyObject *__pyx_v_text_color = 0;
   int __pyx_v_idx;
@@ -7042,8 +9160,26 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_draw_text_overlay", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":626
+  /* "nice_titlebar/_win32_titlebar.pyx":762
+ * 		# This overlays text/icons with GDI for simple glyph rendering.
  * 		cdef HDC dc
+ * 		cdef HFONT hFont = <HFONT>0             # <<<<<<<<<<<<<<
+ * 		cdef HGDIOBJ oldFont = <HGDIOBJ>0
+ * 		cdef RECT text_rect
+*/
+  __pyx_v_hFont = ((HFONT)0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":763
+ * 		cdef HDC dc
+ * 		cdef HFONT hFont = <HFONT>0
+ * 		cdef HGDIOBJ oldFont = <HGDIOBJ>0             # <<<<<<<<<<<<<<
+ * 		cdef RECT text_rect
+ * 		cdef tuple text_color = self._titlebar_text
+*/
+  __pyx_v_oldFont = ((HGDIOBJ)0);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":765
+ * 		cdef HGDIOBJ oldFont = <HGDIOBJ>0
  * 		cdef RECT text_rect
  * 		cdef tuple text_color = self._titlebar_text             # <<<<<<<<<<<<<<
  * 		cdef int idx
@@ -7054,7 +9190,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
   __pyx_v_text_color = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":633
+  /* "nice_titlebar/_win32_titlebar.pyx":772
  * 		cdef bytes icon_bytes
  * 		cdef object button
  * 		if self._hwnd == <HWND>0:             # <<<<<<<<<<<<<<
@@ -7064,7 +9200,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
   __pyx_t_2 = (__pyx_v_self->_hwnd == ((HWND)0));
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":634
+    /* "nice_titlebar/_win32_titlebar.pyx":773
  * 		cdef object button
  * 		if self._hwnd == <HWND>0:
  * 			return             # <<<<<<<<<<<<<<
@@ -7073,7 +9209,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":633
+    /* "nice_titlebar/_win32_titlebar.pyx":772
  * 		cdef bytes icon_bytes
  * 		cdef object button
  * 		if self._hwnd == <HWND>0:             # <<<<<<<<<<<<<<
@@ -7082,7 +9218,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":635
+  /* "nice_titlebar/_win32_titlebar.pyx":774
  * 		if self._hwnd == <HWND>0:
  * 			return
  * 		dc = GetDC(self._hwnd)             # <<<<<<<<<<<<<<
@@ -7091,79 +9227,116 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
   __pyx_v_dc = GetDC(__pyx_v_self->_hwnd);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":636
+  /* "nice_titlebar/_win32_titlebar.pyx":775
  * 			return
  * 		dc = GetDC(self._hwnd)
  * 		if dc == <HDC>0:             # <<<<<<<<<<<<<<
  * 			return
- * 		SetBkMode(dc, TRANSPARENT)
+ * 
 */
   __pyx_t_2 = (__pyx_v_dc == ((HDC)0));
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":637
+    /* "nice_titlebar/_win32_titlebar.pyx":776
  * 		dc = GetDC(self._hwnd)
  * 		if dc == <HDC>0:
  * 			return             # <<<<<<<<<<<<<<
- * 		SetBkMode(dc, TRANSPARENT)
- * 		SetTextColor(dc, _rgb_color(text_color[0], text_color[1], text_color[2]))
+ * 
+ * 		# Use a smoother GUI font for title and button glyphs.
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":636
+    /* "nice_titlebar/_win32_titlebar.pyx":775
  * 			return
  * 		dc = GetDC(self._hwnd)
  * 		if dc == <HDC>0:             # <<<<<<<<<<<<<<
  * 			return
- * 		SetBkMode(dc, TRANSPARENT)
+ * 
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":638
- * 		if dc == <HDC>0:
- * 			return
+  /* "nice_titlebar/_win32_titlebar.pyx":779
+ * 
+ * 		# Use a smoother GUI font for title and button glyphs.
+ * 		hFont = CreateFontA(             # <<<<<<<<<<<<<<
+ * 			-14,
+ * 			0,
+*/
+  __pyx_v_hFont = CreateFontA(-14, 0, 0, 0, __pyx_v_13nice_titlebar_15_win32_titlebar_FW_NORMAL, 0, 0, 0, __pyx_v_13nice_titlebar_15_win32_titlebar_DEFAULT_CHARSET, __pyx_v_13nice_titlebar_15_win32_titlebar_OUT_DEFAULT_PRECIS, __pyx_v_13nice_titlebar_15_win32_titlebar_CLIP_DEFAULT_PRECIS, __pyx_v_13nice_titlebar_15_win32_titlebar_CLEARTYPE_QUALITY, (__pyx_v_13nice_titlebar_15_win32_titlebar_DEFAULT_PITCH | __pyx_v_13nice_titlebar_15_win32_titlebar_FF_DONTCARE), __pyx_k_Segoe_UI);
+
+  /* "nice_titlebar/_win32_titlebar.pyx":795
+ * 			b"Segoe UI",
+ * 		)
+ * 		if hFont != <HFONT>0:             # <<<<<<<<<<<<<<
+ * 			oldFont = SelectObject(dc, <HGDIOBJ>hFont)
+ * 
+*/
+  __pyx_t_2 = (__pyx_v_hFont != ((HFONT)0));
+  if (__pyx_t_2) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":796
+ * 		)
+ * 		if hFont != <HFONT>0:
+ * 			oldFont = SelectObject(dc, <HGDIOBJ>hFont)             # <<<<<<<<<<<<<<
+ * 
+ * 		SetBkMode(dc, TRANSPARENT)
+*/
+    __pyx_v_oldFont = SelectObject(__pyx_v_dc, ((HGDIOBJ)__pyx_v_hFont));
+
+    /* "nice_titlebar/_win32_titlebar.pyx":795
+ * 			b"Segoe UI",
+ * 		)
+ * 		if hFont != <HFONT>0:             # <<<<<<<<<<<<<<
+ * 			oldFont = SelectObject(dc, <HGDIOBJ>hFont)
+ * 
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":798
+ * 			oldFont = SelectObject(dc, <HGDIOBJ>hFont)
+ * 
  * 		SetBkMode(dc, TRANSPARENT)             # <<<<<<<<<<<<<<
  * 		SetTextColor(dc, _rgb_color(text_color[0], text_color[1], text_color[2]))
- * 		text_rect.left = 14
+ * 
 */
   (void)(SetBkMode(__pyx_v_dc, __pyx_v_13nice_titlebar_15_win32_titlebar_TRANSPARENT));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":639
- * 			return
+  /* "nice_titlebar/_win32_titlebar.pyx":799
+ * 
  * 		SetBkMode(dc, TRANSPARENT)
  * 		SetTextColor(dc, _rgb_color(text_color[0], text_color[1], text_color[2]))             # <<<<<<<<<<<<<<
- * 		text_rect.left = 14
- * 		text_rect.top = 0
+ * 
+ * 		# Title text area.
 */
   if (unlikely(__pyx_v_text_color == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 639, __pyx_L1_error)
+    __PYX_ERR(0, 799, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_text_color, 0)); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 639, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_text_color, 0)); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 799, __pyx_L1_error)
   if (unlikely(__pyx_v_text_color == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 639, __pyx_L1_error)
+    __PYX_ERR(0, 799, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_text_color, 1)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 639, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_text_color, 1)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 799, __pyx_L1_error)
   if (unlikely(__pyx_v_text_color == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 639, __pyx_L1_error)
+    __PYX_ERR(0, 799, __pyx_L1_error)
   }
-  __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_text_color, 2)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 639, __pyx_L1_error)
-  __pyx_t_6 = __pyx_f_13nice_titlebar_15_win32_titlebar__rgb_color(__pyx_t_3, __pyx_t_4, __pyx_t_5); if (unlikely(__pyx_t_6 == ((COLORREF)-1) && PyErr_Occurred())) __PYX_ERR(0, 639, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_text_color, 2)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 799, __pyx_L1_error)
+  __pyx_t_6 = __pyx_f_13nice_titlebar_15_win32_titlebar__rgb_color(__pyx_t_3, __pyx_t_4, __pyx_t_5); if (unlikely(__pyx_t_6 == ((COLORREF)-1) && PyErr_Occurred())) __PYX_ERR(0, 799, __pyx_L1_error)
   (void)(SetTextColor(__pyx_v_dc, __pyx_t_6));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":640
- * 		SetBkMode(dc, TRANSPARENT)
- * 		SetTextColor(dc, _rgb_color(text_color[0], text_color[1], text_color[2]))
+  /* "nice_titlebar/_win32_titlebar.pyx":802
+ * 
+ * 		# Title text area.
  * 		text_rect.left = 14             # <<<<<<<<<<<<<<
  * 		text_rect.top = 0
  * 		text_rect.right = self._width - 180
 */
   __pyx_v_text_rect.left = 14;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":641
- * 		SetTextColor(dc, _rgb_color(text_color[0], text_color[1], text_color[2]))
+  /* "nice_titlebar/_win32_titlebar.pyx":803
+ * 		# Title text area.
  * 		text_rect.left = 14
  * 		text_rect.top = 0             # <<<<<<<<<<<<<<
  * 		text_rect.right = self._width - 180
@@ -7171,7 +9344,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
   __pyx_v_text_rect.top = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":642
+  /* "nice_titlebar/_win32_titlebar.pyx":804
  * 		text_rect.left = 14
  * 		text_rect.top = 0
  * 		text_rect.right = self._width - 180             # <<<<<<<<<<<<<<
@@ -7180,7 +9353,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
   __pyx_v_text_rect.right = (__pyx_v_self->_width - 0xB4);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":643
+  /* "nice_titlebar/_win32_titlebar.pyx":805
  * 		text_rect.top = 0
  * 		text_rect.right = self._width - 180
  * 		text_rect.bottom = self._titlebar_height             # <<<<<<<<<<<<<<
@@ -7190,35 +9363,35 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
   __pyx_t_5 = __pyx_v_self->_titlebar_height;
   __pyx_v_text_rect.bottom = __pyx_t_5;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":644
+  /* "nice_titlebar/_win32_titlebar.pyx":806
  * 		text_rect.right = self._width - 180
  * 		text_rect.bottom = self._titlebar_height
  * 		title_bytes = self._title.encode("utf-8", "replace")             # <<<<<<<<<<<<<<
  * 		DrawTextA(dc, <const char*>title_bytes, -1, &text_rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
- * 		for idx, rect in enumerate(self._button_rects):
+ * 
 */
   if (unlikely(__pyx_v_self->_title == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "encode");
-    __PYX_ERR(0, 644, __pyx_L1_error)
+    __PYX_ERR(0, 806, __pyx_L1_error)
   }
-  __pyx_t_1 = PyUnicode_AsEncodedString(__pyx_v_self->_title, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 644, __pyx_L1_error)
+  __pyx_t_1 = PyUnicode_AsEncodedString(__pyx_v_self->_title, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 806, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_title_bytes = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":645
+  /* "nice_titlebar/_win32_titlebar.pyx":807
  * 		text_rect.bottom = self._titlebar_height
  * 		title_bytes = self._title.encode("utf-8", "replace")
  * 		DrawTextA(dc, <const char*>title_bytes, -1, &text_rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)             # <<<<<<<<<<<<<<
- * 		for idx, rect in enumerate(self._button_rects):
- * 			button = self._buttons[idx]
+ * 
+ * 		# Button glyphs, centered in their rectangles.
 */
-  __pyx_t_7 = __Pyx_PyBytes_AsString(__pyx_v_title_bytes); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 645, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyBytes_AsString(__pyx_v_title_bytes); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 807, __pyx_L1_error)
   (void)(DrawTextA(__pyx_v_dc, ((char const *)__pyx_t_7), -1, (&__pyx_v_text_rect), (((__pyx_v_13nice_titlebar_15_win32_titlebar_DT_LEFT | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_SINGLELINE) | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_VCENTER) | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_END_ELLIPSIS)));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":646
- * 		title_bytes = self._title.encode("utf-8", "replace")
- * 		DrawTextA(dc, <const char*>title_bytes, -1, &text_rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+  /* "nice_titlebar/_win32_titlebar.pyx":810
+ * 
+ * 		# Button glyphs, centered in their rectangles.
  * 		for idx, rect in enumerate(self._button_rects):             # <<<<<<<<<<<<<<
  * 			button = self._buttons[idx]
  * 			icon = <str>button.get("icon", "")
@@ -7230,22 +9403,22 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
     {
       Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
       #if !CYTHON_ASSUME_SAFE_SIZE
-      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 646, __pyx_L1_error)
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 810, __pyx_L1_error)
       #endif
       if (__pyx_t_8 >= __pyx_temp) break;
     }
     __pyx_t_9 = __Pyx_PyList_GetItemRefFast(__pyx_t_1, __pyx_t_8, __Pyx_ReferenceSharing_OwnStrongReference);
     ++__pyx_t_8;
-    if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 646, __pyx_L1_error)
+    if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 810, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    if (!(likely(PyTuple_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_9))) __PYX_ERR(0, 646, __pyx_L1_error)
+    if (!(likely(PyTuple_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_9))) __PYX_ERR(0, 810, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_rect, ((PyObject*)__pyx_t_9));
     __pyx_t_9 = 0;
     __pyx_v_idx = __pyx_t_5;
     __pyx_t_5 = (__pyx_t_5 + 1);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":647
- * 		DrawTextA(dc, <const char*>title_bytes, -1, &text_rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+    /* "nice_titlebar/_win32_titlebar.pyx":811
+ * 		# Button glyphs, centered in their rectangles.
  * 		for idx, rect in enumerate(self._button_rects):
  * 			button = self._buttons[idx]             # <<<<<<<<<<<<<<
  * 			icon = <str>button.get("icon", "")
@@ -7253,23 +9426,23 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
     if (unlikely(__pyx_v_self->_buttons == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 647, __pyx_L1_error)
+      __PYX_ERR(0, 811, __pyx_L1_error)
     }
     __pyx_t_9 = __Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx);
     __Pyx_INCREF(__pyx_t_9);
     __Pyx_XDECREF_SET(__pyx_v_button, __pyx_t_9);
     __pyx_t_9 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":648
+    /* "nice_titlebar/_win32_titlebar.pyx":812
  * 		for idx, rect in enumerate(self._button_rects):
  * 			button = self._buttons[idx]
  * 			icon = <str>button.get("icon", "")             # <<<<<<<<<<<<<<
  * 			if not icon:
  * 				icon = self._default_icon(<str>button.get("kind", "custom"))
 */
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 648, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 812, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_mstate_global->__pyx_tuple[7], NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 648, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_mstate_global->__pyx_tuple[7], NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 812, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __pyx_t_9 = __pyx_t_10;
@@ -7278,7 +9451,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
     __Pyx_XDECREF_SET(__pyx_v_icon, ((PyObject*)__pyx_t_9));
     __pyx_t_9 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":649
+    /* "nice_titlebar/_win32_titlebar.pyx":813
  * 			button = self._buttons[idx]
  * 			icon = <str>button.get("icon", "")
  * 			if not icon:             # <<<<<<<<<<<<<<
@@ -7289,32 +9462,32 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
     else
     {
       Py_ssize_t __pyx_temp = __Pyx_PyUnicode_IS_TRUE(__pyx_v_icon);
-      if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 649, __pyx_L1_error)
+      if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 813, __pyx_L1_error)
       __pyx_t_2 = (__pyx_temp != 0);
     }
 
     __pyx_t_11 = (!__pyx_t_2);
     if (__pyx_t_11) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":650
+      /* "nice_titlebar/_win32_titlebar.pyx":814
  * 			icon = <str>button.get("icon", "")
  * 			if not icon:
  * 				icon = self._default_icon(<str>button.get("kind", "custom"))             # <<<<<<<<<<<<<<
  * 			text_rect.left = rect[0]
  * 			text_rect.top = rect[1]
 */
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 650, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 814, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_mstate_global->__pyx_tuple[8], NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 650, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_mstate_global->__pyx_tuple[8], NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 814, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_default_icon(__pyx_v_self, ((PyObject*)__pyx_t_10)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 650, __pyx_L1_error)
+      __pyx_t_9 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_default_icon(__pyx_v_self, ((PyObject*)__pyx_t_10)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 814, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF_SET(__pyx_v_icon, ((PyObject*)__pyx_t_9));
       __pyx_t_9 = 0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":649
+      /* "nice_titlebar/_win32_titlebar.pyx":813
  * 			button = self._buttons[idx]
  * 			icon = <str>button.get("icon", "")
  * 			if not icon:             # <<<<<<<<<<<<<<
@@ -7323,7 +9496,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":651
+    /* "nice_titlebar/_win32_titlebar.pyx":815
  * 			if not icon:
  * 				icon = self._default_icon(<str>button.get("kind", "custom"))
  * 			text_rect.left = rect[0]             # <<<<<<<<<<<<<<
@@ -7332,12 +9505,12 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 651, __pyx_L1_error)
+      __PYX_ERR(0, 815, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 0)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 651, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 0)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 815, __pyx_L1_error)
     __pyx_v_text_rect.left = __pyx_t_4;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":652
+    /* "nice_titlebar/_win32_titlebar.pyx":816
  * 				icon = self._default_icon(<str>button.get("kind", "custom"))
  * 			text_rect.left = rect[0]
  * 			text_rect.top = rect[1]             # <<<<<<<<<<<<<<
@@ -7346,12 +9519,12 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 652, __pyx_L1_error)
+      __PYX_ERR(0, 816, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 1)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 652, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 1)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 816, __pyx_L1_error)
     __pyx_v_text_rect.top = __pyx_t_4;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":653
+    /* "nice_titlebar/_win32_titlebar.pyx":817
  * 			text_rect.left = rect[0]
  * 			text_rect.top = rect[1]
  * 			text_rect.right = rect[2]             # <<<<<<<<<<<<<<
@@ -7360,54 +9533,62 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
 */
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 653, __pyx_L1_error)
+      __PYX_ERR(0, 817, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 2)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 653, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 2)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 817, __pyx_L1_error)
     __pyx_v_text_rect.right = __pyx_t_4;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":654
+    /* "nice_titlebar/_win32_titlebar.pyx":818
  * 			text_rect.top = rect[1]
  * 			text_rect.right = rect[2]
  * 			text_rect.bottom = rect[3]             # <<<<<<<<<<<<<<
  * 			icon_bytes = icon.encode("utf-8", "replace")
- * 			DrawTextA(dc, <const char*>icon_bytes, -1, &text_rect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+ * 			DrawTextA(
 */
     if (unlikely(__pyx_v_rect == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 654, __pyx_L1_error)
+      __PYX_ERR(0, 818, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 3)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 654, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_rect, 3)); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 818, __pyx_L1_error)
     __pyx_v_text_rect.bottom = __pyx_t_4;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":655
+    /* "nice_titlebar/_win32_titlebar.pyx":819
  * 			text_rect.right = rect[2]
  * 			text_rect.bottom = rect[3]
  * 			icon_bytes = icon.encode("utf-8", "replace")             # <<<<<<<<<<<<<<
- * 			DrawTextA(dc, <const char*>icon_bytes, -1, &text_rect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
- * 		ReleaseDC(self._hwnd, dc)
+ * 			DrawTextA(
+ * 				dc,
 */
     if (unlikely(__pyx_v_icon == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "encode");
-      __PYX_ERR(0, 655, __pyx_L1_error)
+      __PYX_ERR(0, 819, __pyx_L1_error)
     }
-    __pyx_t_9 = PyUnicode_AsEncodedString(__pyx_v_icon, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 655, __pyx_L1_error)
+    __pyx_t_9 = PyUnicode_AsEncodedString(__pyx_v_icon, __pyx_k_utf_8, __pyx_k_replace); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 819, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_XDECREF_SET(__pyx_v_icon_bytes, ((PyObject*)__pyx_t_9));
     __pyx_t_9 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":656
+    /* "nice_titlebar/_win32_titlebar.pyx":822
+ * 			DrawTextA(
+ * 				dc,
+ * 				<const char*>icon_bytes,             # <<<<<<<<<<<<<<
+ * 				-1,
+ * 				&text_rect,
+*/
+    __pyx_t_12 = __Pyx_PyBytes_AsString(__pyx_v_icon_bytes); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 822, __pyx_L1_error)
+
+    /* "nice_titlebar/_win32_titlebar.pyx":820
  * 			text_rect.bottom = rect[3]
  * 			icon_bytes = icon.encode("utf-8", "replace")
- * 			DrawTextA(dc, <const char*>icon_bytes, -1, &text_rect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)             # <<<<<<<<<<<<<<
- * 		ReleaseDC(self._hwnd, dc)
- * 
+ * 			DrawTextA(             # <<<<<<<<<<<<<<
+ * 				dc,
+ * 				<const char*>icon_bytes,
 */
-    __pyx_t_12 = __Pyx_PyBytes_AsString(__pyx_v_icon_bytes); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 656, __pyx_L1_error)
-    (void)(DrawTextA(__pyx_v_dc, ((char const *)__pyx_t_12), -1, (&__pyx_v_text_rect), ((__pyx_v_13nice_titlebar_15_win32_titlebar_DT_SINGLELINE | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_VCENTER) | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_END_ELLIPSIS)));
+    (void)(DrawTextA(__pyx_v_dc, ((char const *)__pyx_t_12), -1, (&__pyx_v_text_rect), (((__pyx_v_13nice_titlebar_15_win32_titlebar_DT_CENTER | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_SINGLELINE) | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_VCENTER) | __pyx_v_13nice_titlebar_15_win32_titlebar_DT_END_ELLIPSIS)));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":646
- * 		title_bytes = self._title.encode("utf-8", "replace")
- * 		DrawTextA(dc, <const char*>title_bytes, -1, &text_rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+    /* "nice_titlebar/_win32_titlebar.pyx":810
+ * 
+ * 		# Button glyphs, centered in their rectangles.
  * 		for idx, rect in enumerate(self._button_rects):             # <<<<<<<<<<<<<<
  * 			button = self._buttons[idx]
  * 			icon = <str>button.get("icon", "")
@@ -7415,16 +9596,72 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":657
- * 			icon_bytes = icon.encode("utf-8", "replace")
- * 			DrawTextA(dc, <const char*>icon_bytes, -1, &text_rect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS)
+  /* "nice_titlebar/_win32_titlebar.pyx":829
+ * 
+ * 		# Restore and clean up the font before releasing the DC.
+ * 		if hFont != <HFONT>0:             # <<<<<<<<<<<<<<
+ * 			if oldFont != <HGDIOBJ>0:
+ * 				SelectObject(dc, oldFont)
+*/
+  __pyx_t_11 = (__pyx_v_hFont != ((HFONT)0));
+  if (__pyx_t_11) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":830
+ * 		# Restore and clean up the font before releasing the DC.
+ * 		if hFont != <HFONT>0:
+ * 			if oldFont != <HGDIOBJ>0:             # <<<<<<<<<<<<<<
+ * 				SelectObject(dc, oldFont)
+ * 			DeleteObject(hFont)
+*/
+    __pyx_t_11 = (__pyx_v_oldFont != ((HGDIOBJ)0));
+    if (__pyx_t_11) {
+
+      /* "nice_titlebar/_win32_titlebar.pyx":831
+ * 		if hFont != <HFONT>0:
+ * 			if oldFont != <HGDIOBJ>0:
+ * 				SelectObject(dc, oldFont)             # <<<<<<<<<<<<<<
+ * 			DeleteObject(hFont)
+ * 
+*/
+      (void)(SelectObject(__pyx_v_dc, __pyx_v_oldFont));
+
+      /* "nice_titlebar/_win32_titlebar.pyx":830
+ * 		# Restore and clean up the font before releasing the DC.
+ * 		if hFont != <HFONT>0:
+ * 			if oldFont != <HGDIOBJ>0:             # <<<<<<<<<<<<<<
+ * 				SelectObject(dc, oldFont)
+ * 			DeleteObject(hFont)
+*/
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":832
+ * 			if oldFont != <HGDIOBJ>0:
+ * 				SelectObject(dc, oldFont)
+ * 			DeleteObject(hFont)             # <<<<<<<<<<<<<<
+ * 
+ * 		ReleaseDC(self._hwnd, dc)
+*/
+    (void)(DeleteObject(__pyx_v_hFont));
+
+    /* "nice_titlebar/_win32_titlebar.pyx":829
+ * 
+ * 		# Restore and clean up the font before releasing the DC.
+ * 		if hFont != <HFONT>0:             # <<<<<<<<<<<<<<
+ * 			if oldFont != <HGDIOBJ>0:
+ * 				SelectObject(dc, oldFont)
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":834
+ * 			DeleteObject(hFont)
+ * 
  * 		ReleaseDC(self._hwnd, dc)             # <<<<<<<<<<<<<<
  * 
  * 	cdef str _default_icon(self, str kind):
 */
   (void)(ReleaseDC(__pyx_v_self->_hwnd, __pyx_v_dc));
 
-  /* "nice_titlebar/_win32_titlebar.pyx":622
+  /* "nice_titlebar/_win32_titlebar.pyx":759
  * 		self._draw_text_overlay()
  * 
  * 	cdef void _draw_text_overlay(self):             # <<<<<<<<<<<<<<
@@ -7449,7 +9686,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw_text_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":659
+/* "nice_titlebar/_win32_titlebar.pyx":836
  * 		ReleaseDC(self._hwnd, dc)
  * 
  * 	cdef str _default_icon(self, str kind):             # <<<<<<<<<<<<<<
@@ -7466,17 +9703,17 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_default_icon", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":661
+  /* "nice_titlebar/_win32_titlebar.pyx":838
  * 	cdef str _default_icon(self, str kind):
  * 		# This chooses fallback glyphs for built-in button kinds.
  * 		if kind == "minimize":             # <<<<<<<<<<<<<<
  * 			return "-"
  * 		if kind == "maximize":
 */
-  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_minimize, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 661, __pyx_L1_error)
+  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_minimize, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 838, __pyx_L1_error)
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":662
+    /* "nice_titlebar/_win32_titlebar.pyx":839
  * 		# This chooses fallback glyphs for built-in button kinds.
  * 		if kind == "minimize":
  * 			return "-"             # <<<<<<<<<<<<<<
@@ -7488,7 +9725,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
     __pyx_r = __pyx_mstate_global->__pyx_kp_u__2;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":661
+    /* "nice_titlebar/_win32_titlebar.pyx":838
  * 	cdef str _default_icon(self, str kind):
  * 		# This chooses fallback glyphs for built-in button kinds.
  * 		if kind == "minimize":             # <<<<<<<<<<<<<<
@@ -7497,17 +9734,17 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":663
+  /* "nice_titlebar/_win32_titlebar.pyx":840
  * 		if kind == "minimize":
  * 			return "-"
  * 		if kind == "maximize":             # <<<<<<<<<<<<<<
  * 			return "[]"
  * 		if kind == "restore":
 */
-  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_maximize, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 663, __pyx_L1_error)
+  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_maximize, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 840, __pyx_L1_error)
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":664
+    /* "nice_titlebar/_win32_titlebar.pyx":841
  * 			return "-"
  * 		if kind == "maximize":
  * 			return "[]"             # <<<<<<<<<<<<<<
@@ -7519,7 +9756,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
     __pyx_r = __pyx_mstate_global->__pyx_kp_u__3;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":663
+    /* "nice_titlebar/_win32_titlebar.pyx":840
  * 		if kind == "minimize":
  * 			return "-"
  * 		if kind == "maximize":             # <<<<<<<<<<<<<<
@@ -7528,17 +9765,17 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":665
+  /* "nice_titlebar/_win32_titlebar.pyx":842
  * 		if kind == "maximize":
  * 			return "[]"
  * 		if kind == "restore":             # <<<<<<<<<<<<<<
  * 			return "R"
  * 		if kind == "close":
 */
-  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_restore, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 665, __pyx_L1_error)
+  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_restore, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 842, __pyx_L1_error)
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":666
+    /* "nice_titlebar/_win32_titlebar.pyx":843
  * 			return "[]"
  * 		if kind == "restore":
  * 			return "R"             # <<<<<<<<<<<<<<
@@ -7550,7 +9787,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
     __pyx_r = __pyx_mstate_global->__pyx_n_u_R;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":665
+    /* "nice_titlebar/_win32_titlebar.pyx":842
  * 		if kind == "maximize":
  * 			return "[]"
  * 		if kind == "restore":             # <<<<<<<<<<<<<<
@@ -7559,17 +9796,17 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":667
+  /* "nice_titlebar/_win32_titlebar.pyx":844
  * 		if kind == "restore":
  * 			return "R"
  * 		if kind == "close":             # <<<<<<<<<<<<<<
  * 			return "X"
  * 		return ""
 */
-  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_close, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 667, __pyx_L1_error)
+  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_close, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 844, __pyx_L1_error)
   if (__pyx_t_1) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":668
+    /* "nice_titlebar/_win32_titlebar.pyx":845
  * 			return "R"
  * 		if kind == "close":
  * 			return "X"             # <<<<<<<<<<<<<<
@@ -7581,7 +9818,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
     __pyx_r = __pyx_mstate_global->__pyx_n_u_X;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":667
+    /* "nice_titlebar/_win32_titlebar.pyx":844
  * 		if kind == "restore":
  * 			return "R"
  * 		if kind == "close":             # <<<<<<<<<<<<<<
@@ -7590,7 +9827,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":669
+  /* "nice_titlebar/_win32_titlebar.pyx":846
  * 		if kind == "close":
  * 			return "X"
  * 		return ""             # <<<<<<<<<<<<<<
@@ -7602,7 +9839,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
   __pyx_r = __pyx_mstate_global->__pyx_kp_u_;
   goto __pyx_L0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":659
+  /* "nice_titlebar/_win32_titlebar.pyx":836
  * 		ReleaseDC(self._hwnd, dc)
  * 
  * 	cdef str _default_icon(self, str kind):             # <<<<<<<<<<<<<<
@@ -7620,7 +9857,7 @@ static PyObject *__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__defau
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":671
+/* "nice_titlebar/_win32_titlebar.pyx":848
  * 		return ""
  * 
  * 	cdef void _handle_button_click(self, int x, int y):             # <<<<<<<<<<<<<<
@@ -7641,23 +9878,24 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
   PyObject *__pyx_t_6 = NULL;
   PyObject *__pyx_t_7 = NULL;
   size_t __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
+  int __pyx_t_9;
+  PyObject *__pyx_t_10 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_handle_button_click", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":673
+  /* "nice_titlebar/_win32_titlebar.pyx":850
  * 	cdef void _handle_button_click(self, int x, int y):
  * 		# This dispatches system actions or Python callbacks for buttons.
  * 		cdef int idx = self._button_hit(x, y)             # <<<<<<<<<<<<<<
  * 		cdef object button
  * 		cdef str kind
 */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_button_hit(__pyx_v_self, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 673, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self->__pyx_vtab)->_button_hit(__pyx_v_self, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 850, __pyx_L1_error)
   __pyx_v_idx = __pyx_t_1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":676
+  /* "nice_titlebar/_win32_titlebar.pyx":853
  * 		cdef object button
  * 		cdef str kind
  * 		if idx < 0:             # <<<<<<<<<<<<<<
@@ -7667,7 +9905,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
   __pyx_t_2 = (__pyx_v_idx < 0);
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":677
+    /* "nice_titlebar/_win32_titlebar.pyx":854
  * 		cdef str kind
  * 		if idx < 0:
  * 			return             # <<<<<<<<<<<<<<
@@ -7676,7 +9914,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":676
+    /* "nice_titlebar/_win32_titlebar.pyx":853
  * 		cdef object button
  * 		cdef str kind
  * 		if idx < 0:             # <<<<<<<<<<<<<<
@@ -7685,7 +9923,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":678
+  /* "nice_titlebar/_win32_titlebar.pyx":855
  * 		if idx < 0:
  * 			return
  * 		button = self._buttons[idx]             # <<<<<<<<<<<<<<
@@ -7694,23 +9932,23 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
   if (unlikely(__pyx_v_self->_buttons == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 678, __pyx_L1_error)
+    __PYX_ERR(0, 855, __pyx_L1_error)
   }
   __pyx_t_3 = __Pyx_PyList_GET_ITEM(__pyx_v_self->_buttons, __pyx_v_idx);
   __Pyx_INCREF(__pyx_t_3);
   __pyx_v_button = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":679
+  /* "nice_titlebar/_win32_titlebar.pyx":856
  * 			return
  * 		button = self._buttons[idx]
  * 		kind = <str>button.get("kind", "custom")             # <<<<<<<<<<<<<<
  * 		if kind == "close":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_CLOSE, 0)
 */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 679, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 856, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_mstate_global->__pyx_tuple[8], NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 679, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_mstate_global->__pyx_tuple[8], NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 856, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = __pyx_t_4;
@@ -7719,17 +9957,17 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
   __pyx_v_kind = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":680
+  /* "nice_titlebar/_win32_titlebar.pyx":857
  * 		button = self._buttons[idx]
  * 		kind = <str>button.get("kind", "custom")
  * 		if kind == "close":             # <<<<<<<<<<<<<<
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_CLOSE, 0)
  * 			return
 */
-  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_close, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 680, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_close, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 857, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":681
+    /* "nice_titlebar/_win32_titlebar.pyx":858
  * 		kind = <str>button.get("kind", "custom")
  * 		if kind == "close":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_CLOSE, 0)             # <<<<<<<<<<<<<<
@@ -7738,7 +9976,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
     (void)(PostMessageW(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND, ((WPARAM)__pyx_v_13nice_titlebar_15_win32_titlebar_SC_CLOSE), 0));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":682
+    /* "nice_titlebar/_win32_titlebar.pyx":859
  * 		if kind == "close":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_CLOSE, 0)
  * 			return             # <<<<<<<<<<<<<<
@@ -7747,7 +9985,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":680
+    /* "nice_titlebar/_win32_titlebar.pyx":857
  * 		button = self._buttons[idx]
  * 		kind = <str>button.get("kind", "custom")
  * 		if kind == "close":             # <<<<<<<<<<<<<<
@@ -7756,17 +9994,17 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":683
+  /* "nice_titlebar/_win32_titlebar.pyx":860
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_CLOSE, 0)
  * 			return
  * 		if kind == "minimize":             # <<<<<<<<<<<<<<
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MINIMIZE, 0)
  * 			return
 */
-  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_minimize, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 683, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_minimize, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 860, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":684
+    /* "nice_titlebar/_win32_titlebar.pyx":861
  * 			return
  * 		if kind == "minimize":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MINIMIZE, 0)             # <<<<<<<<<<<<<<
@@ -7775,16 +10013,16 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
     (void)(PostMessageW(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND, ((WPARAM)__pyx_v_13nice_titlebar_15_win32_titlebar_SC_MINIMIZE), 0));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":685
+    /* "nice_titlebar/_win32_titlebar.pyx":862
  * 		if kind == "minimize":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MINIMIZE, 0)
  * 			return             # <<<<<<<<<<<<<<
  * 		if kind == "maximize":
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
+ * 			# Toggle maximize / restore based on current zoom state.
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":683
+    /* "nice_titlebar/_win32_titlebar.pyx":860
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_CLOSE, 0)
  * 			return
  * 		if kind == "minimize":             # <<<<<<<<<<<<<<
@@ -7793,54 +10031,86 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":686
+  /* "nice_titlebar/_win32_titlebar.pyx":863
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MINIMIZE, 0)
  * 			return
  * 		if kind == "maximize":             # <<<<<<<<<<<<<<
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
- * 			return
+ * 			# Toggle maximize / restore based on current zoom state.
+ * 			if IsZoomed(self._hwnd):
 */
-  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_maximize, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 686, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_maximize, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 863, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":687
- * 			return
+    /* "nice_titlebar/_win32_titlebar.pyx":865
  * 		if kind == "maximize":
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)             # <<<<<<<<<<<<<<
+ * 			# Toggle maximize / restore based on current zoom state.
+ * 			if IsZoomed(self._hwnd):             # <<<<<<<<<<<<<<
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
+ * 			else:
+*/
+    __pyx_t_2 = (IsZoomed(__pyx_v_self->_hwnd) != 0);
+    if (__pyx_t_2) {
+
+      /* "nice_titlebar/_win32_titlebar.pyx":866
+ * 			# Toggle maximize / restore based on current zoom state.
+ * 			if IsZoomed(self._hwnd):
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)             # <<<<<<<<<<<<<<
+ * 			else:
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
+*/
+      (void)(PostMessageW(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND, ((WPARAM)__pyx_v_13nice_titlebar_15_win32_titlebar_SC_RESTORE), 0));
+
+      /* "nice_titlebar/_win32_titlebar.pyx":865
+ * 		if kind == "maximize":
+ * 			# Toggle maximize / restore based on current zoom state.
+ * 			if IsZoomed(self._hwnd):             # <<<<<<<<<<<<<<
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
+ * 			else:
+*/
+      goto __pyx_L7;
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":868
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
+ * 			else:
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)             # <<<<<<<<<<<<<<
  * 			return
  * 		if kind == "restore":
 */
-    (void)(PostMessageW(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND, ((WPARAM)__pyx_v_13nice_titlebar_15_win32_titlebar_SC_MAXIMIZE), 0));
+    /*else*/ {
+      (void)(PostMessageW(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND, ((WPARAM)__pyx_v_13nice_titlebar_15_win32_titlebar_SC_MAXIMIZE), 0));
+    }
+    __pyx_L7:;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":688
- * 		if kind == "maximize":
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
+    /* "nice_titlebar/_win32_titlebar.pyx":869
+ * 			else:
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
  * 			return             # <<<<<<<<<<<<<<
  * 		if kind == "restore":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":686
+    /* "nice_titlebar/_win32_titlebar.pyx":863
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MINIMIZE, 0)
  * 			return
  * 		if kind == "maximize":             # <<<<<<<<<<<<<<
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
- * 			return
+ * 			# Toggle maximize / restore based on current zoom state.
+ * 			if IsZoomed(self._hwnd):
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":689
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
+  /* "nice_titlebar/_win32_titlebar.pyx":870
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
  * 			return
  * 		if kind == "restore":             # <<<<<<<<<<<<<<
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
  * 			return
 */
-  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_restore, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 689, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PyUnicode_Equals(__pyx_v_kind, __pyx_mstate_global->__pyx_n_u_restore, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 870, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":690
+    /* "nice_titlebar/_win32_titlebar.pyx":871
  * 			return
  * 		if kind == "restore":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)             # <<<<<<<<<<<<<<
@@ -7849,17 +10119,17 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
     (void)(PostMessageW(__pyx_v_self->_hwnd, __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND, ((WPARAM)__pyx_v_13nice_titlebar_15_win32_titlebar_SC_RESTORE), 0));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":691
+    /* "nice_titlebar/_win32_titlebar.pyx":872
  * 		if kind == "restore":
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
  * 			return             # <<<<<<<<<<<<<<
  * 		try:
- * 			if button.get("on_click") is not None:
+ * 			if button.get("on_click") is not None and self._owner is not None:
 */
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":689
- * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
+    /* "nice_titlebar/_win32_titlebar.pyx":870
+ * 				PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_MAXIMIZE, 0)
  * 			return
  * 		if kind == "restore":             # <<<<<<<<<<<<<<
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
@@ -7867,12 +10137,12 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":692
+  /* "nice_titlebar/_win32_titlebar.pyx":873
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
  * 			return
  * 		try:             # <<<<<<<<<<<<<<
- * 			if button.get("on_click") is not None:
- * 				button["on_click"](self._close_owner)
+ * 			if button.get("on_click") is not None and self._owner is not None:
+ * 				button["on_click"](self._owner)
 */
   {
     __Pyx_PyThreadState_declare
@@ -7883,11 +10153,11 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
     __Pyx_XGOTREF(__pyx_t_7);
     /*try:*/ {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":693
+      /* "nice_titlebar/_win32_titlebar.pyx":874
  * 			return
  * 		try:
- * 			if button.get("on_click") is not None:             # <<<<<<<<<<<<<<
- * 				button["on_click"](self._close_owner)
+ * 			if button.get("on_click") is not None and self._owner is not None:             # <<<<<<<<<<<<<<
+ * 				button["on_click"](self._owner)
  * 		except Exception:
 */
       __pyx_t_4 = __pyx_v_button;
@@ -7897,74 +10167,82 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
         PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_mstate_global->__pyx_n_u_on_click};
         __pyx_t_3 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_8, (2-__pyx_t_8) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 693, __pyx_L8_error)
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 874, __pyx_L9_error)
         __Pyx_GOTREF(__pyx_t_3);
       }
-      __pyx_t_2 = (__pyx_t_3 != Py_None);
+      __pyx_t_9 = (__pyx_t_3 != Py_None);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (__pyx_t_9) {
+      } else {
+        __pyx_t_2 = __pyx_t_9;
+        goto __pyx_L16_bool_binop_done;
+      }
+      __pyx_t_9 = (__pyx_v_self->_owner != Py_None);
+      __pyx_t_2 = __pyx_t_9;
+      __pyx_L16_bool_binop_done:;
       if (__pyx_t_2) {
 
-        /* "nice_titlebar/_win32_titlebar.pyx":694
+        /* "nice_titlebar/_win32_titlebar.pyx":875
  * 		try:
- * 			if button.get("on_click") is not None:
- * 				button["on_click"](self._close_owner)             # <<<<<<<<<<<<<<
+ * 			if button.get("on_click") is not None and self._owner is not None:
+ * 				button["on_click"](self._owner)             # <<<<<<<<<<<<<<
  * 		except Exception:
  * 			PyErr_Clear()
 */
         __pyx_t_4 = NULL;
-        __pyx_t_9 = __Pyx_PyObject_Dict_GetItem(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_on_click); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 694, __pyx_L8_error)
-        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_10 = __Pyx_PyObject_Dict_GetItem(__pyx_v_button, __pyx_mstate_global->__pyx_n_u_on_click); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 875, __pyx_L9_error)
+        __Pyx_GOTREF(__pyx_t_10);
         __pyx_t_8 = 1;
         #if CYTHON_UNPACK_METHODS
-        if (unlikely(PyMethod_Check(__pyx_t_9))) {
-          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_9);
+        if (unlikely(PyMethod_Check(__pyx_t_10))) {
+          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_10);
           assert(__pyx_t_4);
-          PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
           __Pyx_INCREF(__pyx_t_4);
           __Pyx_INCREF(__pyx__function);
-          __Pyx_DECREF_SET(__pyx_t_9, __pyx__function);
+          __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
           __pyx_t_8 = 0;
         }
         #endif
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_self->_close_owner};
-          __pyx_t_3 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_9, __pyx_callargs+__pyx_t_8, (2-__pyx_t_8) | (__pyx_t_8*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_self->_owner};
+          __pyx_t_3 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_10, __pyx_callargs+__pyx_t_8, (2-__pyx_t_8) | (__pyx_t_8*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 694, __pyx_L8_error)
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 875, __pyx_L9_error)
           __Pyx_GOTREF(__pyx_t_3);
         }
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-        /* "nice_titlebar/_win32_titlebar.pyx":693
+        /* "nice_titlebar/_win32_titlebar.pyx":874
  * 			return
  * 		try:
- * 			if button.get("on_click") is not None:             # <<<<<<<<<<<<<<
- * 				button["on_click"](self._close_owner)
+ * 			if button.get("on_click") is not None and self._owner is not None:             # <<<<<<<<<<<<<<
+ * 				button["on_click"](self._owner)
  * 		except Exception:
 */
       }
 
-      /* "nice_titlebar/_win32_titlebar.pyx":692
+      /* "nice_titlebar/_win32_titlebar.pyx":873
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
  * 			return
  * 		try:             # <<<<<<<<<<<<<<
- * 			if button.get("on_click") is not None:
- * 				button["on_click"](self._close_owner)
+ * 			if button.get("on_click") is not None and self._owner is not None:
+ * 				button["on_click"](self._owner)
 */
     }
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    goto __pyx_L13_try_end;
-    __pyx_L8_error:;
+    goto __pyx_L14_try_end;
+    __pyx_L9_error:;
+    __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":695
- * 			if button.get("on_click") is not None:
- * 				button["on_click"](self._close_owner)
+    /* "nice_titlebar/_win32_titlebar.pyx":876
+ * 			if button.get("on_click") is not None and self._owner is not None:
+ * 				button["on_click"](self._owner)
  * 		except Exception:             # <<<<<<<<<<<<<<
  * 			PyErr_Clear()
  * 
@@ -7972,13 +10250,13 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
     __pyx_t_1 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
     if (__pyx_t_1) {
       __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._handle_button_click", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_9, &__pyx_t_4) < 0) __PYX_ERR(0, 695, __pyx_L10_except_error)
+      if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_10, &__pyx_t_4) < 0) __PYX_ERR(0, 876, __pyx_L11_except_error)
       __Pyx_XGOTREF(__pyx_t_3);
-      __Pyx_XGOTREF(__pyx_t_9);
+      __Pyx_XGOTREF(__pyx_t_10);
       __Pyx_XGOTREF(__pyx_t_4);
 
-      /* "nice_titlebar/_win32_titlebar.pyx":696
- * 				button["on_click"](self._close_owner)
+      /* "nice_titlebar/_win32_titlebar.pyx":877
+ * 				button["on_click"](self._owner)
  * 		except Exception:
  * 			PyErr_Clear()             # <<<<<<<<<<<<<<
  * 
@@ -7986,34 +10264,34 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
 */
       PyErr_Clear();
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      goto __pyx_L9_exception_handled;
+      goto __pyx_L10_exception_handled;
     }
-    goto __pyx_L10_except_error;
+    goto __pyx_L11_except_error;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":692
+    /* "nice_titlebar/_win32_titlebar.pyx":873
  * 			PostMessageW(self._hwnd, WM_SYSCOMMAND, <WPARAM>SC_RESTORE, 0)
  * 			return
  * 		try:             # <<<<<<<<<<<<<<
- * 			if button.get("on_click") is not None:
- * 				button["on_click"](self._close_owner)
+ * 			if button.get("on_click") is not None and self._owner is not None:
+ * 				button["on_click"](self._owner)
 */
-    __pyx_L10_except_error:;
+    __pyx_L11_except_error:;
     __Pyx_XGIVEREF(__pyx_t_5);
     __Pyx_XGIVEREF(__pyx_t_6);
     __Pyx_XGIVEREF(__pyx_t_7);
     __Pyx_ExceptionReset(__pyx_t_5, __pyx_t_6, __pyx_t_7);
     goto __pyx_L1_error;
-    __pyx_L9_exception_handled:;
+    __pyx_L10_exception_handled:;
     __Pyx_XGIVEREF(__pyx_t_5);
     __Pyx_XGIVEREF(__pyx_t_6);
     __Pyx_XGIVEREF(__pyx_t_7);
     __Pyx_ExceptionReset(__pyx_t_5, __pyx_t_6, __pyx_t_7);
-    __pyx_L13_try_end:;
+    __pyx_L14_try_end:;
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":671
+  /* "nice_titlebar/_win32_titlebar.pyx":848
  * 		return ""
  * 
  * 	cdef void _handle_button_click(self, int x, int y):             # <<<<<<<<<<<<<<
@@ -8026,7 +10304,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
   __Pyx_AddTraceback("nice_titlebar._win32_titlebar.NativeWindow._handle_button_click", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_button);
@@ -8034,7 +10312,7 @@ static void __pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_but
   __Pyx_RefNannyFinishContext();
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":363
+/* "nice_titlebar/_win32_titlebar.pyx":419
  * 	"""Native Win32 window backed by a Cython-managed WndProc."""
  * 
  * 	cdef public bint created             # <<<<<<<<<<<<<<
@@ -8066,7 +10344,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_7crea
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->created); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 363, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->created); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 419, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8104,7 +10382,7 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_7created_2_
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 363, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 419, __pyx_L1_error)
   __pyx_v_self->created = __pyx_t_1;
 
   /* function exit code */
@@ -8124,15 +10402,15 @@ static int __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_7created_2_
 */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19__reduce_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_29__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_19__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19__reduce_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_29__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_29__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_29__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8158,14 +10436,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   const Py_ssize_t __pyx_kwds_len = unlikely(__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
   if (unlikely(__pyx_kwds_len < 0)) return NULL;
   if (unlikely(__pyx_kwds_len > 0)) {__Pyx_RejectKeywords("__reduce_cython__", __pyx_kwds); return NULL;}
-  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18__reduce_cython__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_28__reduce_cython__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_28__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -8205,15 +10483,15 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_18__r
 */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21__setstate_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_31__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_21__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21__setstate_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_31__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_31__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_31__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8279,7 +10557,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20__setstate_cython__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v___pyx_state);
+  __pyx_r = __pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_30__setstate_cython__(((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_self), __pyx_v___pyx_state);
 
   /* function exit code */
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
@@ -8289,7 +10567,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_30__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -8321,7 +10599,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_12NativeWindow_20__s
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":699
+/* "nice_titlebar/_win32_titlebar.pyx":880
  * 
  * 
  * cdef LRESULT __stdcall _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) except? -1 with gil:             # <<<<<<<<<<<<<<
@@ -8343,19 +10621,21 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   PyObject *__pyx_t_2 = NULL;
   int __pyx_t_3;
   int __pyx_t_4;
-  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_5;
   PyObject *__pyx_t_6 = NULL;
   PyObject *__pyx_t_7 = NULL;
   PyObject *__pyx_t_8 = NULL;
-  size_t __pyx_t_9;
-  int __pyx_t_10;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  size_t __pyx_t_12;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
   __Pyx_RefNannySetupContext("_wnd_proc", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":701
+  /* "nice_titlebar/_win32_titlebar.pyx":882
  * cdef LRESULT __stdcall _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) except? -1 with gil:
  * 	# This routes messages into the owning NativeWindow instance.
  * 	cdef NativeWindow window = <NativeWindow>_WINDOWS.get(<uintptr_t>hwnd)             # <<<<<<<<<<<<<<
@@ -8364,11 +10644,11 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   if (unlikely(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "get");
-    __PYX_ERR(0, 701, __pyx_L1_error)
+    __PYX_ERR(0, 882, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_hwnd)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 701, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_hwnd)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 882, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyDict_GetItemDefault(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, __pyx_t_1, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 701, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_GetItemDefault(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, __pyx_t_1, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 882, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __pyx_t_2;
@@ -8377,7 +10657,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_v_window = ((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":703
+  /* "nice_titlebar/_win32_titlebar.pyx":884
  * 	cdef NativeWindow window = <NativeWindow>_WINDOWS.get(<uintptr_t>hwnd)
  * 	cdef PAINTSTRUCT paint
  * 	cdef int x = 0             # <<<<<<<<<<<<<<
@@ -8386,7 +10666,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   __pyx_v_x = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":704
+  /* "nice_titlebar/_win32_titlebar.pyx":885
  * 	cdef PAINTSTRUCT paint
  * 	cdef int x = 0
  * 	cdef int y = 0             # <<<<<<<<<<<<<<
@@ -8395,7 +10675,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   __pyx_v_y = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":705
+  /* "nice_titlebar/_win32_titlebar.pyx":886
  * 	cdef int x = 0
  * 	cdef int y = 0
  * 	cdef int idx = -1             # <<<<<<<<<<<<<<
@@ -8404,7 +10684,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   __pyx_v_idx = -1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":706
+  /* "nice_titlebar/_win32_titlebar.pyx":887
  * 	cdef int y = 0
  * 	cdef int idx = -1
  * 	cdef unsigned int width = 0             # <<<<<<<<<<<<<<
@@ -8413,7 +10693,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   __pyx_v_width = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":707
+  /* "nice_titlebar/_win32_titlebar.pyx":888
  * 	cdef int idx = -1
  * 	cdef unsigned int width = 0
  * 	cdef unsigned int height = 0             # <<<<<<<<<<<<<<
@@ -8422,7 +10702,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   __pyx_v_height = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":709
+  /* "nice_titlebar/_win32_titlebar.pyx":890
  * 	cdef unsigned int height = 0
  * 
  * 	if msg == WM_NCCALCSIZE:             # <<<<<<<<<<<<<<
@@ -8432,7 +10712,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_NCCALCSIZE);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":710
+    /* "nice_titlebar/_win32_titlebar.pyx":891
  * 
  * 	if msg == WM_NCCALCSIZE:
  * 		return 0             # <<<<<<<<<<<<<<
@@ -8442,7 +10722,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":709
+    /* "nice_titlebar/_win32_titlebar.pyx":890
  * 	cdef unsigned int height = 0
  * 
  * 	if msg == WM_NCCALCSIZE:             # <<<<<<<<<<<<<<
@@ -8451,7 +10731,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":712
+  /* "nice_titlebar/_win32_titlebar.pyx":893
  * 		return 0
  * 
  * 	if window is None:             # <<<<<<<<<<<<<<
@@ -8461,7 +10741,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (((PyObject *)__pyx_v_window) == Py_None);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":713
+    /* "nice_titlebar/_win32_titlebar.pyx":894
  * 
  * 	if window is None:
  * 		return DefWindowProcW(hwnd, msg, wparam, lparam)             # <<<<<<<<<<<<<<
@@ -8471,7 +10751,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = DefWindowProcW(__pyx_v_hwnd, __pyx_v_msg, __pyx_v_wparam, __pyx_v_lparam);
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":712
+    /* "nice_titlebar/_win32_titlebar.pyx":893
  * 		return 0
  * 
  * 	if window is None:             # <<<<<<<<<<<<<<
@@ -8480,7 +10760,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":715
+  /* "nice_titlebar/_win32_titlebar.pyx":896
  * 		return DefWindowProcW(hwnd, msg, wparam, lparam)
  * 
  * 	if msg == WM_NCHITTEST:             # <<<<<<<<<<<<<<
@@ -8490,7 +10770,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_NCHITTEST);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":716
+    /* "nice_titlebar/_win32_titlebar.pyx":897
  * 
  * 	if msg == WM_NCHITTEST:
  * 		x = ntb_get_x_lparam(lparam)             # <<<<<<<<<<<<<<
@@ -8499,7 +10779,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_x = ntb_get_x_lparam(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":717
+    /* "nice_titlebar/_win32_titlebar.pyx":898
  * 	if msg == WM_NCHITTEST:
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)             # <<<<<<<<<<<<<<
@@ -8508,18 +10788,18 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_y = ntb_get_y_lparam(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":718
+    /* "nice_titlebar/_win32_titlebar.pyx":899
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)
  * 		return <LRESULT>window._hit_test(x, y)             # <<<<<<<<<<<<<<
  * 
  * 	if msg == WM_MOUSEMOVE:
 */
-    __pyx_t_4 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_hit_test(__pyx_v_window, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 718, __pyx_L1_error)
+    __pyx_t_4 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_hit_test(__pyx_v_window, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 899, __pyx_L1_error)
     __pyx_r = ((LRESULT)__pyx_t_4);
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":715
+    /* "nice_titlebar/_win32_titlebar.pyx":896
  * 		return DefWindowProcW(hwnd, msg, wparam, lparam)
  * 
  * 	if msg == WM_NCHITTEST:             # <<<<<<<<<<<<<<
@@ -8528,7 +10808,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":720
+  /* "nice_titlebar/_win32_titlebar.pyx":901
  * 		return <LRESULT>window._hit_test(x, y)
  * 
  * 	if msg == WM_MOUSEMOVE:             # <<<<<<<<<<<<<<
@@ -8538,7 +10818,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_MOUSEMOVE);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":721
+    /* "nice_titlebar/_win32_titlebar.pyx":902
  * 
  * 	if msg == WM_MOUSEMOVE:
  * 		x = ntb_get_x_lparam(lparam)             # <<<<<<<<<<<<<<
@@ -8547,7 +10827,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_x = ntb_get_x_lparam(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":722
+    /* "nice_titlebar/_win32_titlebar.pyx":903
  * 	if msg == WM_MOUSEMOVE:
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)             # <<<<<<<<<<<<<<
@@ -8556,56 +10836,213 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_y = ntb_get_y_lparam(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":723
+    /* "nice_titlebar/_win32_titlebar.pyx":904
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)
  * 		idx = window._button_hit(x, y)             # <<<<<<<<<<<<<<
  * 		if idx != window._hover_index:
  * 			window._hover_index = idx
 */
-    __pyx_t_4 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_button_hit(__pyx_v_window, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 723, __pyx_L1_error)
+    __pyx_t_4 = ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_button_hit(__pyx_v_window, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 904, __pyx_L1_error)
     __pyx_v_idx = __pyx_t_4;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":724
+    /* "nice_titlebar/_win32_titlebar.pyx":905
  * 		y = ntb_get_y_lparam(lparam)
  * 		idx = window._button_hit(x, y)
  * 		if idx != window._hover_index:             # <<<<<<<<<<<<<<
  * 			window._hover_index = idx
- * 			window._invalidate()
+ * 			window._invalidate_button(idx)
 */
     __pyx_t_3 = (__pyx_v_idx != __pyx_v_window->_hover_index);
     if (__pyx_t_3) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":725
+      /* "nice_titlebar/_win32_titlebar.pyx":906
  * 		idx = window._button_hit(x, y)
  * 		if idx != window._hover_index:
  * 			window._hover_index = idx             # <<<<<<<<<<<<<<
- * 			window._invalidate()
- * 		return 0
+ * 			window._invalidate_button(idx)
+ * 		# Forward client-area mouse move events into Python.
 */
       __pyx_v_window->_hover_index = __pyx_v_idx;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":726
+      /* "nice_titlebar/_win32_titlebar.pyx":907
  * 		if idx != window._hover_index:
  * 			window._hover_index = idx
- * 			window._invalidate()             # <<<<<<<<<<<<<<
- * 		return 0
- * 
+ * 			window._invalidate_button(idx)             # <<<<<<<<<<<<<<
+ * 		# Forward client-area mouse move events into Python.
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:
 */
-      ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_invalidate(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 726, __pyx_L1_error)
+      ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_invalidate_button(__pyx_v_window, __pyx_v_idx); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 907, __pyx_L1_error)
 
-      /* "nice_titlebar/_win32_titlebar.pyx":724
+      /* "nice_titlebar/_win32_titlebar.pyx":905
  * 		y = ntb_get_y_lparam(lparam)
  * 		idx = window._button_hit(x, y)
  * 		if idx != window._hover_index:             # <<<<<<<<<<<<<<
  * 			window._hover_index = idx
- * 			window._invalidate()
+ * 			window._invalidate_button(idx)
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":727
- * 			window._hover_index = idx
- * 			window._invalidate()
+    /* "nice_titlebar/_win32_titlebar.pyx":909
+ * 			window._invalidate_button(idx)
+ * 		# Forward client-area mouse move events into Python.
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				window._mouse_move_cb(window._owner, x, y)
+*/
+    __pyx_t_5 = (__pyx_v_y >= __pyx_v_window->_titlebar_height);
+    if (__pyx_t_5) {
+    } else {
+      __pyx_t_3 = __pyx_t_5;
+      goto __pyx_L9_bool_binop_done;
+    }
+    __pyx_t_5 = (__pyx_v_window->_mouse_move_cb != Py_None);
+    if (__pyx_t_5) {
+    } else {
+      __pyx_t_3 = __pyx_t_5;
+      goto __pyx_L9_bool_binop_done;
+    }
+    __pyx_t_5 = (__pyx_v_window->_owner != Py_None);
+    __pyx_t_3 = __pyx_t_5;
+    __pyx_L9_bool_binop_done:;
+    if (__pyx_t_3) {
+
+      /* "nice_titlebar/_win32_titlebar.pyx":910
+ * 		# Forward client-area mouse move events into Python.
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._mouse_move_cb(window._owner, x, y)
+ * 			except Exception:
+*/
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_6);
+        __Pyx_XGOTREF(__pyx_t_7);
+        __Pyx_XGOTREF(__pyx_t_8);
+        /*try:*/ {
+
+          /* "nice_titlebar/_win32_titlebar.pyx":911
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:
+ * 			try:
+ * 				window._mouse_move_cb(window._owner, x, y)             # <<<<<<<<<<<<<<
+ * 			except Exception:
+ * 				PyErr_Clear()
+*/
+          __pyx_t_2 = NULL;
+          __Pyx_INCREF(__pyx_v_window->_mouse_move_cb);
+          __pyx_t_9 = __pyx_v_window->_mouse_move_cb; 
+          __pyx_t_10 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 911, __pyx_L12_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_11 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 911, __pyx_L12_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_12 = 1;
+          #if CYTHON_UNPACK_METHODS
+          if (likely(PyMethod_Check(__pyx_t_9))) {
+            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_9);
+            assert(__pyx_t_2);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_9);
+            __Pyx_INCREF(__pyx_t_2);
+            __Pyx_INCREF(__pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_9, __pyx__function);
+            __pyx_t_12 = 0;
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[4] = {__pyx_t_2, __pyx_v_window->_owner, __pyx_t_10, __pyx_t_11};
+            __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_9, __pyx_callargs+__pyx_t_12, (4-__pyx_t_12) | (__pyx_t_12*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 911, __pyx_L12_error)
+            __Pyx_GOTREF(__pyx_t_1);
+          }
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":910
+ * 		# Forward client-area mouse move events into Python.
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._mouse_move_cb(window._owner, x, y)
+ * 			except Exception:
+*/
+        }
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        goto __pyx_L17_try_end;
+        __pyx_L12_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":912
+ * 			try:
+ * 				window._mouse_move_cb(window._owner, x, y)
+ * 			except Exception:             # <<<<<<<<<<<<<<
+ * 				PyErr_Clear()
+ * 		return 0
+*/
+        __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+        if (__pyx_t_4) {
+          __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_9, &__pyx_t_11) < 0) __PYX_ERR(0, 912, __pyx_L14_except_error)
+          __Pyx_XGOTREF(__pyx_t_1);
+          __Pyx_XGOTREF(__pyx_t_9);
+          __Pyx_XGOTREF(__pyx_t_11);
+
+          /* "nice_titlebar/_win32_titlebar.pyx":913
+ * 				window._mouse_move_cb(window._owner, x, y)
+ * 			except Exception:
+ * 				PyErr_Clear()             # <<<<<<<<<<<<<<
+ * 		return 0
+ * 
+*/
+          PyErr_Clear();
+          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          goto __pyx_L13_exception_handled;
+        }
+        goto __pyx_L14_except_error;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":910
+ * 		# Forward client-area mouse move events into Python.
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._mouse_move_cb(window._owner, x, y)
+ * 			except Exception:
+*/
+        __pyx_L14_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        goto __pyx_L1_error;
+        __pyx_L13_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        __pyx_L17_try_end:;
+      }
+
+      /* "nice_titlebar/_win32_titlebar.pyx":909
+ * 			window._invalidate_button(idx)
+ * 		# Forward client-area mouse move events into Python.
+ * 		if y >= window._titlebar_height and window._mouse_move_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				window._mouse_move_cb(window._owner, x, y)
+*/
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":914
+ * 			except Exception:
+ * 				PyErr_Clear()
  * 		return 0             # <<<<<<<<<<<<<<
  * 
  * 	if msg == WM_LBUTTONDOWN:
@@ -8613,7 +11050,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":720
+    /* "nice_titlebar/_win32_titlebar.pyx":901
  * 		return <LRESULT>window._hit_test(x, y)
  * 
  * 	if msg == WM_MOUSEMOVE:             # <<<<<<<<<<<<<<
@@ -8622,7 +11059,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":729
+  /* "nice_titlebar/_win32_titlebar.pyx":916
  * 		return 0
  * 
  * 	if msg == WM_LBUTTONDOWN:             # <<<<<<<<<<<<<<
@@ -8632,7 +11069,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_LBUTTONDOWN);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":730
+    /* "nice_titlebar/_win32_titlebar.pyx":917
  * 
  * 	if msg == WM_LBUTTONDOWN:
  * 		x = ntb_get_x_lparam(lparam)             # <<<<<<<<<<<<<<
@@ -8641,7 +11078,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_x = ntb_get_x_lparam(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":731
+    /* "nice_titlebar/_win32_titlebar.pyx":918
  * 	if msg == WM_LBUTTONDOWN:
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)             # <<<<<<<<<<<<<<
@@ -8650,45 +11087,200 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_y = ntb_get_y_lparam(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":732
+    /* "nice_titlebar/_win32_titlebar.pyx":919
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)
  * 		if y < window._titlebar_height:             # <<<<<<<<<<<<<<
  * 			window._handle_button_click(x, y)
- * 		return 0
+ * 		else:
 */
     __pyx_t_3 = (__pyx_v_y < __pyx_v_window->_titlebar_height);
     if (__pyx_t_3) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":733
+      /* "nice_titlebar/_win32_titlebar.pyx":920
  * 		y = ntb_get_y_lparam(lparam)
  * 		if y < window._titlebar_height:
  * 			window._handle_button_click(x, y)             # <<<<<<<<<<<<<<
- * 		return 0
- * 
+ * 		else:
+ * 			if window._mouse_down_cb is not None and window._owner is not None:
 */
-      ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_handle_button_click(__pyx_v_window, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 733, __pyx_L1_error)
+      ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_handle_button_click(__pyx_v_window, __pyx_v_x, __pyx_v_y); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 920, __pyx_L1_error)
 
-      /* "nice_titlebar/_win32_titlebar.pyx":732
+      /* "nice_titlebar/_win32_titlebar.pyx":919
  * 		x = ntb_get_x_lparam(lparam)
  * 		y = ntb_get_y_lparam(lparam)
  * 		if y < window._titlebar_height:             # <<<<<<<<<<<<<<
  * 			window._handle_button_click(x, y)
- * 		return 0
+ * 		else:
 */
+      goto __pyx_L21;
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":734
- * 		if y < window._titlebar_height:
+    /* "nice_titlebar/_win32_titlebar.pyx":922
  * 			window._handle_button_click(x, y)
+ * 		else:
+ * 			if window._mouse_down_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 				try:
+ * 					window._mouse_down_cb(window._owner, x, y)
+*/
+    /*else*/ {
+      __pyx_t_5 = (__pyx_v_window->_mouse_down_cb != Py_None);
+      if (__pyx_t_5) {
+      } else {
+        __pyx_t_3 = __pyx_t_5;
+        goto __pyx_L23_bool_binop_done;
+      }
+      __pyx_t_5 = (__pyx_v_window->_owner != Py_None);
+      __pyx_t_3 = __pyx_t_5;
+      __pyx_L23_bool_binop_done:;
+      if (__pyx_t_3) {
+
+        /* "nice_titlebar/_win32_titlebar.pyx":923
+ * 		else:
+ * 			if window._mouse_down_cb is not None and window._owner is not None:
+ * 				try:             # <<<<<<<<<<<<<<
+ * 					window._mouse_down_cb(window._owner, x, y)
+ * 				except Exception:
+*/
+        {
+          __Pyx_PyThreadState_declare
+          __Pyx_PyThreadState_assign
+          __Pyx_ExceptionSave(&__pyx_t_8, &__pyx_t_7, &__pyx_t_6);
+          __Pyx_XGOTREF(__pyx_t_8);
+          __Pyx_XGOTREF(__pyx_t_7);
+          __Pyx_XGOTREF(__pyx_t_6);
+          /*try:*/ {
+
+            /* "nice_titlebar/_win32_titlebar.pyx":924
+ * 			if window._mouse_down_cb is not None and window._owner is not None:
+ * 				try:
+ * 					window._mouse_down_cb(window._owner, x, y)             # <<<<<<<<<<<<<<
+ * 				except Exception:
+ * 					PyErr_Clear()
+*/
+            __pyx_t_9 = NULL;
+            __Pyx_INCREF(__pyx_v_window->_mouse_down_cb);
+            __pyx_t_1 = __pyx_v_window->_mouse_down_cb; 
+            __pyx_t_10 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 924, __pyx_L25_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 924, __pyx_L25_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_12 = 1;
+            #if CYTHON_UNPACK_METHODS
+            if (likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
+              assert(__pyx_t_9);
+              PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_1);
+              __Pyx_INCREF(__pyx_t_9);
+              __Pyx_INCREF(__pyx__function);
+              __Pyx_DECREF_SET(__pyx_t_1, __pyx__function);
+              __pyx_t_12 = 0;
+            }
+            #endif
+            {
+              PyObject *__pyx_callargs[4] = {__pyx_t_9, __pyx_v_window->_owner, __pyx_t_10, __pyx_t_2};
+              __pyx_t_11 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_1, __pyx_callargs+__pyx_t_12, (4-__pyx_t_12) | (__pyx_t_12*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+              __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+              __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 924, __pyx_L25_error)
+              __Pyx_GOTREF(__pyx_t_11);
+            }
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+
+            /* "nice_titlebar/_win32_titlebar.pyx":923
+ * 		else:
+ * 			if window._mouse_down_cb is not None and window._owner is not None:
+ * 				try:             # <<<<<<<<<<<<<<
+ * 					window._mouse_down_cb(window._owner, x, y)
+ * 				except Exception:
+*/
+          }
+          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+          goto __pyx_L30_try_end;
+          __pyx_L25_error:;
+          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":925
+ * 				try:
+ * 					window._mouse_down_cb(window._owner, x, y)
+ * 				except Exception:             # <<<<<<<<<<<<<<
+ * 					PyErr_Clear()
+ * 		return 0
+*/
+          __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+          if (__pyx_t_4) {
+            __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+            if (__Pyx_GetException(&__pyx_t_11, &__pyx_t_1, &__pyx_t_2) < 0) __PYX_ERR(0, 925, __pyx_L27_except_error)
+            __Pyx_XGOTREF(__pyx_t_11);
+            __Pyx_XGOTREF(__pyx_t_1);
+            __Pyx_XGOTREF(__pyx_t_2);
+
+            /* "nice_titlebar/_win32_titlebar.pyx":926
+ * 					window._mouse_down_cb(window._owner, x, y)
+ * 				except Exception:
+ * 					PyErr_Clear()             # <<<<<<<<<<<<<<
+ * 		return 0
+ * 
+*/
+            PyErr_Clear();
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            goto __pyx_L26_exception_handled;
+          }
+          goto __pyx_L27_except_error;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":923
+ * 		else:
+ * 			if window._mouse_down_cb is not None and window._owner is not None:
+ * 				try:             # <<<<<<<<<<<<<<
+ * 					window._mouse_down_cb(window._owner, x, y)
+ * 				except Exception:
+*/
+          __pyx_L27_except_error:;
+          __Pyx_XGIVEREF(__pyx_t_8);
+          __Pyx_XGIVEREF(__pyx_t_7);
+          __Pyx_XGIVEREF(__pyx_t_6);
+          __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_7, __pyx_t_6);
+          goto __pyx_L1_error;
+          __pyx_L26_exception_handled:;
+          __Pyx_XGIVEREF(__pyx_t_8);
+          __Pyx_XGIVEREF(__pyx_t_7);
+          __Pyx_XGIVEREF(__pyx_t_6);
+          __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_7, __pyx_t_6);
+          __pyx_L30_try_end:;
+        }
+
+        /* "nice_titlebar/_win32_titlebar.pyx":922
+ * 			window._handle_button_click(x, y)
+ * 		else:
+ * 			if window._mouse_down_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 				try:
+ * 					window._mouse_down_cb(window._owner, x, y)
+*/
+      }
+    }
+    __pyx_L21:;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":927
+ * 				except Exception:
+ * 					PyErr_Clear()
  * 		return 0             # <<<<<<<<<<<<<<
  * 
- * 	if msg == WM_SIZE:
+ * 	if msg == WM_LBUTTONUP:
 */
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":729
+    /* "nice_titlebar/_win32_titlebar.pyx":916
  * 		return 0
  * 
  * 	if msg == WM_LBUTTONDOWN:             # <<<<<<<<<<<<<<
@@ -8697,7 +11289,578 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":736
+  /* "nice_titlebar/_win32_titlebar.pyx":929
+ * 		return 0
+ * 
+ * 	if msg == WM_LBUTTONUP:             # <<<<<<<<<<<<<<
+ * 		x = ntb_get_x_lparam(lparam)
+ * 		y = ntb_get_y_lparam(lparam)
+*/
+  __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_LBUTTONUP);
+  if (__pyx_t_3) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":930
+ * 
+ * 	if msg == WM_LBUTTONUP:
+ * 		x = ntb_get_x_lparam(lparam)             # <<<<<<<<<<<<<<
+ * 		y = ntb_get_y_lparam(lparam)
+ * 		if y >= window._titlebar_height:
+*/
+    __pyx_v_x = ntb_get_x_lparam(__pyx_v_lparam);
+
+    /* "nice_titlebar/_win32_titlebar.pyx":931
+ * 	if msg == WM_LBUTTONUP:
+ * 		x = ntb_get_x_lparam(lparam)
+ * 		y = ntb_get_y_lparam(lparam)             # <<<<<<<<<<<<<<
+ * 		if y >= window._titlebar_height:
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+*/
+    __pyx_v_y = ntb_get_y_lparam(__pyx_v_lparam);
+
+    /* "nice_titlebar/_win32_titlebar.pyx":932
+ * 		x = ntb_get_x_lparam(lparam)
+ * 		y = ntb_get_y_lparam(lparam)
+ * 		if y >= window._titlebar_height:             # <<<<<<<<<<<<<<
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+ * 				try:
+*/
+    __pyx_t_3 = (__pyx_v_y >= __pyx_v_window->_titlebar_height);
+    if (__pyx_t_3) {
+
+      /* "nice_titlebar/_win32_titlebar.pyx":933
+ * 		y = ntb_get_y_lparam(lparam)
+ * 		if y >= window._titlebar_height:
+ * 			if window._mouse_up_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 				try:
+ * 					window._mouse_up_cb(window._owner, x, y)
+*/
+      __pyx_t_5 = (__pyx_v_window->_mouse_up_cb != Py_None);
+      if (__pyx_t_5) {
+      } else {
+        __pyx_t_3 = __pyx_t_5;
+        goto __pyx_L36_bool_binop_done;
+      }
+      __pyx_t_5 = (__pyx_v_window->_owner != Py_None);
+      __pyx_t_3 = __pyx_t_5;
+      __pyx_L36_bool_binop_done:;
+      if (__pyx_t_3) {
+
+        /* "nice_titlebar/_win32_titlebar.pyx":934
+ * 		if y >= window._titlebar_height:
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+ * 				try:             # <<<<<<<<<<<<<<
+ * 					window._mouse_up_cb(window._owner, x, y)
+ * 				except Exception:
+*/
+        {
+          __Pyx_PyThreadState_declare
+          __Pyx_PyThreadState_assign
+          __Pyx_ExceptionSave(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8);
+          __Pyx_XGOTREF(__pyx_t_6);
+          __Pyx_XGOTREF(__pyx_t_7);
+          __Pyx_XGOTREF(__pyx_t_8);
+          /*try:*/ {
+
+            /* "nice_titlebar/_win32_titlebar.pyx":935
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+ * 				try:
+ * 					window._mouse_up_cb(window._owner, x, y)             # <<<<<<<<<<<<<<
+ * 				except Exception:
+ * 					PyErr_Clear()
+*/
+            __pyx_t_1 = NULL;
+            __Pyx_INCREF(__pyx_v_window->_mouse_up_cb);
+            __pyx_t_11 = __pyx_v_window->_mouse_up_cb; 
+            __pyx_t_10 = __Pyx_PyLong_From_int(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 935, __pyx_L38_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            __pyx_t_9 = __Pyx_PyLong_From_int(__pyx_v_y); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 935, __pyx_L38_error)
+            __Pyx_GOTREF(__pyx_t_9);
+            __pyx_t_12 = 1;
+            #if CYTHON_UNPACK_METHODS
+            if (likely(PyMethod_Check(__pyx_t_11))) {
+              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_11);
+              assert(__pyx_t_1);
+              PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_11);
+              __Pyx_INCREF(__pyx_t_1);
+              __Pyx_INCREF(__pyx__function);
+              __Pyx_DECREF_SET(__pyx_t_11, __pyx__function);
+              __pyx_t_12 = 0;
+            }
+            #endif
+            {
+              PyObject *__pyx_callargs[4] = {__pyx_t_1, __pyx_v_window->_owner, __pyx_t_10, __pyx_t_9};
+              __pyx_t_2 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_11, __pyx_callargs+__pyx_t_12, (4-__pyx_t_12) | (__pyx_t_12*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+              __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+              __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+              if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 935, __pyx_L38_error)
+              __Pyx_GOTREF(__pyx_t_2);
+            }
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+            /* "nice_titlebar/_win32_titlebar.pyx":934
+ * 		if y >= window._titlebar_height:
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+ * 				try:             # <<<<<<<<<<<<<<
+ * 					window._mouse_up_cb(window._owner, x, y)
+ * 				except Exception:
+*/
+          }
+          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+          goto __pyx_L43_try_end;
+          __pyx_L38_error:;
+          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":936
+ * 				try:
+ * 					window._mouse_up_cb(window._owner, x, y)
+ * 				except Exception:             # <<<<<<<<<<<<<<
+ * 					PyErr_Clear()
+ * 		return 0
+*/
+          __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+          if (__pyx_t_4) {
+            __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+            if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_11, &__pyx_t_9) < 0) __PYX_ERR(0, 936, __pyx_L40_except_error)
+            __Pyx_XGOTREF(__pyx_t_2);
+            __Pyx_XGOTREF(__pyx_t_11);
+            __Pyx_XGOTREF(__pyx_t_9);
+
+            /* "nice_titlebar/_win32_titlebar.pyx":937
+ * 					window._mouse_up_cb(window._owner, x, y)
+ * 				except Exception:
+ * 					PyErr_Clear()             # <<<<<<<<<<<<<<
+ * 		return 0
+ * 
+*/
+            PyErr_Clear();
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+            goto __pyx_L39_exception_handled;
+          }
+          goto __pyx_L40_except_error;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":934
+ * 		if y >= window._titlebar_height:
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+ * 				try:             # <<<<<<<<<<<<<<
+ * 					window._mouse_up_cb(window._owner, x, y)
+ * 				except Exception:
+*/
+          __pyx_L40_except_error:;
+          __Pyx_XGIVEREF(__pyx_t_6);
+          __Pyx_XGIVEREF(__pyx_t_7);
+          __Pyx_XGIVEREF(__pyx_t_8);
+          __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+          goto __pyx_L1_error;
+          __pyx_L39_exception_handled:;
+          __Pyx_XGIVEREF(__pyx_t_6);
+          __Pyx_XGIVEREF(__pyx_t_7);
+          __Pyx_XGIVEREF(__pyx_t_8);
+          __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+          __pyx_L43_try_end:;
+        }
+
+        /* "nice_titlebar/_win32_titlebar.pyx":933
+ * 		y = ntb_get_y_lparam(lparam)
+ * 		if y >= window._titlebar_height:
+ * 			if window._mouse_up_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 				try:
+ * 					window._mouse_up_cb(window._owner, x, y)
+*/
+      }
+
+      /* "nice_titlebar/_win32_titlebar.pyx":932
+ * 		x = ntb_get_x_lparam(lparam)
+ * 		y = ntb_get_y_lparam(lparam)
+ * 		if y >= window._titlebar_height:             # <<<<<<<<<<<<<<
+ * 			if window._mouse_up_cb is not None and window._owner is not None:
+ * 				try:
+*/
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":938
+ * 				except Exception:
+ * 					PyErr_Clear()
+ * 		return 0             # <<<<<<<<<<<<<<
+ * 
+ * 	if msg == WM_KEYDOWN:
+*/
+    __pyx_r = 0;
+    goto __pyx_L0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":929
+ * 		return 0
+ * 
+ * 	if msg == WM_LBUTTONUP:             # <<<<<<<<<<<<<<
+ * 		x = ntb_get_x_lparam(lparam)
+ * 		y = ntb_get_y_lparam(lparam)
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":940
+ * 		return 0
+ * 
+ * 	if msg == WM_KEYDOWN:             # <<<<<<<<<<<<<<
+ * 		if window._key_down_cb is not None and window._owner is not None:
+ * 			try:
+*/
+  __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_KEYDOWN);
+  if (__pyx_t_3) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":941
+ * 
+ * 	if msg == WM_KEYDOWN:
+ * 		if window._key_down_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				window._key_down_cb(window._owner, <int>wparam)
+*/
+    __pyx_t_5 = (__pyx_v_window->_key_down_cb != Py_None);
+    if (__pyx_t_5) {
+    } else {
+      __pyx_t_3 = __pyx_t_5;
+      goto __pyx_L48_bool_binop_done;
+    }
+    __pyx_t_5 = (__pyx_v_window->_owner != Py_None);
+    __pyx_t_3 = __pyx_t_5;
+    __pyx_L48_bool_binop_done:;
+    if (__pyx_t_3) {
+
+      /* "nice_titlebar/_win32_titlebar.pyx":942
+ * 	if msg == WM_KEYDOWN:
+ * 		if window._key_down_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._key_down_cb(window._owner, <int>wparam)
+ * 			except Exception:
+*/
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_8, &__pyx_t_7, &__pyx_t_6);
+        __Pyx_XGOTREF(__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_7);
+        __Pyx_XGOTREF(__pyx_t_6);
+        /*try:*/ {
+
+          /* "nice_titlebar/_win32_titlebar.pyx":943
+ * 		if window._key_down_cb is not None and window._owner is not None:
+ * 			try:
+ * 				window._key_down_cb(window._owner, <int>wparam)             # <<<<<<<<<<<<<<
+ * 			except Exception:
+ * 				PyErr_Clear()
+*/
+          __pyx_t_11 = NULL;
+          __Pyx_INCREF(__pyx_v_window->_key_down_cb);
+          __pyx_t_2 = __pyx_v_window->_key_down_cb; 
+          __pyx_t_10 = __Pyx_PyLong_From_int(((int)__pyx_v_wparam)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 943, __pyx_L50_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_12 = 1;
+          #if CYTHON_UNPACK_METHODS
+          if (likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_2);
+            assert(__pyx_t_11);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_2);
+            __Pyx_INCREF(__pyx_t_11);
+            __Pyx_INCREF(__pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_2, __pyx__function);
+            __pyx_t_12 = 0;
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[3] = {__pyx_t_11, __pyx_v_window->_owner, __pyx_t_10};
+            __pyx_t_9 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_2, __pyx_callargs+__pyx_t_12, (3-__pyx_t_12) | (__pyx_t_12*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 943, __pyx_L50_error)
+            __Pyx_GOTREF(__pyx_t_9);
+          }
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":942
+ * 	if msg == WM_KEYDOWN:
+ * 		if window._key_down_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._key_down_cb(window._owner, <int>wparam)
+ * 			except Exception:
+*/
+        }
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        goto __pyx_L55_try_end;
+        __pyx_L50_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":944
+ * 			try:
+ * 				window._key_down_cb(window._owner, <int>wparam)
+ * 			except Exception:             # <<<<<<<<<<<<<<
+ * 				PyErr_Clear()
+ * 		return 0
+*/
+        __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+        if (__pyx_t_4) {
+          __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_9, &__pyx_t_2, &__pyx_t_10) < 0) __PYX_ERR(0, 944, __pyx_L52_except_error)
+          __Pyx_XGOTREF(__pyx_t_9);
+          __Pyx_XGOTREF(__pyx_t_2);
+          __Pyx_XGOTREF(__pyx_t_10);
+
+          /* "nice_titlebar/_win32_titlebar.pyx":945
+ * 				window._key_down_cb(window._owner, <int>wparam)
+ * 			except Exception:
+ * 				PyErr_Clear()             # <<<<<<<<<<<<<<
+ * 		return 0
+ * 
+*/
+          PyErr_Clear();
+          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          goto __pyx_L51_exception_handled;
+        }
+        goto __pyx_L52_except_error;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":942
+ * 	if msg == WM_KEYDOWN:
+ * 		if window._key_down_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._key_down_cb(window._owner, <int>wparam)
+ * 			except Exception:
+*/
+        __pyx_L52_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_7, __pyx_t_6);
+        goto __pyx_L1_error;
+        __pyx_L51_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_7, __pyx_t_6);
+        __pyx_L55_try_end:;
+      }
+
+      /* "nice_titlebar/_win32_titlebar.pyx":941
+ * 
+ * 	if msg == WM_KEYDOWN:
+ * 		if window._key_down_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				window._key_down_cb(window._owner, <int>wparam)
+*/
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":946
+ * 			except Exception:
+ * 				PyErr_Clear()
+ * 		return 0             # <<<<<<<<<<<<<<
+ * 
+ * 	if msg == WM_CHAR:
+*/
+    __pyx_r = 0;
+    goto __pyx_L0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":940
+ * 		return 0
+ * 
+ * 	if msg == WM_KEYDOWN:             # <<<<<<<<<<<<<<
+ * 		if window._key_down_cb is not None and window._owner is not None:
+ * 			try:
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":948
+ * 		return 0
+ * 
+ * 	if msg == WM_CHAR:             # <<<<<<<<<<<<<<
+ * 		if window._char_cb is not None and window._owner is not None:
+ * 			try:
+*/
+  __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_CHAR);
+  if (__pyx_t_3) {
+
+    /* "nice_titlebar/_win32_titlebar.pyx":949
+ * 
+ * 	if msg == WM_CHAR:
+ * 		if window._char_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+*/
+    __pyx_t_5 = (__pyx_v_window->_char_cb != Py_None);
+    if (__pyx_t_5) {
+    } else {
+      __pyx_t_3 = __pyx_t_5;
+      goto __pyx_L60_bool_binop_done;
+    }
+    __pyx_t_5 = (__pyx_v_window->_owner != Py_None);
+    __pyx_t_3 = __pyx_t_5;
+    __pyx_L60_bool_binop_done:;
+    if (__pyx_t_3) {
+
+      /* "nice_titlebar/_win32_titlebar.pyx":950
+ * 	if msg == WM_CHAR:
+ * 		if window._char_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+ * 			except Exception:
+*/
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_6);
+        __Pyx_XGOTREF(__pyx_t_7);
+        __Pyx_XGOTREF(__pyx_t_8);
+        /*try:*/ {
+
+          /* "nice_titlebar/_win32_titlebar.pyx":951
+ * 		if window._char_cb is not None and window._owner is not None:
+ * 			try:
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))             # <<<<<<<<<<<<<<
+ * 			except Exception:
+ * 				PyErr_Clear()
+*/
+          __pyx_t_2 = NULL;
+          __Pyx_INCREF(__pyx_v_window->_char_cb);
+          __pyx_t_9 = __pyx_v_window->_char_cb; 
+          __pyx_t_11 = PyUnicode_FromOrdinal((((int)__pyx_v_wparam) & 0xFFFF)); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 951, __pyx_L62_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_12 = 1;
+          #if CYTHON_UNPACK_METHODS
+          if (likely(PyMethod_Check(__pyx_t_9))) {
+            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_9);
+            assert(__pyx_t_2);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_9);
+            __Pyx_INCREF(__pyx_t_2);
+            __Pyx_INCREF(__pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_9, __pyx__function);
+            __pyx_t_12 = 0;
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_window->_owner, __pyx_t_11};
+            __pyx_t_10 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_9, __pyx_callargs+__pyx_t_12, (3-__pyx_t_12) | (__pyx_t_12*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+            if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 951, __pyx_L62_error)
+            __Pyx_GOTREF(__pyx_t_10);
+          }
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+
+          /* "nice_titlebar/_win32_titlebar.pyx":950
+ * 	if msg == WM_CHAR:
+ * 		if window._char_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+ * 			except Exception:
+*/
+        }
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        goto __pyx_L67_try_end;
+        __pyx_L62_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":952
+ * 			try:
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+ * 			except Exception:             # <<<<<<<<<<<<<<
+ * 				PyErr_Clear()
+ * 		return 0
+*/
+        __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
+        if (__pyx_t_4) {
+          __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_10, &__pyx_t_9, &__pyx_t_11) < 0) __PYX_ERR(0, 952, __pyx_L64_except_error)
+          __Pyx_XGOTREF(__pyx_t_10);
+          __Pyx_XGOTREF(__pyx_t_9);
+          __Pyx_XGOTREF(__pyx_t_11);
+
+          /* "nice_titlebar/_win32_titlebar.pyx":953
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+ * 			except Exception:
+ * 				PyErr_Clear()             # <<<<<<<<<<<<<<
+ * 		return 0
+ * 
+*/
+          PyErr_Clear();
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          goto __pyx_L63_exception_handled;
+        }
+        goto __pyx_L64_except_error;
+
+        /* "nice_titlebar/_win32_titlebar.pyx":950
+ * 	if msg == WM_CHAR:
+ * 		if window._char_cb is not None and window._owner is not None:
+ * 			try:             # <<<<<<<<<<<<<<
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+ * 			except Exception:
+*/
+        __pyx_L64_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        goto __pyx_L1_error;
+        __pyx_L63_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        __pyx_L67_try_end:;
+      }
+
+      /* "nice_titlebar/_win32_titlebar.pyx":949
+ * 
+ * 	if msg == WM_CHAR:
+ * 		if window._char_cb is not None and window._owner is not None:             # <<<<<<<<<<<<<<
+ * 			try:
+ * 				window._char_cb(window._owner, chr(<int>wparam & 0xFFFF))
+*/
+    }
+
+    /* "nice_titlebar/_win32_titlebar.pyx":954
+ * 			except Exception:
+ * 				PyErr_Clear()
+ * 		return 0             # <<<<<<<<<<<<<<
+ * 
+ * 	if msg == WM_SIZE:
+*/
+    __pyx_r = 0;
+    goto __pyx_L0;
+
+    /* "nice_titlebar/_win32_titlebar.pyx":948
+ * 		return 0
+ * 
+ * 	if msg == WM_CHAR:             # <<<<<<<<<<<<<<
+ * 		if window._char_cb is not None and window._owner is not None:
+ * 			try:
+*/
+  }
+
+  /* "nice_titlebar/_win32_titlebar.pyx":956
  * 		return 0
  * 
  * 	if msg == WM_SIZE:             # <<<<<<<<<<<<<<
@@ -8707,7 +11870,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SIZE);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":737
+    /* "nice_titlebar/_win32_titlebar.pyx":957
  * 
  * 	if msg == WM_SIZE:
  * 		width = ntb_lo_word(lparam)             # <<<<<<<<<<<<<<
@@ -8716,7 +11879,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_width = ntb_lo_word(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":738
+    /* "nice_titlebar/_win32_titlebar.pyx":958
  * 	if msg == WM_SIZE:
  * 		width = ntb_lo_word(lparam)
  * 		height = ntb_hi_word(lparam)             # <<<<<<<<<<<<<<
@@ -8725,7 +11888,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_height = ntb_hi_word(__pyx_v_lparam);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":739
+    /* "nice_titlebar/_win32_titlebar.pyx":959
  * 		width = ntb_lo_word(lparam)
  * 		height = ntb_hi_word(lparam)
  * 		window._width = <int>width             # <<<<<<<<<<<<<<
@@ -8734,7 +11897,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_window->_width = ((int)__pyx_v_width);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":740
+    /* "nice_titlebar/_win32_titlebar.pyx":960
  * 		height = ntb_hi_word(lparam)
  * 		window._width = <int>width
  * 		window._height = <int>height             # <<<<<<<<<<<<<<
@@ -8743,25 +11906,25 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_window->_height = ((int)__pyx_v_height);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":741
+    /* "nice_titlebar/_win32_titlebar.pyx":961
  * 		window._width = <int>width
  * 		window._height = <int>height
  * 		window._layout_buttons()             # <<<<<<<<<<<<<<
  * 		window._invalidate()
  * 		return 0
 */
-    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_layout_buttons(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 741, __pyx_L1_error)
+    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_layout_buttons(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 961, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":742
+    /* "nice_titlebar/_win32_titlebar.pyx":962
  * 		window._height = <int>height
  * 		window._layout_buttons()
  * 		window._invalidate()             # <<<<<<<<<<<<<<
  * 		return 0
  * 
 */
-    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_invalidate(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 742, __pyx_L1_error)
+    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_invalidate(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 962, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":743
+    /* "nice_titlebar/_win32_titlebar.pyx":963
  * 		window._layout_buttons()
  * 		window._invalidate()
  * 		return 0             # <<<<<<<<<<<<<<
@@ -8771,7 +11934,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":736
+    /* "nice_titlebar/_win32_titlebar.pyx":956
  * 		return 0
  * 
  * 	if msg == WM_SIZE:             # <<<<<<<<<<<<<<
@@ -8780,7 +11943,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":745
+  /* "nice_titlebar/_win32_titlebar.pyx":965
  * 		return 0
  * 
  * 	if msg == WM_PAINT:             # <<<<<<<<<<<<<<
@@ -8790,7 +11953,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_PAINT);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":746
+    /* "nice_titlebar/_win32_titlebar.pyx":966
  * 
  * 	if msg == WM_PAINT:
  * 		BeginPaint(hwnd, &paint)             # <<<<<<<<<<<<<<
@@ -8799,16 +11962,16 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     (void)(BeginPaint(__pyx_v_hwnd, (&__pyx_v_paint)));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":747
+    /* "nice_titlebar/_win32_titlebar.pyx":967
  * 	if msg == WM_PAINT:
  * 		BeginPaint(hwnd, &paint)
  * 		window._draw()             # <<<<<<<<<<<<<<
  * 		EndPaint(hwnd, &paint)
  * 		return 0
 */
-    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_draw(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 747, __pyx_L1_error)
+    ((struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow *)__pyx_v_window->__pyx_vtab)->_draw(__pyx_v_window); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 967, __pyx_L1_error)
 
-    /* "nice_titlebar/_win32_titlebar.pyx":748
+    /* "nice_titlebar/_win32_titlebar.pyx":968
  * 		BeginPaint(hwnd, &paint)
  * 		window._draw()
  * 		EndPaint(hwnd, &paint)             # <<<<<<<<<<<<<<
@@ -8817,7 +11980,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     (void)(EndPaint(__pyx_v_hwnd, (&__pyx_v_paint)));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":749
+    /* "nice_titlebar/_win32_titlebar.pyx":969
  * 		window._draw()
  * 		EndPaint(hwnd, &paint)
  * 		return 0             # <<<<<<<<<<<<<<
@@ -8827,7 +11990,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":745
+    /* "nice_titlebar/_win32_titlebar.pyx":965
  * 		return 0
  * 
  * 	if msg == WM_PAINT:             # <<<<<<<<<<<<<<
@@ -8836,7 +11999,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":751
+  /* "nice_titlebar/_win32_titlebar.pyx":971
  * 		return 0
  * 
  * 	if msg == WM_CLOSE:             # <<<<<<<<<<<<<<
@@ -8846,7 +12009,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_CLOSE);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":752
+    /* "nice_titlebar/_win32_titlebar.pyx":972
  * 
  * 	if msg == WM_CLOSE:
  * 		DestroyWindow(hwnd)             # <<<<<<<<<<<<<<
@@ -8855,7 +12018,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     (void)(DestroyWindow(__pyx_v_hwnd));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":753
+    /* "nice_titlebar/_win32_titlebar.pyx":973
  * 	if msg == WM_CLOSE:
  * 		DestroyWindow(hwnd)
  * 		return 0             # <<<<<<<<<<<<<<
@@ -8865,7 +12028,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":751
+    /* "nice_titlebar/_win32_titlebar.pyx":971
  * 		return 0
  * 
  * 	if msg == WM_CLOSE:             # <<<<<<<<<<<<<<
@@ -8874,7 +12037,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":755
+  /* "nice_titlebar/_win32_titlebar.pyx":975
  * 		return 0
  * 
  * 	if msg == WM_DESTROY:             # <<<<<<<<<<<<<<
@@ -8884,7 +12047,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_t_3 = (__pyx_v_msg == __pyx_v_13nice_titlebar_15_win32_titlebar_WM_DESTROY);
   if (__pyx_t_3) {
 
-    /* "nice_titlebar/_win32_titlebar.pyx":756
+    /* "nice_titlebar/_win32_titlebar.pyx":976
  * 
  * 	if msg == WM_DESTROY:
  * 		ntb_d2d_release(&window._d2d)             # <<<<<<<<<<<<<<
@@ -8893,7 +12056,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     ntb_d2d_release((&__pyx_v_window->_d2d));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":757
+    /* "nice_titlebar/_win32_titlebar.pyx":977
  * 	if msg == WM_DESTROY:
  * 		ntb_d2d_release(&window._d2d)
  * 		try:             # <<<<<<<<<<<<<<
@@ -8903,13 +12066,13 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     {
       __Pyx_PyThreadState_declare
       __Pyx_PyThreadState_assign
-      __Pyx_ExceptionSave(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7);
-      __Pyx_XGOTREF(__pyx_t_5);
-      __Pyx_XGOTREF(__pyx_t_6);
+      __Pyx_ExceptionSave(&__pyx_t_8, &__pyx_t_7, &__pyx_t_6);
+      __Pyx_XGOTREF(__pyx_t_8);
       __Pyx_XGOTREF(__pyx_t_7);
+      __Pyx_XGOTREF(__pyx_t_6);
       /*try:*/ {
 
-        /* "nice_titlebar/_win32_titlebar.pyx":758
+        /* "nice_titlebar/_win32_titlebar.pyx":978
  * 		ntb_d2d_release(&window._d2d)
  * 		try:
  * 			if window._close_callback is not None:             # <<<<<<<<<<<<<<
@@ -8919,39 +12082,39 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
         __pyx_t_3 = (__pyx_v_window->_close_callback != Py_None);
         if (__pyx_t_3) {
 
-          /* "nice_titlebar/_win32_titlebar.pyx":759
+          /* "nice_titlebar/_win32_titlebar.pyx":979
  * 		try:
  * 			if window._close_callback is not None:
  * 				window._close_callback(window._close_owner)             # <<<<<<<<<<<<<<
  * 		except Exception:
  * 			PyErr_Clear()
 */
-          __pyx_t_2 = NULL;
+          __pyx_t_9 = NULL;
           __Pyx_INCREF(__pyx_v_window->_close_callback);
-          __pyx_t_8 = __pyx_v_window->_close_callback; 
-          __pyx_t_9 = 1;
+          __pyx_t_10 = __pyx_v_window->_close_callback; 
+          __pyx_t_12 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (likely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_2);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_2);
+          if (likely(PyMethod_Check(__pyx_t_10))) {
+            __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_10);
+            assert(__pyx_t_9);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
+            __Pyx_INCREF(__pyx_t_9);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
-            __pyx_t_9 = 0;
+            __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
+            __pyx_t_12 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_window->_close_owner};
-            __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_8, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 759, __pyx_L14_error)
-            __Pyx_GOTREF(__pyx_t_1);
+            PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_v_window->_close_owner};
+            __pyx_t_11 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_10, __pyx_callargs+__pyx_t_12, (2-__pyx_t_12) | (__pyx_t_12*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 979, __pyx_L74_error)
+            __Pyx_GOTREF(__pyx_t_11);
           }
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-          /* "nice_titlebar/_win32_titlebar.pyx":758
+          /* "nice_titlebar/_win32_titlebar.pyx":978
  * 		ntb_d2d_release(&window._d2d)
  * 		try:
  * 			if window._close_callback is not None:             # <<<<<<<<<<<<<<
@@ -8960,7 +12123,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
         }
 
-        /* "nice_titlebar/_win32_titlebar.pyx":757
+        /* "nice_titlebar/_win32_titlebar.pyx":977
  * 	if msg == WM_DESTROY:
  * 		ntb_d2d_release(&window._d2d)
  * 		try:             # <<<<<<<<<<<<<<
@@ -8968,16 +12131,18 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
  * 				window._close_callback(window._close_owner)
 */
       }
-      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-      goto __pyx_L19_try_end;
-      __pyx_L14_error:;
-      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+      goto __pyx_L79_try_end;
+      __pyx_L74_error:;
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":760
+      /* "nice_titlebar/_win32_titlebar.pyx":980
  * 			if window._close_callback is not None:
  * 				window._close_callback(window._close_owner)
  * 		except Exception:             # <<<<<<<<<<<<<<
@@ -8987,12 +12152,12 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
       __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(((PyTypeObject*)PyExc_Exception))));
       if (__pyx_t_4) {
         __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
-        if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_8, &__pyx_t_2) < 0) __PYX_ERR(0, 760, __pyx_L16_except_error)
-        __Pyx_XGOTREF(__pyx_t_1);
-        __Pyx_XGOTREF(__pyx_t_8);
-        __Pyx_XGOTREF(__pyx_t_2);
+        if (__Pyx_GetException(&__pyx_t_11, &__pyx_t_10, &__pyx_t_9) < 0) __PYX_ERR(0, 980, __pyx_L76_except_error)
+        __Pyx_XGOTREF(__pyx_t_11);
+        __Pyx_XGOTREF(__pyx_t_10);
+        __Pyx_XGOTREF(__pyx_t_9);
 
-        /* "nice_titlebar/_win32_titlebar.pyx":761
+        /* "nice_titlebar/_win32_titlebar.pyx":981
  * 				window._close_callback(window._close_owner)
  * 		except Exception:
  * 			PyErr_Clear()             # <<<<<<<<<<<<<<
@@ -9000,52 +12165,52 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
  * 			del _WINDOWS[<uintptr_t>hwnd]
 */
         PyErr_Clear();
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        goto __pyx_L15_exception_handled;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        goto __pyx_L75_exception_handled;
       }
-      goto __pyx_L16_except_error;
+      goto __pyx_L76_except_error;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":757
+      /* "nice_titlebar/_win32_titlebar.pyx":977
  * 	if msg == WM_DESTROY:
  * 		ntb_d2d_release(&window._d2d)
  * 		try:             # <<<<<<<<<<<<<<
  * 			if window._close_callback is not None:
  * 				window._close_callback(window._close_owner)
 */
-      __pyx_L16_except_error:;
-      __Pyx_XGIVEREF(__pyx_t_5);
-      __Pyx_XGIVEREF(__pyx_t_6);
+      __pyx_L76_except_error:;
+      __Pyx_XGIVEREF(__pyx_t_8);
       __Pyx_XGIVEREF(__pyx_t_7);
-      __Pyx_ExceptionReset(__pyx_t_5, __pyx_t_6, __pyx_t_7);
+      __Pyx_XGIVEREF(__pyx_t_6);
+      __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_7, __pyx_t_6);
       goto __pyx_L1_error;
-      __pyx_L15_exception_handled:;
-      __Pyx_XGIVEREF(__pyx_t_5);
-      __Pyx_XGIVEREF(__pyx_t_6);
+      __pyx_L75_exception_handled:;
+      __Pyx_XGIVEREF(__pyx_t_8);
       __Pyx_XGIVEREF(__pyx_t_7);
-      __Pyx_ExceptionReset(__pyx_t_5, __pyx_t_6, __pyx_t_7);
-      __pyx_L19_try_end:;
+      __Pyx_XGIVEREF(__pyx_t_6);
+      __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_7, __pyx_t_6);
+      __pyx_L79_try_end:;
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":762
+    /* "nice_titlebar/_win32_titlebar.pyx":982
  * 		except Exception:
  * 			PyErr_Clear()
  * 		if <uintptr_t>hwnd in _WINDOWS:             # <<<<<<<<<<<<<<
  * 			del _WINDOWS[<uintptr_t>hwnd]
  * 		window._hwnd = <HWND>0
 */
-    __pyx_t_2 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_hwnd)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 762, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_9 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_hwnd)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 982, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
     if (unlikely(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 762, __pyx_L1_error)
+      __PYX_ERR(0, 982, __pyx_L1_error)
     }
-    __pyx_t_3 = (__Pyx_PyDict_ContainsTF(__pyx_t_2, __pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 762, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_3 = (__Pyx_PyDict_ContainsTF(__pyx_t_9, __pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 982, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     if (__pyx_t_3) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":763
+      /* "nice_titlebar/_win32_titlebar.pyx":983
  * 			PyErr_Clear()
  * 		if <uintptr_t>hwnd in _WINDOWS:
  * 			del _WINDOWS[<uintptr_t>hwnd]             # <<<<<<<<<<<<<<
@@ -9054,14 +12219,14 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
       if (unlikely(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 763, __pyx_L1_error)
+        __PYX_ERR(0, 983, __pyx_L1_error)
       }
-      __pyx_t_2 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_hwnd)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 763, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      if (unlikely((PyDict_DelItem(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, __pyx_t_2) < 0))) __PYX_ERR(0, 763, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_9 = __Pyx_PyLong_FromSize_t(((uintptr_t)__pyx_v_hwnd)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 983, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      if (unlikely((PyDict_DelItem(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, __pyx_t_9) < 0))) __PYX_ERR(0, 983, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-      /* "nice_titlebar/_win32_titlebar.pyx":762
+      /* "nice_titlebar/_win32_titlebar.pyx":982
  * 		except Exception:
  * 			PyErr_Clear()
  * 		if <uintptr_t>hwnd in _WINDOWS:             # <<<<<<<<<<<<<<
@@ -9070,7 +12235,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":764
+    /* "nice_titlebar/_win32_titlebar.pyx":984
  * 		if <uintptr_t>hwnd in _WINDOWS:
  * 			del _WINDOWS[<uintptr_t>hwnd]
  * 		window._hwnd = <HWND>0             # <<<<<<<<<<<<<<
@@ -9079,7 +12244,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_window->_hwnd = ((HWND)0);
 
-    /* "nice_titlebar/_win32_titlebar.pyx":765
+    /* "nice_titlebar/_win32_titlebar.pyx":985
  * 			del _WINDOWS[<uintptr_t>hwnd]
  * 		window._hwnd = <HWND>0
  * 		window.created = False             # <<<<<<<<<<<<<<
@@ -9088,7 +12253,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     __pyx_v_window->created = 0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":766
+    /* "nice_titlebar/_win32_titlebar.pyx":986
  * 		window._hwnd = <HWND>0
  * 		window.created = False
  * 		Py_DECREF(window)             # <<<<<<<<<<<<<<
@@ -9097,18 +12262,18 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     Py_DECREF(((PyObject *)__pyx_v_window));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":767
+    /* "nice_titlebar/_win32_titlebar.pyx":987
  * 		window.created = False
  * 		Py_DECREF(window)
  * 		if not _WINDOWS:             # <<<<<<<<<<<<<<
  * 			PostQuitMessage(0)
  * 		return 0
 */
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 767, __pyx_L1_error)
-    __pyx_t_10 = (!__pyx_t_3);
-    if (__pyx_t_10) {
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 987, __pyx_L1_error)
+    __pyx_t_5 = (!__pyx_t_3);
+    if (__pyx_t_5) {
 
-      /* "nice_titlebar/_win32_titlebar.pyx":768
+      /* "nice_titlebar/_win32_titlebar.pyx":988
  * 		Py_DECREF(window)
  * 		if not _WINDOWS:
  * 			PostQuitMessage(0)             # <<<<<<<<<<<<<<
@@ -9117,7 +12282,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
       (void)(PostQuitMessage(0));
 
-      /* "nice_titlebar/_win32_titlebar.pyx":767
+      /* "nice_titlebar/_win32_titlebar.pyx":987
  * 		window.created = False
  * 		Py_DECREF(window)
  * 		if not _WINDOWS:             # <<<<<<<<<<<<<<
@@ -9126,7 +12291,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
     }
 
-    /* "nice_titlebar/_win32_titlebar.pyx":769
+    /* "nice_titlebar/_win32_titlebar.pyx":989
  * 		if not _WINDOWS:
  * 			PostQuitMessage(0)
  * 		return 0             # <<<<<<<<<<<<<<
@@ -9136,7 +12301,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":755
+    /* "nice_titlebar/_win32_titlebar.pyx":975
  * 		return 0
  * 
  * 	if msg == WM_DESTROY:             # <<<<<<<<<<<<<<
@@ -9145,7 +12310,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
 */
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":771
+  /* "nice_titlebar/_win32_titlebar.pyx":991
  * 		return 0
  * 
  * 	return DefWindowProcW(hwnd, msg, wparam, lparam)             # <<<<<<<<<<<<<<
@@ -9155,7 +12320,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_r = DefWindowProcW(__pyx_v_hwnd, __pyx_v_msg, __pyx_v_wparam, __pyx_v_lparam);
   goto __pyx_L0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":699
+  /* "nice_titlebar/_win32_titlebar.pyx":880
  * 
  * 
  * cdef LRESULT __stdcall _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) except? -1 with gil:             # <<<<<<<<<<<<<<
@@ -9167,7 +12332,9 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
   __Pyx_AddTraceback("nice_titlebar._win32_titlebar._wnd_proc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1L;
   __pyx_L0:;
@@ -9177,7 +12344,7 @@ static LRESULT __stdcall __pyx_f_13nice_titlebar_15_win32_titlebar__wnd_proc(HWN
   return __pyx_r;
 }
 
-/* "nice_titlebar/_win32_titlebar.pyx":774
+/* "nice_titlebar/_win32_titlebar.pyx":994
  * 
  * 
  * def run_event_loop():             # <<<<<<<<<<<<<<
@@ -9209,7 +12376,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_run_event_loop(CYTHO
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("run_event_loop", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":777
+  /* "nice_titlebar/_win32_titlebar.pyx":997
  * 	"""Run the standard Win32 message loop until windows are closed."""
  * 	cdef MSG msg
  * 	while GetMessageW(&msg, <HWND>0, 0, 0) > 0:             # <<<<<<<<<<<<<<
@@ -9220,7 +12387,7 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_run_event_loop(CYTHO
     __pyx_t_1 = (GetMessageW((&__pyx_v_msg), ((HWND)0), 0, 0) > 0);
     if (!__pyx_t_1) break;
 
-    /* "nice_titlebar/_win32_titlebar.pyx":778
+    /* "nice_titlebar/_win32_titlebar.pyx":998
  * 	cdef MSG msg
  * 	while GetMessageW(&msg, <HWND>0, 0, 0) > 0:
  * 		TranslateMessage(&msg)             # <<<<<<<<<<<<<<
@@ -9229,16 +12396,17 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_run_event_loop(CYTHO
 */
     (void)(TranslateMessage((&__pyx_v_msg)));
 
-    /* "nice_titlebar/_win32_titlebar.pyx":779
+    /* "nice_titlebar/_win32_titlebar.pyx":999
  * 	while GetMessageW(&msg, <HWND>0, 0, 0) > 0:
  * 		TranslateMessage(&msg)
  * 		DispatchMessageW(&msg)             # <<<<<<<<<<<<<<
+ * 
  * 
 */
     (void)(DispatchMessageW((&__pyx_v_msg)));
   }
 
-  /* "nice_titlebar/_win32_titlebar.pyx":774
+  /* "nice_titlebar/_win32_titlebar.pyx":994
  * 
  * 
  * def run_event_loop():             # <<<<<<<<<<<<<<
@@ -9253,6 +12421,174 @@ static PyObject *__pyx_pf_13nice_titlebar_15_win32_titlebar_run_event_loop(CYTHO
   return __pyx_r;
 }
 /* #### Code section: module_exttypes ### */
+
+static PyObject *__pyx_tp_new_13nice_titlebar_15_win32_titlebar_Canvas(PyTypeObject *t, PyObject *a, PyObject *k) {
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *p;
+  PyObject *o;
+  o = __Pyx_AllocateExtensionType(t, 0);
+  if (unlikely(!o)) return 0;
+  p = ((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)o);
+  p->_window = ((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)Py_None); Py_INCREF(Py_None);
+  if (unlikely(__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_1__cinit__(o, a, k) < 0)) goto bad;
+  return o;
+  bad:
+  Py_DECREF(o); o = 0;
+  return NULL;
+}
+
+static void __pyx_tp_dealloc_13nice_titlebar_15_win32_titlebar_Canvas(PyObject *o) {
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *p = (struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)o;
+  #if CYTHON_USE_TP_FINALIZE
+  if (unlikely(__Pyx_PyObject_GetSlot(o, tp_finalize, destructor)) && !__Pyx_PyObject_GC_IsFinalized(o)) {
+    if (__Pyx_PyObject_GetSlot(o, tp_dealloc, destructor) == __pyx_tp_dealloc_13nice_titlebar_15_win32_titlebar_Canvas) {
+      if (PyObject_CallFinalizerFromDealloc(o)) return;
+    }
+  }
+  #endif
+  PyObject_GC_UnTrack(o);
+  {
+    PyObject *etype, *eval, *etb;
+    PyErr_Fetch(&etype, &eval, &etb);
+    __Pyx_SET_REFCNT(o, Py_REFCNT(o) + 1);
+    __pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_3__dealloc__(o);
+    __Pyx_SET_REFCNT(o, Py_REFCNT(o) - 1);
+    PyErr_Restore(etype, eval, etb);
+  }
+  Py_CLEAR(p->_window);
+  PyTypeObject *tp = Py_TYPE(o);
+  #if CYTHON_USE_TYPE_SLOTS
+  (*tp->tp_free)(o);
+  #else
+  {
+    freefunc tp_free = (freefunc)PyType_GetSlot(tp, Py_tp_free);
+    if (tp_free) tp_free(o);
+  }
+  #endif
+  #if CYTHON_USE_TYPE_SPECS
+  Py_DECREF(tp);
+  #endif
+}
+
+static int __pyx_tp_traverse_13nice_titlebar_15_win32_titlebar_Canvas(PyObject *o, visitproc v, void *a) {
+  int e;
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *p = (struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)o;
+  {
+    e = __Pyx_call_type_traverse(o, 1, v, a);
+    if (e) return e;
+  }
+  if (p->_window) {
+    e = (*v)(((PyObject *)p->_window), a); if (e) return e;
+  }
+  return 0;
+}
+
+static int __pyx_tp_clear_13nice_titlebar_15_win32_titlebar_Canvas(PyObject *o) {
+  PyObject* tmp;
+  struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *p = (struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas *)o;
+  tmp = ((PyObject*)p->_window);
+  p->_window = ((struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  return 0;
+}
+
+static PyMethodDef __pyx_methods_13nice_titlebar_15_win32_titlebar_Canvas[] = {
+  {"clear", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_5clear, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_6Canvas_4clear},
+  {"fill_rect", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_7fill_rect, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_6Canvas_6fill_rect},
+  {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_9__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_6Canvas_11__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {0, 0, 0, 0}
+};
+#if CYTHON_USE_TYPE_SPECS
+static PyType_Slot __pyx_type_13nice_titlebar_15_win32_titlebar_Canvas_slots[] = {
+  {Py_tp_dealloc, (void *)__pyx_tp_dealloc_13nice_titlebar_15_win32_titlebar_Canvas},
+  {Py_tp_doc, (void *)PyDoc_STR("Lightweight Direct2D canvas exposed to Python.")},
+  {Py_tp_traverse, (void *)__pyx_tp_traverse_13nice_titlebar_15_win32_titlebar_Canvas},
+  {Py_tp_clear, (void *)__pyx_tp_clear_13nice_titlebar_15_win32_titlebar_Canvas},
+  {Py_tp_methods, (void *)__pyx_methods_13nice_titlebar_15_win32_titlebar_Canvas},
+  {Py_tp_new, (void *)__pyx_tp_new_13nice_titlebar_15_win32_titlebar_Canvas},
+  {0, 0},
+};
+static PyType_Spec __pyx_type_13nice_titlebar_15_win32_titlebar_Canvas_spec = {
+  "nice_titlebar._win32_titlebar.Canvas",
+  sizeof(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas),
+  0,
+  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
+  __pyx_type_13nice_titlebar_15_win32_titlebar_Canvas_slots,
+};
+#else
+
+static PyTypeObject __pyx_type_13nice_titlebar_15_win32_titlebar_Canvas = {
+  PyVarObject_HEAD_INIT(0, 0)
+  "nice_titlebar._win32_titlebar.""Canvas", /*tp_name*/
+  sizeof(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_Canvas), /*tp_basicsize*/
+  0, /*tp_itemsize*/
+  __pyx_tp_dealloc_13nice_titlebar_15_win32_titlebar_Canvas, /*tp_dealloc*/
+  0, /*tp_vectorcall_offset*/
+  0, /*tp_getattr*/
+  0, /*tp_setattr*/
+  0, /*tp_as_async*/
+  0, /*tp_repr*/
+  0, /*tp_as_number*/
+  0, /*tp_as_sequence*/
+  0, /*tp_as_mapping*/
+  0, /*tp_hash*/
+  0, /*tp_call*/
+  0, /*tp_str*/
+  0, /*tp_getattro*/
+  0, /*tp_setattro*/
+  0, /*tp_as_buffer*/
+  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
+  PyDoc_STR("Lightweight Direct2D canvas exposed to Python."), /*tp_doc*/
+  __pyx_tp_traverse_13nice_titlebar_15_win32_titlebar_Canvas, /*tp_traverse*/
+  __pyx_tp_clear_13nice_titlebar_15_win32_titlebar_Canvas, /*tp_clear*/
+  0, /*tp_richcompare*/
+  0, /*tp_weaklistoffset*/
+  0, /*tp_iter*/
+  0, /*tp_iternext*/
+  __pyx_methods_13nice_titlebar_15_win32_titlebar_Canvas, /*tp_methods*/
+  0, /*tp_members*/
+  0, /*tp_getset*/
+  0, /*tp_base*/
+  0, /*tp_dict*/
+  0, /*tp_descr_get*/
+  0, /*tp_descr_set*/
+  #if !CYTHON_USE_TYPE_SPECS
+  0, /*tp_dictoffset*/
+  #endif
+  0, /*tp_init*/
+  0, /*tp_alloc*/
+  __pyx_tp_new_13nice_titlebar_15_win32_titlebar_Canvas, /*tp_new*/
+  0, /*tp_free*/
+  0, /*tp_is_gc*/
+  0, /*tp_bases*/
+  0, /*tp_mro*/
+  0, /*tp_cache*/
+  0, /*tp_subclasses*/
+  0, /*tp_weaklist*/
+  0, /*tp_del*/
+  0, /*tp_version_tag*/
+  #if CYTHON_USE_TP_FINALIZE
+  0, /*tp_finalize*/
+  #else
+  NULL, /*tp_finalize*/
+  #endif
+  #if !CYTHON_COMPILING_IN_PYPY || PYPY_VERSION_NUM >= 0x07030800
+  0, /*tp_vectorcall*/
+  #endif
+  #if __PYX_NEED_TP_PRINT_SLOT == 1
+  0, /*tp_print*/
+  #endif
+  #if PY_VERSION_HEX >= 0x030C0000
+  0, /*tp_watched*/
+  #endif
+  #if PY_VERSION_HEX >= 0x030d00A4
+  0, /*tp_versions_used*/
+  #endif
+  #if CYTHON_COMPILING_IN_PYPY && PY_VERSION_HEX >= 0x03090000 && PY_VERSION_HEX < 0x030a0000
+  0, /*tp_pypy_flags*/
+  #endif
+};
+#endif
 static struct __pyx_vtabstruct_13nice_titlebar_15_win32_titlebar_NativeWindow __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow;
 
 static PyObject *__pyx_tp_new_13nice_titlebar_15_win32_titlebar_NativeWindow(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
@@ -9271,6 +12607,13 @@ static PyObject *__pyx_tp_new_13nice_titlebar_15_win32_titlebar_NativeWindow(PyT
   p->_button_rects = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->_close_callback = Py_None; Py_INCREF(Py_None);
   p->_close_owner = Py_None; Py_INCREF(Py_None);
+  p->_owner = Py_None; Py_INCREF(Py_None);
+  p->_paint_callback = Py_None; Py_INCREF(Py_None);
+  p->_mouse_move_cb = Py_None; Py_INCREF(Py_None);
+  p->_mouse_down_cb = Py_None; Py_INCREF(Py_None);
+  p->_mouse_up_cb = Py_None; Py_INCREF(Py_None);
+  p->_key_down_cb = Py_None; Py_INCREF(Py_None);
+  p->_char_cb = Py_None; Py_INCREF(Py_None);
   if (unlikely(__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_1__cinit__(o, __pyx_mstate_global->__pyx_empty_tuple, NULL) < 0)) goto bad;
   return o;
   bad:
@@ -9305,6 +12648,13 @@ static void __pyx_tp_dealloc_13nice_titlebar_15_win32_titlebar_NativeWindow(PyOb
   Py_CLEAR(p->_button_rects);
   Py_CLEAR(p->_close_callback);
   Py_CLEAR(p->_close_owner);
+  Py_CLEAR(p->_owner);
+  Py_CLEAR(p->_paint_callback);
+  Py_CLEAR(p->_mouse_move_cb);
+  Py_CLEAR(p->_mouse_down_cb);
+  Py_CLEAR(p->_mouse_up_cb);
+  Py_CLEAR(p->_key_down_cb);
+  Py_CLEAR(p->_char_cb);
   PyTypeObject *tp = Py_TYPE(o);
   #if CYTHON_USE_TYPE_SLOTS
   (*tp->tp_free)(o);
@@ -9347,6 +12697,27 @@ static int __pyx_tp_traverse_13nice_titlebar_15_win32_titlebar_NativeWindow(PyOb
   if (p->_close_owner) {
     e = (*v)(p->_close_owner, a); if (e) return e;
   }
+  if (p->_owner) {
+    e = (*v)(p->_owner, a); if (e) return e;
+  }
+  if (p->_paint_callback) {
+    e = (*v)(p->_paint_callback, a); if (e) return e;
+  }
+  if (p->_mouse_move_cb) {
+    e = (*v)(p->_mouse_move_cb, a); if (e) return e;
+  }
+  if (p->_mouse_down_cb) {
+    e = (*v)(p->_mouse_down_cb, a); if (e) return e;
+  }
+  if (p->_mouse_up_cb) {
+    e = (*v)(p->_mouse_up_cb, a); if (e) return e;
+  }
+  if (p->_key_down_cb) {
+    e = (*v)(p->_key_down_cb, a); if (e) return e;
+  }
+  if (p->_char_cb) {
+    e = (*v)(p->_char_cb, a); if (e) return e;
+  }
   return 0;
 }
 
@@ -9374,6 +12745,27 @@ static int __pyx_tp_clear_13nice_titlebar_15_win32_titlebar_NativeWindow(PyObjec
   tmp = ((PyObject*)p->_close_owner);
   p->_close_owner = Py_None; Py_INCREF(Py_None);
   Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_owner);
+  p->_owner = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_paint_callback);
+  p->_paint_callback = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_mouse_move_cb);
+  p->_mouse_move_cb = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_mouse_down_cb);
+  p->_mouse_down_cb = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_mouse_up_cb);
+  p->_mouse_up_cb = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_key_down_cb);
+  p->_key_down_cb = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_char_cb);
+  p->_char_cb = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
   return 0;
 }
 
@@ -9396,10 +12788,15 @@ static PyMethodDef __pyx_methods_13nice_titlebar_15_win32_titlebar_NativeWindow[
   {"set_client_background", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_9set_client_background, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_8set_client_background},
   {"set_title", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_11set_title, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_10set_title},
   {"register_close_callback", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_13register_close_callback, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_12register_close_callback},
-  {"show", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15show, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_14show},
-  {"close", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17close, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_16close},
-  {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"set_owner", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_15set_owner, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_14set_owner},
+  {"set_paint_callback", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_17set_paint_callback, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_16set_paint_callback},
+  {"set_mouse_callbacks", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_19set_mouse_callbacks, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_18set_mouse_callbacks},
+  {"set_key_callbacks", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_21set_key_callbacks, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_20set_key_callbacks},
+  {"invalidate", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_23invalidate, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_22invalidate},
+  {"show", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_25show, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_24show},
+  {"close", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_27close, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_26close},
+  {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_29__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_13nice_titlebar_15_win32_titlebar_12NativeWindow_31__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -9556,10 +12953,34 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
+  #if CYTHON_USE_TYPE_SPECS
+  __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_13nice_titlebar_15_win32_titlebar_Canvas_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas)) __PYX_ERR(0, 371, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_13nice_titlebar_15_win32_titlebar_Canvas_spec, __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas) < (0)) __PYX_ERR(0, 371, __pyx_L1_error)
+  #else
+  __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas = &__pyx_type_13nice_titlebar_15_win32_titlebar_Canvas;
+  #endif
+  #if !CYTHON_COMPILING_IN_LIMITED_API
+  #endif
+  #if !CYTHON_USE_TYPE_SPECS
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas) < (0)) __PYX_ERR(0, 371, __pyx_L1_error)
+  #endif
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount((PyObject*)__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas);
+  #endif
+  #if !CYTHON_COMPILING_IN_LIMITED_API
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas->tp_dictoffset && __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas->tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas->tp_getattro = PyObject_GenericGetAttr;
+  }
+  #endif
+  if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_Canvas, (PyObject *) __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas) < (0)) __PYX_ERR(0, 371, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas) < (0)) __PYX_ERR(0, 371, __pyx_L1_error)
   __pyx_vtabptr_13nice_titlebar_15_win32_titlebar_NativeWindow = &__pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow;
+  __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._canvas_clear = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, PyObject *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__canvas_clear;
+  __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._canvas_fill_rect = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, float, float, float, float, PyObject *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__canvas_fill_rect;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._register_window_class = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__register_window_class;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._layout_buttons = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__layout_buttons;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._invalidate = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate;
+  __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._invalidate_button = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__invalidate_button;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._hit_test = (int (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int, int))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__hit_test;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._button_hit = (int (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int, int))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__button_hit;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._draw = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__draw;
@@ -9567,15 +12988,15 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._default_icon = (PyObject *(*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, PyObject *))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__default_icon;
   __pyx_vtable_13nice_titlebar_15_win32_titlebar_NativeWindow._handle_button_click = (void (*)(struct __pyx_obj_13nice_titlebar_15_win32_titlebar_NativeWindow *, int, int))__pyx_f_13nice_titlebar_15_win32_titlebar_12NativeWindow__handle_button_click;
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow)) __PYX_ERR(0, 360, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow_spec, __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 360, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow)) __PYX_ERR(0, 416, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow_spec, __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 416, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow = &__pyx_type_13nice_titlebar_15_win32_titlebar_NativeWindow;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 360, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 416, __pyx_L1_error)
   #endif
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount((PyObject*)__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow);
@@ -9587,7 +13008,7 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   #endif
   #if CYTHON_UPDATE_DESCRIPTOR_DOC
   {
-    PyObject *wrapper = PyObject_GetAttrString((PyObject *)__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, "__init__"); if (unlikely(!wrapper)) __PYX_ERR(0, 360, __pyx_L1_error)
+    PyObject *wrapper = PyObject_GetAttrString((PyObject *)__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, "__init__"); if (unlikely(!wrapper)) __PYX_ERR(0, 416, __pyx_L1_error)
     if (__Pyx_IS_TYPE(wrapper, &PyWrapperDescr_Type)) {
       __pyx_wrapperbase_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__ = *((PyWrapperDescrObject *)wrapper)->d_base;
       __pyx_wrapperbase_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__.doc = __pyx_doc_13nice_titlebar_15_win32_titlebar_12NativeWindow_2__init__;
@@ -9595,10 +13016,10 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
     }
   }
   #endif
-  if (__Pyx_SetVtable(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_vtabptr_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 360, __pyx_L1_error)
-  if (__Pyx_MergeVtables(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 360, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_NativeWindow, (PyObject *) __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 360, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject *) __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 360, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_vtabptr_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 416, __pyx_L1_error)
+  if (__Pyx_MergeVtables(__pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 416, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_NativeWindow, (PyObject *) __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 416, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_mstate->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow) < (0)) __PYX_ERR(0, 416, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -9919,7 +13340,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
   (void)__Pyx_modinit_function_import_code(__pyx_mstate);
   /*--- Execution code ---*/
 
-  /* "nice_titlebar/_win32_titlebar.pyx":292
+  /* "nice_titlebar/_win32_titlebar.pyx":313
  * 		unsigned long lPrivate
  * 
  * cdef int WS_POPUP = 0x80000000             # <<<<<<<<<<<<<<
@@ -9928,7 +13349,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_POPUP = 0x80000000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":293
+  /* "nice_titlebar/_win32_titlebar.pyx":314
  * 
  * cdef int WS_POPUP = 0x80000000
  * cdef int WS_THICKFRAME = 0x00040000             # <<<<<<<<<<<<<<
@@ -9937,7 +13358,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_THICKFRAME = 0x00040000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":294
+  /* "nice_titlebar/_win32_titlebar.pyx":315
  * cdef int WS_POPUP = 0x80000000
  * cdef int WS_THICKFRAME = 0x00040000
  * cdef int WS_MINIMIZEBOX = 0x00020000             # <<<<<<<<<<<<<<
@@ -9946,7 +13367,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_MINIMIZEBOX = 0x00020000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":295
+  /* "nice_titlebar/_win32_titlebar.pyx":316
  * cdef int WS_THICKFRAME = 0x00040000
  * cdef int WS_MINIMIZEBOX = 0x00020000
  * cdef int WS_MAXIMIZEBOX = 0x00010000             # <<<<<<<<<<<<<<
@@ -9955,7 +13376,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_MAXIMIZEBOX = 0x00010000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":296
+  /* "nice_titlebar/_win32_titlebar.pyx":317
  * cdef int WS_MINIMIZEBOX = 0x00020000
  * cdef int WS_MAXIMIZEBOX = 0x00010000
  * cdef int WS_SYSMENU = 0x00080000             # <<<<<<<<<<<<<<
@@ -9964,7 +13385,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_SYSMENU = 0x00080000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":297
+  /* "nice_titlebar/_win32_titlebar.pyx":318
  * cdef int WS_MAXIMIZEBOX = 0x00010000
  * cdef int WS_SYSMENU = 0x00080000
  * cdef int WS_VISIBLE = 0x10000000             # <<<<<<<<<<<<<<
@@ -9973,7 +13394,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_VISIBLE = 0x10000000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":298
+  /* "nice_titlebar/_win32_titlebar.pyx":319
  * cdef int WS_SYSMENU = 0x00080000
  * cdef int WS_VISIBLE = 0x10000000
  * cdef int WS_EX_APPWINDOW = 0x00040000             # <<<<<<<<<<<<<<
@@ -9982,7 +13403,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_EX_APPWINDOW = 0x00040000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":299
+  /* "nice_titlebar/_win32_titlebar.pyx":320
  * cdef int WS_VISIBLE = 0x10000000
  * cdef int WS_EX_APPWINDOW = 0x00040000
  * cdef int WS_EX_LAYERED = 0x00080000             # <<<<<<<<<<<<<<
@@ -9991,7 +13412,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WS_EX_LAYERED = 0x00080000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":300
+  /* "nice_titlebar/_win32_titlebar.pyx":321
  * cdef int WS_EX_APPWINDOW = 0x00040000
  * cdef int WS_EX_LAYERED = 0x00080000
  * cdef int CW_USEDEFAULT = 0x80000000             # <<<<<<<<<<<<<<
@@ -10000,7 +13421,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_CW_USEDEFAULT = 0x80000000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":301
+  /* "nice_titlebar/_win32_titlebar.pyx":322
  * cdef int WS_EX_LAYERED = 0x00080000
  * cdef int CW_USEDEFAULT = 0x80000000
  * cdef int SW_SHOW = 5             # <<<<<<<<<<<<<<
@@ -10009,7 +13430,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_SW_SHOW = 5;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":302
+  /* "nice_titlebar/_win32_titlebar.pyx":323
  * cdef int CW_USEDEFAULT = 0x80000000
  * cdef int SW_SHOW = 5
  * cdef int GWLP_USERDATA = -21             # <<<<<<<<<<<<<<
@@ -10018,7 +13439,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_GWLP_USERDATA = -21;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":303
+  /* "nice_titlebar/_win32_titlebar.pyx":324
  * cdef int SW_SHOW = 5
  * cdef int GWLP_USERDATA = -21
  * cdef int LWA_ALPHA = 0x00000002             # <<<<<<<<<<<<<<
@@ -10027,7 +13448,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_LWA_ALPHA = 0x00000002;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":304
+  /* "nice_titlebar/_win32_titlebar.pyx":325
  * cdef int GWLP_USERDATA = -21
  * cdef int LWA_ALPHA = 0x00000002
  * cdef int WM_DESTROY = 0x0002             # <<<<<<<<<<<<<<
@@ -10036,7 +13457,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_DESTROY = 0x0002;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":305
+  /* "nice_titlebar/_win32_titlebar.pyx":326
  * cdef int LWA_ALPHA = 0x00000002
  * cdef int WM_DESTROY = 0x0002
  * cdef int WM_CLOSE = 0x0010             # <<<<<<<<<<<<<<
@@ -10045,7 +13466,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_CLOSE = 0x0010;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":306
+  /* "nice_titlebar/_win32_titlebar.pyx":327
  * cdef int WM_DESTROY = 0x0002
  * cdef int WM_CLOSE = 0x0010
  * cdef int WM_PAINT = 0x000F             # <<<<<<<<<<<<<<
@@ -10054,7 +13475,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_PAINT = 0x000F;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":307
+  /* "nice_titlebar/_win32_titlebar.pyx":328
  * cdef int WM_CLOSE = 0x0010
  * cdef int WM_PAINT = 0x000F
  * cdef int WM_SIZE = 0x0005             # <<<<<<<<<<<<<<
@@ -10063,44 +13484,71 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SIZE = 0x0005;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":308
+  /* "nice_titlebar/_win32_titlebar.pyx":329
  * cdef int WM_PAINT = 0x000F
  * cdef int WM_SIZE = 0x0005
  * cdef int WM_NCHITTEST = 0x0084             # <<<<<<<<<<<<<<
  * cdef int WM_LBUTTONDOWN = 0x0201
- * cdef int WM_MOUSEMOVE = 0x0200
+ * cdef int WM_LBUTTONUP = 0x0202
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_NCHITTEST = 0x0084;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":309
+  /* "nice_titlebar/_win32_titlebar.pyx":330
  * cdef int WM_SIZE = 0x0005
  * cdef int WM_NCHITTEST = 0x0084
  * cdef int WM_LBUTTONDOWN = 0x0201             # <<<<<<<<<<<<<<
+ * cdef int WM_LBUTTONUP = 0x0202
  * cdef int WM_MOUSEMOVE = 0x0200
- * cdef int WM_NCCALCSIZE = 0x0083
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_LBUTTONDOWN = 0x0201;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":310
+  /* "nice_titlebar/_win32_titlebar.pyx":331
  * cdef int WM_NCHITTEST = 0x0084
  * cdef int WM_LBUTTONDOWN = 0x0201
+ * cdef int WM_LBUTTONUP = 0x0202             # <<<<<<<<<<<<<<
+ * cdef int WM_MOUSEMOVE = 0x0200
+ * cdef int WM_KEYDOWN = 0x0100
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_WM_LBUTTONUP = 0x0202;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":332
+ * cdef int WM_LBUTTONDOWN = 0x0201
+ * cdef int WM_LBUTTONUP = 0x0202
  * cdef int WM_MOUSEMOVE = 0x0200             # <<<<<<<<<<<<<<
- * cdef int WM_NCCALCSIZE = 0x0083
- * cdef int HTCLIENT = 1
+ * cdef int WM_KEYDOWN = 0x0100
+ * cdef int WM_CHAR = 0x0102
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_MOUSEMOVE = 0x0200;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":311
- * cdef int WM_LBUTTONDOWN = 0x0201
+  /* "nice_titlebar/_win32_titlebar.pyx":333
+ * cdef int WM_LBUTTONUP = 0x0202
  * cdef int WM_MOUSEMOVE = 0x0200
+ * cdef int WM_KEYDOWN = 0x0100             # <<<<<<<<<<<<<<
+ * cdef int WM_CHAR = 0x0102
+ * cdef int WM_NCCALCSIZE = 0x0083
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_WM_KEYDOWN = 0x0100;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":334
+ * cdef int WM_MOUSEMOVE = 0x0200
+ * cdef int WM_KEYDOWN = 0x0100
+ * cdef int WM_CHAR = 0x0102             # <<<<<<<<<<<<<<
+ * cdef int WM_NCCALCSIZE = 0x0083
+ * cdef int HTCLIENT = 1
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_WM_CHAR = 0x0102;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":335
+ * cdef int WM_KEYDOWN = 0x0100
+ * cdef int WM_CHAR = 0x0102
  * cdef int WM_NCCALCSIZE = 0x0083             # <<<<<<<<<<<<<<
  * cdef int HTCLIENT = 1
  * cdef int HTCAPTION = 2
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_NCCALCSIZE = 0x0083;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":312
- * cdef int WM_MOUSEMOVE = 0x0200
+  /* "nice_titlebar/_win32_titlebar.pyx":336
+ * cdef int WM_CHAR = 0x0102
  * cdef int WM_NCCALCSIZE = 0x0083
  * cdef int HTCLIENT = 1             # <<<<<<<<<<<<<<
  * cdef int HTCAPTION = 2
@@ -10108,7 +13556,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTCLIENT = 1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":313
+  /* "nice_titlebar/_win32_titlebar.pyx":337
  * cdef int WM_NCCALCSIZE = 0x0083
  * cdef int HTCLIENT = 1
  * cdef int HTCAPTION = 2             # <<<<<<<<<<<<<<
@@ -10117,7 +13565,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTCAPTION = 2;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":314
+  /* "nice_titlebar/_win32_titlebar.pyx":338
  * cdef int HTCLIENT = 1
  * cdef int HTCAPTION = 2
  * cdef int HTLEFT = 10             # <<<<<<<<<<<<<<
@@ -10126,7 +13574,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTLEFT = 10;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":315
+  /* "nice_titlebar/_win32_titlebar.pyx":339
  * cdef int HTCAPTION = 2
  * cdef int HTLEFT = 10
  * cdef int HTRIGHT = 11             # <<<<<<<<<<<<<<
@@ -10135,7 +13583,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTRIGHT = 11;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":316
+  /* "nice_titlebar/_win32_titlebar.pyx":340
  * cdef int HTLEFT = 10
  * cdef int HTRIGHT = 11
  * cdef int HTTOP = 12             # <<<<<<<<<<<<<<
@@ -10144,7 +13592,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTTOP = 12;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":317
+  /* "nice_titlebar/_win32_titlebar.pyx":341
  * cdef int HTRIGHT = 11
  * cdef int HTTOP = 12
  * cdef int HTTOPLEFT = 13             # <<<<<<<<<<<<<<
@@ -10153,7 +13601,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTTOPLEFT = 13;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":318
+  /* "nice_titlebar/_win32_titlebar.pyx":342
  * cdef int HTTOP = 12
  * cdef int HTTOPLEFT = 13
  * cdef int HTTOPRIGHT = 14             # <<<<<<<<<<<<<<
@@ -10162,7 +13610,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTTOPRIGHT = 14;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":319
+  /* "nice_titlebar/_win32_titlebar.pyx":343
  * cdef int HTTOPLEFT = 13
  * cdef int HTTOPRIGHT = 14
  * cdef int HTBOTTOM = 15             # <<<<<<<<<<<<<<
@@ -10171,7 +13619,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTBOTTOM = 15;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":320
+  /* "nice_titlebar/_win32_titlebar.pyx":344
  * cdef int HTTOPRIGHT = 14
  * cdef int HTBOTTOM = 15
  * cdef int HTBOTTOMLEFT = 16             # <<<<<<<<<<<<<<
@@ -10180,7 +13628,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTBOTTOMLEFT = 16;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":321
+  /* "nice_titlebar/_win32_titlebar.pyx":345
  * cdef int HTBOTTOM = 15
  * cdef int HTBOTTOMLEFT = 16
  * cdef int HTBOTTOMRIGHT = 17             # <<<<<<<<<<<<<<
@@ -10189,7 +13637,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_HTBOTTOMRIGHT = 17;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":322
+  /* "nice_titlebar/_win32_titlebar.pyx":346
  * cdef int HTBOTTOMLEFT = 16
  * cdef int HTBOTTOMRIGHT = 17
  * cdef int TRANSPARENT = 1             # <<<<<<<<<<<<<<
@@ -10198,7 +13646,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_TRANSPARENT = 1;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":323
+  /* "nice_titlebar/_win32_titlebar.pyx":347
  * cdef int HTBOTTOMRIGHT = 17
  * cdef int TRANSPARENT = 1
  * cdef int DT_LEFT = 0x0000             # <<<<<<<<<<<<<<
@@ -10207,7 +13655,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_DT_LEFT = 0x0000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":324
+  /* "nice_titlebar/_win32_titlebar.pyx":348
  * cdef int TRANSPARENT = 1
  * cdef int DT_LEFT = 0x0000
  * cdef int DT_VCENTER = 0x0004             # <<<<<<<<<<<<<<
@@ -10216,35 +13664,44 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_DT_VCENTER = 0x0004;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":325
+  /* "nice_titlebar/_win32_titlebar.pyx":349
  * cdef int DT_LEFT = 0x0000
  * cdef int DT_VCENTER = 0x0004
  * cdef int DT_SINGLELINE = 0x0020             # <<<<<<<<<<<<<<
  * cdef int DT_END_ELLIPSIS = 0x00008000
- * cdef int WM_SYSCOMMAND = 0x0112
+ * cdef int DT_CENTER = 0x0001
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_DT_SINGLELINE = 0x0020;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":326
+  /* "nice_titlebar/_win32_titlebar.pyx":350
  * cdef int DT_VCENTER = 0x0004
  * cdef int DT_SINGLELINE = 0x0020
  * cdef int DT_END_ELLIPSIS = 0x00008000             # <<<<<<<<<<<<<<
+ * cdef int DT_CENTER = 0x0001
  * cdef int WM_SYSCOMMAND = 0x0112
- * cdef int SC_MINIMIZE = 0xF020
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_DT_END_ELLIPSIS = 0x00008000;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":327
+  /* "nice_titlebar/_win32_titlebar.pyx":351
  * cdef int DT_SINGLELINE = 0x0020
  * cdef int DT_END_ELLIPSIS = 0x00008000
+ * cdef int DT_CENTER = 0x0001             # <<<<<<<<<<<<<<
+ * cdef int WM_SYSCOMMAND = 0x0112
+ * cdef int SC_MINIMIZE = 0xF020
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_DT_CENTER = 0x0001;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":352
+ * cdef int DT_END_ELLIPSIS = 0x00008000
+ * cdef int DT_CENTER = 0x0001
  * cdef int WM_SYSCOMMAND = 0x0112             # <<<<<<<<<<<<<<
  * cdef int SC_MINIMIZE = 0xF020
  * cdef int SC_MAXIMIZE = 0xF030
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_WM_SYSCOMMAND = 0x0112;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":328
- * cdef int DT_END_ELLIPSIS = 0x00008000
+  /* "nice_titlebar/_win32_titlebar.pyx":353
+ * cdef int DT_CENTER = 0x0001
  * cdef int WM_SYSCOMMAND = 0x0112
  * cdef int SC_MINIMIZE = 0xF020             # <<<<<<<<<<<<<<
  * cdef int SC_MAXIMIZE = 0xF030
@@ -10252,7 +13709,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_SC_MINIMIZE = 0xF020;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":329
+  /* "nice_titlebar/_win32_titlebar.pyx":354
  * cdef int WM_SYSCOMMAND = 0x0112
  * cdef int SC_MINIMIZE = 0xF020
  * cdef int SC_MAXIMIZE = 0xF030             # <<<<<<<<<<<<<<
@@ -10261,7 +13718,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_SC_MAXIMIZE = 0xF030;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":330
+  /* "nice_titlebar/_win32_titlebar.pyx":355
  * cdef int SC_MINIMIZE = 0xF020
  * cdef int SC_MAXIMIZE = 0xF030
  * cdef int SC_RESTORE = 0xF120             # <<<<<<<<<<<<<<
@@ -10270,30 +13727,93 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_SC_RESTORE = 0xF120;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":331
+  /* "nice_titlebar/_win32_titlebar.pyx":356
  * cdef int SC_MAXIMIZE = 0xF030
  * cdef int SC_RESTORE = 0xF120
  * cdef int SC_CLOSE = 0xF060             # <<<<<<<<<<<<<<
  * 
- * cdef dict _WINDOWS = {}
+ * cdef int CLEARTYPE_QUALITY = 5
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar_SC_CLOSE = 0xF060;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":333
+  /* "nice_titlebar/_win32_titlebar.pyx":358
  * cdef int SC_CLOSE = 0xF060
+ * 
+ * cdef int CLEARTYPE_QUALITY = 5             # <<<<<<<<<<<<<<
+ * cdef int FW_NORMAL = 400
+ * cdef int DEFAULT_CHARSET = 1
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_CLEARTYPE_QUALITY = 5;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":359
+ * 
+ * cdef int CLEARTYPE_QUALITY = 5
+ * cdef int FW_NORMAL = 400             # <<<<<<<<<<<<<<
+ * cdef int DEFAULT_CHARSET = 1
+ * cdef int OUT_DEFAULT_PRECIS = 0
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_FW_NORMAL = 0x190;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":360
+ * cdef int CLEARTYPE_QUALITY = 5
+ * cdef int FW_NORMAL = 400
+ * cdef int DEFAULT_CHARSET = 1             # <<<<<<<<<<<<<<
+ * cdef int OUT_DEFAULT_PRECIS = 0
+ * cdef int CLIP_DEFAULT_PRECIS = 0
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_DEFAULT_CHARSET = 1;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":361
+ * cdef int FW_NORMAL = 400
+ * cdef int DEFAULT_CHARSET = 1
+ * cdef int OUT_DEFAULT_PRECIS = 0             # <<<<<<<<<<<<<<
+ * cdef int CLIP_DEFAULT_PRECIS = 0
+ * cdef int DEFAULT_PITCH = 0
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_OUT_DEFAULT_PRECIS = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":362
+ * cdef int DEFAULT_CHARSET = 1
+ * cdef int OUT_DEFAULT_PRECIS = 0
+ * cdef int CLIP_DEFAULT_PRECIS = 0             # <<<<<<<<<<<<<<
+ * cdef int DEFAULT_PITCH = 0
+ * cdef int FF_DONTCARE = 0
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_CLIP_DEFAULT_PRECIS = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":363
+ * cdef int OUT_DEFAULT_PRECIS = 0
+ * cdef int CLIP_DEFAULT_PRECIS = 0
+ * cdef int DEFAULT_PITCH = 0             # <<<<<<<<<<<<<<
+ * cdef int FF_DONTCARE = 0
+ * 
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_DEFAULT_PITCH = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":364
+ * cdef int CLIP_DEFAULT_PRECIS = 0
+ * cdef int DEFAULT_PITCH = 0
+ * cdef int FF_DONTCARE = 0             # <<<<<<<<<<<<<<
+ * 
+ * cdef dict _WINDOWS = {}
+*/
+  __pyx_v_13nice_titlebar_15_win32_titlebar_FF_DONTCARE = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":366
+ * cdef int FF_DONTCARE = 0
  * 
  * cdef dict _WINDOWS = {}             # <<<<<<<<<<<<<<
  * cdef bint _CLASS_REGISTERED = False
  * cdef bytes _CLASS_NAME = b"NiceTitlebarWindowClass"
 */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 333, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 366, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS);
   __Pyx_DECREF_SET(__pyx_v_13nice_titlebar_15_win32_titlebar__WINDOWS, ((PyObject*)__pyx_t_2));
   __Pyx_GIVEREF(__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":334
+  /* "nice_titlebar/_win32_titlebar.pyx":367
  * 
  * cdef dict _WINDOWS = {}
  * cdef bint _CLASS_REGISTERED = False             # <<<<<<<<<<<<<<
@@ -10302,7 +13822,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 */
   __pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_REGISTERED = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":335
+  /* "nice_titlebar/_win32_titlebar.pyx":368
  * cdef dict _WINDOWS = {}
  * cdef bint _CLASS_REGISTERED = False
  * cdef bytes _CLASS_NAME = b"NiceTitlebarWindowClass"             # <<<<<<<<<<<<<<
@@ -10314,94 +13834,34 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
   __Pyx_DECREF_SET(__pyx_v_13nice_titlebar_15_win32_titlebar__CLASS_NAME, __pyx_mstate_global->__pyx_n_b_NiceTitlebarWindowClass);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_n_b_NiceTitlebarWindowClass);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":413
- * 		ntb_d2d_release(&self._d2d)
+  /* "nice_titlebar/_win32_titlebar.pyx":383
+ * 		Py_DECREF(self._window)
  * 
- * 	def configure_titlebar(self, int height, tuple bg, tuple text_color, str font_family, float font_size, list buttons):             # <<<<<<<<<<<<<<
- * 		"""Update titlebar style and request repaint."""
- * 		self._titlebar_height = height
+ * 	def clear(self, color):             # <<<<<<<<<<<<<<
+ * 		"""Clear the client area with an RGBA color tuple."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_7configure_titlebar, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_configure_titlebar, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 413, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_5clear, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Canvas_clear, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_configure_titlebar, __pyx_t_2) < (0)) __PYX_ERR(0, 413, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas, __pyx_mstate_global->__pyx_n_u_clear, __pyx_t_2) < (0)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":422
- * 		self._invalidate()
+  /* "nice_titlebar/_win32_titlebar.pyx":388
+ * 		self._window._canvas_clear(rgba)
  * 
- * 	def set_client_background(self, int r, int g, int b, int a):             # <<<<<<<<<<<<<<
- * 		"""Update client area background color."""
- * 		self._client_bg = (r, g, b, a)
+ * 	def fill_rect(self, float x, float y, float width, float height, color):             # <<<<<<<<<<<<<<
+ * 		"""Fill a rectangle at (x, y, width, height) with RGBA color."""
+ * 		cdef tuple rgba = _normalize_rgba(color)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_9set_client_background, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_client_backgrou, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 422, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_7fill_rect, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Canvas_fill_rect, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_client_background, __pyx_t_2) < (0)) __PYX_ERR(0, 422, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "nice_titlebar/_win32_titlebar.pyx":427
- * 		self._invalidate()
- * 
- * 	def set_title(self, str value):             # <<<<<<<<<<<<<<
- * 		"""Update title text in native window and local state."""
- * 		cdef bytes title_bytes
-*/
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_11set_title, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_title, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 427, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
-  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
-  #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_title, __pyx_t_2) < (0)) __PYX_ERR(0, 427, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "nice_titlebar/_win32_titlebar.pyx":436
- * 		self._invalidate()
- * 
- * 	def register_close_callback(self, object callback, object owner):             # <<<<<<<<<<<<<<
- * 		"""Register Python callback invoked when the window is destroyed."""
- * 		self._close_callback = callback
-*/
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_13register_close_callback, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_register_close_call, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 436, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
-  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
-  #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_register_close_callback, __pyx_t_2) < (0)) __PYX_ERR(0, 436, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "nice_titlebar/_win32_titlebar.pyx":441
- * 		self._close_owner = owner
- * 
- * 	def show(self):             # <<<<<<<<<<<<<<
- * 		"""Create and show the window if not already created."""
- * 		cdef int alpha = 255
-*/
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_15show, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_show, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 441, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
-  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
-  #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_show, __pyx_t_2) < (0)) __PYX_ERR(0, 441, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "nice_titlebar/_win32_titlebar.pyx":486
- * 		self._invalidate()
- * 
- * 	def close(self):             # <<<<<<<<<<<<<<
- * 		"""Destroy the native window if it exists."""
- * 		if self._hwnd != <HWND>0:
-*/
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_17close, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_close, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 486, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
-  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
-  #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_close, __pyx_t_2) < (0)) __PYX_ERR(0, 486, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_Canvas, __pyx_mstate_global->__pyx_n_u_fill_rect, __pyx_t_2) < (0)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "(tree fragment)":1
@@ -10409,7 +13869,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_19__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow___reduce_cython, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_9__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Canvas___reduce_cython, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
@@ -10423,7 +13883,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_21__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow___setstate_cython, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[7])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_6Canvas_11__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Canvas___setstate_cython, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
@@ -10431,19 +13891,211 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_setstate_cython, __pyx_t_2) < (0)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "nice_titlebar/_win32_titlebar.pyx":774
+  /* "nice_titlebar/_win32_titlebar.pyx":483
+ * 		ntb_d2d_release(&self._d2d)
+ * 
+ * 	def configure_titlebar(self, int height, tuple bg, tuple text_color, str font_family, float font_size, list buttons):             # <<<<<<<<<<<<<<
+ * 		"""Update titlebar style and request repaint."""
+ * 		self._titlebar_height = height
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_7configure_titlebar, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_configure_titlebar, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 483, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_configure_titlebar, __pyx_t_2) < (0)) __PYX_ERR(0, 483, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":492
+ * 		self._invalidate()
+ * 
+ * 	def set_client_background(self, int r, int g, int b, int a):             # <<<<<<<<<<<<<<
+ * 		"""Update client area background color."""
+ * 		self._client_bg = (r, g, b, a)
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_9set_client_background, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_client_backgrou, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 492, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_client_background, __pyx_t_2) < (0)) __PYX_ERR(0, 492, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":497
+ * 		self._invalidate()
+ * 
+ * 	def set_title(self, str value):             # <<<<<<<<<<<<<<
+ * 		"""Update title text in native window and local state."""
+ * 		cdef bytes title_bytes
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_11set_title, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_title, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 497, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_title, __pyx_t_2) < (0)) __PYX_ERR(0, 497, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":506
+ * 		self._invalidate()
+ * 
+ * 	def register_close_callback(self, object callback, object owner):             # <<<<<<<<<<<<<<
+ * 		"""Register Python callback invoked when the window is destroyed."""
+ * 		self._close_callback = callback
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_13register_close_callback, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_register_close_call, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[7])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_register_close_callback, __pyx_t_2) < (0)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":511
+ * 		self._close_owner = owner
+ * 
+ * 	def set_owner(self, object owner):             # <<<<<<<<<<<<<<
+ * 		"""Store the high-level Python Window object for callbacks."""
+ * 		self._owner = owner
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_15set_owner, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_owner, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[8])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_owner, __pyx_t_2) < (0)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":515
+ * 		self._owner = owner
+ * 
+ * 	def set_paint_callback(self, object callback):             # <<<<<<<<<<<<<<
+ * 		"""Register a Python paint callback: (window, canvas) -> None."""
+ * 		self._paint_callback = callback
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_17set_paint_callback, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_paint_callback, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 515, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_paint_callback, __pyx_t_2) < (0)) __PYX_ERR(0, 515, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":519
+ * 		self._paint_callback = callback
+ * 
+ * 	def set_mouse_callbacks(self, object move_cb, object down_cb, object up_cb):             # <<<<<<<<<<<<<<
+ * 		"""Register Python mouse callbacks: (window, x, y) -> None."""
+ * 		self._mouse_move_cb = move_cb
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_19set_mouse_callbacks, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_mouse_callbacks, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_mouse_callbacks, __pyx_t_2) < (0)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":525
+ * 		self._mouse_up_cb = up_cb
+ * 
+ * 	def set_key_callbacks(self, object key_down_cb, object char_cb):             # <<<<<<<<<<<<<<
+ * 		"""Register Python keyboard callbacks."""
+ * 		self._key_down_cb = key_down_cb
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_21set_key_callbacks, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_set_key_callbacks, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 525, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_set_key_callbacks, __pyx_t_2) < (0)) __PYX_ERR(0, 525, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":530
+ * 		self._char_cb = char_cb
+ * 
+ * 	def invalidate(self):             # <<<<<<<<<<<<<<
+ * 		"""Public wrapper to request a full repaint from Python."""
+ * 		self._invalidate()
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_23invalidate, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_invalidate, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 530, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_invalidate, __pyx_t_2) < (0)) __PYX_ERR(0, 530, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":552
+ * 		)
+ * 
+ * 	def show(self):             # <<<<<<<<<<<<<<
+ * 		"""Create and show the window if not already created."""
+ * 		cdef int alpha = 255
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_25show, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_show, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[13])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 552, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_show, __pyx_t_2) < (0)) __PYX_ERR(0, 552, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":597
+ * 		self._invalidate()
+ * 
+ * 	def close(self):             # <<<<<<<<<<<<<<
+ * 		"""Destroy the native window if it exists."""
+ * 		if self._hwnd != <HWND>0:
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_27close, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow_close, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[14])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 597, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_13nice_titlebar_15_win32_titlebar_NativeWindow, __pyx_mstate_global->__pyx_n_u_close, __pyx_t_2) < (0)) __PYX_ERR(0, 597, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "(tree fragment)":1
+ * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_29__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow___reduce_cython, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[15])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_reduce_cython, __pyx_t_2) < (0)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "(tree fragment)":3
+ * def __reduce_cython__(self):
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+ * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
+ *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_12NativeWindow_31__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NativeWindow___setstate_cython, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[16])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
+  PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
+  #endif
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_setstate_cython, __pyx_t_2) < (0)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "nice_titlebar/_win32_titlebar.pyx":994
  * 
  * 
  * def run_event_loop():             # <<<<<<<<<<<<<<
  * 	"""Run the standard Win32 message loop until windows are closed."""
  * 	cdef MSG msg
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_1run_event_loop, 0, __pyx_mstate_global->__pyx_n_u_run_event_loop, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[8])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 774, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_13nice_titlebar_15_win32_titlebar_1run_event_loop, 0, __pyx_mstate_global->__pyx_n_u_run_event_loop, NULL, __pyx_mstate_global->__pyx_n_u_nice_titlebar__win32_titlebar, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[17])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 994, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_run_event_loop, __pyx_t_2) < (0)) __PYX_ERR(0, 774, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_run_event_loop, __pyx_t_2) < (0)) __PYX_ERR(0, 994, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "nice_titlebar/_win32_titlebar.pyx":1
@@ -10492,7 +14144,7 @@ __Pyx_RefNannySetupContext("PyInit__win32_titlebar", 0);
 
 static int __Pyx_InitCachedBuiltins(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 568, __pyx_L1_error)
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 695, __pyx_L1_error)
 
   /* Cached unbound methods */
   __pyx_mstate->__pyx_umethod_PyDict_Type_get.type = (PyObject*)&PyDict_Type;
@@ -10514,94 +14166,94 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":350
+  /* "nice_titlebar/_win32_titlebar.pyx":406
  * 	cdef int a = 255
  * 	if color is None:
  * 		return (0, 0, 0, 255)             # <<<<<<<<<<<<<<
  * 	if len(color) == 3:
  * 		r, g, b = color
 */
-  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(0, 406, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[0]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[0]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":389
+  /* "nice_titlebar/_win32_titlebar.pyx":452
  * 		self._title = "Nice Titlebar"
  * 		self._titlebar_height = 34
  * 		self._titlebar_bg = (24, 24, 24, 255)             # <<<<<<<<<<<<<<
  * 		self._titlebar_text = (240, 240, 240, 255)
  * 		self._client_bg = (30, 30, 34, 255)
 */
-  __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_24, __pyx_mstate_global->__pyx_int_24, __pyx_mstate_global->__pyx_int_24, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 389, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_24, __pyx_mstate_global->__pyx_int_24, __pyx_mstate_global->__pyx_int_24, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 452, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[1]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[1]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":390
+  /* "nice_titlebar/_win32_titlebar.pyx":453
  * 		self._titlebar_height = 34
  * 		self._titlebar_bg = (24, 24, 24, 255)
  * 		self._titlebar_text = (240, 240, 240, 255)             # <<<<<<<<<<<<<<
  * 		self._client_bg = (30, 30, 34, 255)
  * 		self._buttons = []
 */
-  __pyx_mstate_global->__pyx_tuple[2] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_240, __pyx_mstate_global->__pyx_int_240, __pyx_mstate_global->__pyx_int_240, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[2])) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[2] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_240, __pyx_mstate_global->__pyx_int_240, __pyx_mstate_global->__pyx_int_240, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[2])) __PYX_ERR(0, 453, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[2]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[2]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":391
+  /* "nice_titlebar/_win32_titlebar.pyx":454
  * 		self._titlebar_bg = (24, 24, 24, 255)
  * 		self._titlebar_text = (240, 240, 240, 255)
  * 		self._client_bg = (30, 30, 34, 255)             # <<<<<<<<<<<<<<
  * 		self._buttons = []
  * 		self._button_rects = []
 */
-  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_30, __pyx_mstate_global->__pyx_int_30, __pyx_mstate_global->__pyx_int_34, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 391, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_30, __pyx_mstate_global->__pyx_int_30, __pyx_mstate_global->__pyx_int_34, __pyx_mstate_global->__pyx_int_255); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 454, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[3]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[3]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":515
+  /* "nice_titlebar/_win32_titlebar.pyx":626
  * 		for idx in range(len(self._buttons) - 1, -1, -1):
  * 			try:
  * 				width = int(self._buttons[idx].get("width", 46))             # <<<<<<<<<<<<<<
  * 			except Exception:
  * 				width = 46
 */
-  __pyx_mstate_global->__pyx_tuple[4] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_width, __pyx_mstate_global->__pyx_int_46); if (unlikely(!__pyx_mstate_global->__pyx_tuple[4])) __PYX_ERR(0, 515, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[4] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_width, __pyx_mstate_global->__pyx_int_46); if (unlikely(!__pyx_mstate_global->__pyx_tuple[4])) __PYX_ERR(0, 626, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[4]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[4]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":604
- * 		)
+  /* "nice_titlebar/_win32_titlebar.pyx":741
+ * 
  * 		for idx, button_rect in enumerate(self._button_rects):
  * 			btn_bg = _normalize_rgba(self._buttons[idx].get("bg", (0, 0, 0, 0)))             # <<<<<<<<<<<<<<
  * 			btn_hover = _normalize_rgba(self._buttons[idx].get("hover", btn_bg))
  * 			if idx == self._hover_index:
 */
-  __pyx_mstate_global->__pyx_tuple[5] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0); if (unlikely(!__pyx_mstate_global->__pyx_tuple[5])) __PYX_ERR(0, 604, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[5] = PyTuple_Pack(4, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0, __pyx_mstate_global->__pyx_int_0); if (unlikely(!__pyx_mstate_global->__pyx_tuple[5])) __PYX_ERR(0, 741, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[5]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[5]);
-  __pyx_mstate_global->__pyx_tuple[6] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_bg, __pyx_mstate_global->__pyx_tuple[5]); if (unlikely(!__pyx_mstate_global->__pyx_tuple[6])) __PYX_ERR(0, 604, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[6] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_bg, __pyx_mstate_global->__pyx_tuple[5]); if (unlikely(!__pyx_mstate_global->__pyx_tuple[6])) __PYX_ERR(0, 741, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[6]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[6]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":648
+  /* "nice_titlebar/_win32_titlebar.pyx":812
  * 		for idx, rect in enumerate(self._button_rects):
  * 			button = self._buttons[idx]
  * 			icon = <str>button.get("icon", "")             # <<<<<<<<<<<<<<
  * 			if not icon:
  * 				icon = self._default_icon(<str>button.get("kind", "custom"))
 */
-  __pyx_mstate_global->__pyx_tuple[7] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_icon, __pyx_mstate_global->__pyx_kp_u_); if (unlikely(!__pyx_mstate_global->__pyx_tuple[7])) __PYX_ERR(0, 648, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[7] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_icon, __pyx_mstate_global->__pyx_kp_u_); if (unlikely(!__pyx_mstate_global->__pyx_tuple[7])) __PYX_ERR(0, 812, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[7]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[7]);
 
-  /* "nice_titlebar/_win32_titlebar.pyx":650
+  /* "nice_titlebar/_win32_titlebar.pyx":814
  * 			icon = <str>button.get("icon", "")
  * 			if not icon:
  * 				icon = self._default_icon(<str>button.get("kind", "custom"))             # <<<<<<<<<<<<<<
  * 			text_rect.left = rect[0]
  * 			text_rect.top = rect[1]
 */
-  __pyx_mstate_global->__pyx_tuple[8] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_kind, __pyx_mstate_global->__pyx_n_u_custom); if (unlikely(!__pyx_mstate_global->__pyx_tuple[8])) __PYX_ERR(0, 650, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[8] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_n_u_kind, __pyx_mstate_global->__pyx_n_u_custom); if (unlikely(!__pyx_mstate_global->__pyx_tuple[8])) __PYX_ERR(0, 814, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[8]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[8]);
   #if CYTHON_IMMORTAL_CONSTANTS
@@ -10634,31 +14286,31 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 9; } index[] = {{0},{26},{23},{31},{13},{179},{24},{1},{2},{1},{8},{7},{6},{2},{9},{50},{37},{14},{12},{30},{32},{18},{31},{36},{34},{22},{17},{20},{1},{1},{1},{5},{18},{1},{2},{7},{8},{18},{5},{18},{6},{9},{8},{11},{9},{8},{1},{3},{12},{6},{5},{4},{13},{5},{4},{8},{8},{8},{10},{3},{8},{29},{8},{7},{5},{3},{11},{14},{12},{1},{10},{17},{13},{23},{7},{14},{4},{21},{12},{9},{10},{12},{19},{4},{5},{8},{10},{5},{11},{15},{11},{5},{6},{5},{45},{346},{9},{24},{18},{57},{60},{22},{23}};
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1180 bytes) */
-const char* const cstring = "BZh91AY&SY\260\215}\334\000\000\246\377\377\377\375\377\367l\333\275\355\277\243|\376\377\377\377\370\300@@@@@@@@@@@@\000@\000P\004\030mf\330H\211y\316\rD\323T\375P\362\233I\265?R=G\250z\201\240\001\220=@4\0004\000\032hh4\036\221\265\033\322A\241\t\243#S\rD\332h&\246\215\006\200\000\032\000\000\000\000\000\320\r\003@\224\3214$\236\2042\002\030P\310\006\200d\031\000\001\240\000\000\007\250yOS'\251\265\016\000\001\240\000h\014\200\000\001\240\0004\320\000\000\000\001\240\003S\324\244d`\3214b`\0042d0\201\200& \320\032h\007\244\001\220\001\241\212\236\350q\234\234\256r%\335n\3530\223\010WL\316\211d4 \tj\273>\243\032\214\334\3478\021\000\t\245\335\2223;\363<\013_\232r&\24224\034\322\356\356g\032\245UD\265\202l\324\212\"\tw>\336>/3\212\237\322\342\257e~w\343\353\364~\223S\264\261\344\275\373O\372\327\267%\265sC\225\256m\200\320\233so\205\250C\224j\037\277\2411_\035\256\242~\341\210k\212\214X\210\001\353>\222\025l$z\343b\360\257\267\326t\244\273\372&\277\335z\331%8\216\203\030O\005\254\224\271n\3573\306\272:\030E\020\265\261\226_\0006\315G\215\334{)\310\240\301\303\000\\0\036\203\006\236w\265\254\243x\n\334\201@\010\030\277(\314\337\227\n\242(9\010M\2440\250\005\020\263*\365\037n\\\360Wq\026\326\323\215\347%0xYP\355\215 \270\272R\024Q!1JQ\204\256\201\235`!\347\2012z\223\364jno\364\362qr\344\311\235g\327\345\033\362\337'\354!\302K\206\225P\311+\332wA\250\300\006\212W\300a\016\266@\200\245\240 \014\206\345a\027\020\246{\203\010\252\003\356\010\204\006-\001\033c`\n\332L\347\346\216\026NoY\316@\303\327#\2245\026$\267W\205\307S\031\341\336\004d\240a\000\233\247\206\256\322$\226b\356\304y\272u\367s\357\344\336\321\246\213i\350\004\247\205\035\024\243v\020\345I\242KU\032YK\004\301\315\255F\262\243\026x\361v\010\036L\345_\n\333\025Za\244\315|\326\005\253MI\271\277\031\256N\265wP\322\235\021\266e\337\276\327\0357\032\256b/+\032ug\035kf\251\240\202\312\032\241\216\312I\240\310\234&\010\301\024\242\260\340\221\344\236\355B\360\331\215\022\303l\333\231\346\022U\035R!<\2020~|F\301Ve""\275\031\200\251\260\345\005\256\014\203\014\020}\030h\027i9\034\273\022\210\321\310Av\311\322\333\336\201\215\346\241\n\014K\006\014h\340  \300\301\312\276,X\243Z\257Z\222>\306y\261J\272\023$Y:\202\331T\345\263\331 l\026\352\300E\274gkm[f\266\234GI\032\262\213\351\276\215y\236\362\3106f\206\031\224YvHN\271\032\020\203\363\036\t\306#\020\211\0205\235\271\370\260\022\301\263\233\231\265\302:\232\217\324\240)\243\025\304fR\240K\341\005\354\2531u\301\245@\202V\327\332\371\311{ \300\263=\027\244\220@aA-\300\3201\262A<2^Cq\212r\255A/P\252HY-!f2\264Qc\311\303h)}\303K\351\327\236\016\242ze\234\345\n\270\351\035\375\030\332\205\200\311\026\302[.\362\314\016\307\007\r\263h2\027\305\006D\334\030\313\005\330lZ\273\n\316\347Y\263\000\352*\2209\316\317\032\377\255\025\202\254i\245b{2\314W\014qP\2328,\004\021iZ\000\205\022\022\034L\005i%D\206\263\312\361\216\335(c\r\230\020\261\210P\014\334\271\316\376\322Mf\274(F\310\342(A\026$\331( \2160-\005\374\236\304Be\315`\363\264\312\350\246C\316\324'\371Y\252\3232e\001@D\262\342I<pK\332G\t<\277t}\304\277Cz\300Q\206!:\341{\230\007\307\361~\212\3414`|MO\2359\245\316\245YRE\240<IN.\344J\221\"\372\375OU\2172g\023\331\202\241#*tL\007\366=\037\203\217\275~\317\260\006\230\363\375%\274\376[\365\323\322\037g\241=eeY\211\350s\316\027/\017q\352\213\n\2631K\311g\302\222\304\257\374]\311\024\341BB\3025\367p";
-    PyObject *data = __Pyx_DecompressString(cstring, 1180, 2);
+    const struct { const unsigned int length: 9; } index[] = {{0},{26},{23},{31},{13},{179},{24},{1},{2},{1},{8},{7},{6},{2},{9},{50},{37},{14},{6},{24},{26},{12},{16},{12},{30},{32},{18},{31},{23},{36},{34},{30},{32},{22},{31},{22},{17},{20},{1},{1},{1},{5},{18},{1},{2},{7},{8},{7},{5},{18},{5},{5},{18},{6},{7},{9},{8},{9},{11},{9},{8},{1},{3},{12},{6},{5},{4},{10},{13},{5},{11},{4},{8},{8},{8},{10},{7},{3},{8},{29},{8},{7},{5},{3},{11},{14},{12},{1},{10},{17},{13},{23},{7},{4},{14},{4},{21},{17},{19},{12},{9},{18},{9},{10},{12},{19},{4},{5},{8},{10},{5},{11},{15},{11},{5},{5},{6},{5},{6},{1},{1},{45},{346},{31},{22},{9},{24},{10},{18},{26},{17},{9},{57},{9},{60},{22},{23}};
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1347 bytes) */
+const char* const cstring = "BZh91AY&SY\246\2066)\000\000\311\377\377\377\375\377\367l\333\275\355\277\243\374\376\377\377\377\370\300@@@@@@@@@@@@\000@\000P\004\335\345t(\000\0008A\242D\200\003\324l\204h\320\033D\365\000\032h\310\030\203\324\017B\032\003CCF\321\032\036(\032\232\224\362\217\325<\243O\324\2310\232=\010hb4d\320\3204\032\003\021\246#\001\006L\232\003\324i\247\2508\000\r\000\000\310\000\000\003!\243@\000\000\000\000\000\000\010jQ?SH\304h\320\031\014\232\003 \310i\204\311\246\214\215\0312\003@\003\021\350\236\247\244\300\230Jh\202\023\010\t\200M\024\304\322i\352?T\001\204\000\000\000\000\000\320\320z\207\244\364IN\"X\227\013\330\004\202\\\013\307x\314\003 \010\003\000\300\006\031\2034\030$\262\032\020\004\332\216\317{\027\263zOK\r\0200\311\246\356\311\031;\372\036\t\276\254iri;\2273\236\211\273\273\2310\324(\244\212\th\032\225iCI3\002J\020^\213+\tV?\201T\310\024\324Z\033\257\002\302\236\032~\250\244\364UM\234\002e\210\331\202\t)l\373 mi\267\357\357i\020\344\232G\271\355N)\371\370f\307\017\276\214\243\316\226\227s[\274 \027\365Y\0004\004\325\224\262&\006P\033N\226\261\314\232\317\311?\306\327W:\207, \202O\000V\005\374\34388\374\333\236\\\272f\374>\244\272\322\314l\376\003\360\207\226\006\314\027\237\272\342Q.\224\303\356R\343\365\337Ct\201\032\226\351\236\256l\325\254\357\360\033\1772\030lQ\262\303\266\277\333\343h`\306\347b\337P7@A\013\025O#\357\233\236\262\377\250\256\215e\374g\232E\257\013\0248\227D;\3312Wc\024&+h5f\362\240R\010hd!,\034\035\274\004\314:\274C\315\361\030\2228R\223G\217\263\325\272\302\252\265$c\260\001\274_\232\362c\356\370,\243\001\257{\315A\210l<e\375\234\275\3063\267$\324N\262E\314?0\302\235+\260g\270\367\243\335\031\2626yO\245\353\277\231$y\220\361\223a\320q\235\203\313\323\211\313\202\347\275\366\202\225^\354\327\367\366s\231\202f/\222\300d_\341:\337&i\241\261<J\215l9fw\211V\"D\t\245!\255\200G\t\226\350\336\212\024\000\333c\225\220\323\366{5r\317\331\177M{$\245\272&\303BxQ\315(\321\010r\201JM$\226wsYA;\260R\003\321\242ME!\252\361\341\330@\3632(\366\322\270*J""\335f\026g\251r2\211Ne\207W\306\302\232)\301\014\323N\2326\230u\263\213n\367g\301\252\346\007'\263\340\343O\n\343\237U\272*l!\263\226A\317^<\221`\230/.\037\n\235\257\266Y\373\014\007\321\363\223\236\010\322x\316\366G\036V\374+\355+\253o\317\000\225\3646\343\233o,\307,ea\247\272\271<\367\265u\253\006\363\211\211\246f\303.9\033\374w8\345\201\201G:&i\351\264\365\211\016\301}7\365\211\211\203\253L\222\203\002v\211\225\0041\177{H \264\233\224{\331\252VmEJ\023\013cfT\260\225]\t\204\267\212\330y\026\342\247\215\217Q\201+\225\254\255\021_\007\204Wm{+I\336T\207Hr\030\362\351\252%\262\335z\311\317\307T6\330\233O\251\257\237n{\344R\243\261\233\271m\274\343\234qe\260\001#e\024G\037\027\261\237\212\251\233E\331,)\335S\354z\367\360\304\212\234\271\002I\026'\026\321\314\263\312\211\316\\\254\022\014\014_Ml\341\230\275\245\336L\220\243\256iS\027&\303\2264\311p\354\265\263\213\235,0\313\242\340\245\241\322\334\261\306M\253\224\340}z#K\026h\267Q4\331\332$\263\377\216\352\301+x\233_n\251\365<\211\345\204\363\204\212;\2113$z\262\033\204+X\022+l\333\016\325\030\2043wp\256:\213\213oA\2317\013\3463X\303^\324\330\252\356|\252\332\305\330h\241u\327wk\323\357T\322\315\244\362>\222\375]\266\232\327!\034\3669u\206\307v534\244\237K\260\0319\256\031\273\367{\002\261%\241\316z\375\250g\322_\275\333?\213H\336+Q\213\200\006T;7\347(\224\010\244\224\344\321\316\321\027\021\t\346@\030\345\322\240d`\305\020:\005\277Mc\013\3365\310yt\224\201\273\326f\"S$9\006L*\351*\270.\360\362\023\013\0258\307\330P\213\270\374E\203\2525j%\350\0332\216,\276L'\r\261\356_\247X\034\022\224\336\310\232\376\246\363\025\347\033\025\177\235\200\025\017\236Yi\271\314\272\303\212\252\360^4P\354x\256?\221!\226\227\222>\311Gh=t6\247\341D\231F\303\010\230\311\rM\262\353\346^7nn%\355\310Q\273\266S\366\325Ui\024\351\351\235\226\026C\330=\021QRs\211Y2\257l\246\r5\357\213\271\"\234(HSC\033\024\200";
+    PyObject *data = __Pyx_DecompressString(cstring, 1347, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (1061 bytes) */
-const char* const cstring = "x\332uU\317o\033E\024&v\032J\203\322\032h\t\010\320D\215T\004\212\253\244U\013\002\201\362\213\210\003Q\222Fj\241\255\206\331\335\347\365$\2633\366\316\254c\227\003{\334\343\034\367\270G\0379\346\310\261\307\034}\354\237\300\237\300\233\365\217\304Mj\331\263o\347\275\371\336\367\276\367\274\273\251\204\212I\224hC< \007;\033\004o\361\262^\337\214\201\031x\312e\240N\266\273OI\203q\001A}\213\307\340\233\265-\302%7\234\t\376\212\031\256\344\330\275\313} \207\334\010\360X\274\253\014\020\323d\206l\366L\023\203\270&\001\010\356A\214\320\242G\264\211\271o vA\222\354m\357\255<\374\356!a2 1\034a\032Mt\342\371\202i\r\232\250\006\361\022.\014\227\304\364Z\240\353\344\327\006\351\251\204H\200\200\030EZ\030w\361\200i\202$\032\2143\310=&\2452%W\212\307\271\014\357\221\240\254\205w\300\235\376\205\t\r\365\003\010\271FF\233\016\343B\331+\317_\376\314\202\200\"\006\004\\3O\000H\267\206>\327C+\220\n\253k\260D\030Bi\014A\342\003\245$HJx\251\344\nV\333A\311\320\353;\365(\325\261\177_\242b\324\214\024\273OO\270|\2606\271\257\267z\335\037\235J2\324*\211}\370i\2279\302\303\266\\\264\353\223\224~\2515\245oyQ\010\215\365\277\303\357\013\245azG\311\006\017\223\370\234\334\224;\036\tE\313\223\324gBx\314?\236\212\301\224\350\346 \ru\2760V\211\014.E\224\360\323\273MuB\351^\257\213\277-\034\020\272\013]s\000\215\203g\214\211V\2231\335\223>WH\021\021q\036@{^\350%\306(\251\307D0\257\004\312\261\3311\363a\270\203D/W\345\343\354\253\010d\022\225S\t]\252MO@C!\353\006\213\270\350\225\246\346\257\260\233\215D\372\224\206!\322\246\341XP\332\004\0366Q\324\016\3408\243\264\\\323\t5n \322\307X\027\245\021C:\270vy\204`\021\216@T\202F*H\204\273\352\220R\311\"4\247\206\242\376\326P`\006\254\316?V-\346s\323S'\022\342\226jQ\212\303BG\224\234\3311n,)~\332\t\023C\340\370|2/\r\314d\0035\240\357\350o\014\250V\014q\")t\\c\205R-\r\242qe\257\313\251\033\2254i5\032\243\277\311\205\241\244W\014\250\033\203\262\027\224\032L\353\326.&qO\254\022\250\\\250\327s\316\2214\243V`\317\245n\261\030\331t\230H\240\\\364\t\017L3""\235\371o\356\275\312\365\364/\273dW\355v~'\327\305\335\342I\277\322_\032T>*7\327'FZ{S\371\330\256\276\251\\K\017\263\332\240:;\250\314\235\315}\231\357\017*\267\355\357\271W,\364\275\177\346O\327N\351\353\215\327\352\354%=\243\177\016*\213\371\314\240<\361\225\325\371r~TbWof\355A\345\226\235\265;\371\343b\251\370\276\217i\346R\236\375\2353\007\\\275egF\313\354\370\373~\332\036-\037\270\35472\204A:\366\267bx7\344\365\251\255\332Gy\315\005}a\367-\033T\320\225\375`\203\374\233\002s\314g\253\331\372\025|\346\263G\366\023\373G\036;\260\271\264\221mdl0\373!\306^_\310<\344Q\332U,6\017\212\257\373w\373\364t\347\337\325R\200;.\311\265\364\205\255\331e\333\314Yn\212\307\030\260\177\201\002\236\315\016\355\"\322\252,d,3\326\235L\217m\315]\204]J\021\377F\366\255\335w\022OU\201\022 \257r\037S}\346\020\206)\323\032v\016\3458\262#y'Gj\366\266\r\221'/\332\356f\310*\352\257\216s\r\241>\317\227FP\252\330/Xi/\3467\213v\177f\030\270l\231m\237\027x~6U\366I^\315\037\344\343]\367\226\033\277\344\206\317\254\362}\361?=\234\320\322";
-    PyObject *data = __Pyx_DecompressString(cstring, 1061, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (1214 bytes) */
+const char* const cstring = "x\332uVKo\0337\020\256eGM\343\302\211\232G\323\242-h$@\212\026V`'HZ\264h\341W\215\036\352\332\216\201\244\217\200\345\356R+\332\\R^r%mz\250\216{\344q\217{\3241G\037{\314\321G\035\363\023\372\023:\244V\262d9\202\304\035\316\2203\337|3#\354\246\3442FQ\2424\362(:\330\331@\260\205\307z}3\246D\323\347L\004\262\263\335}\216\032\204q\032\324\267XL}\275\266\205\230`\232\021\316^\021\315\244\030\231w\231O\321!\323\234z$\336\225\232\"\335$\032m\246\272\t\207\230B\001\345\314\2431\270\346)R:f\276\246\261=$\320\336\366\336\312\343o\036#\"\002\024\323#\010\243\220J<\237\023\245\250B\262\201\274\204q\315\004\322i\213\252:\372\271\201R\231 Ai\200\264D-87yA7\251@\212j+\240\007D\010\251\035V\014\327\231\010\037\240\300\345\302\332\324\336\376\211pE\353\0074d\n\020mZ\037\023i\257\374\361\362G\022\004\030|\320\200)\342qJ\205]C\237\251\241\024\010\t\3315H\3025\3028\246A\342S\214Q\2208\367B\212\025\310\266\r\224\201\325\267\354a\254b\377\241\000\306\260.\031{\210;L<Z\033\357\353\255\264\373\275eI\204J&\261O\177\330$\242M\324p\255\217\303\370\216_\214\307zH[A\2663\026\237S\022\227r\203q\216-\003\273\304\2220,\365\244<\353\377\202u&\312\224\335\347R\321i\215\024\r\026&\361y\302Sf\006\2608\013\300\341\224:.k\202\235C\354\023\316=\342\037O\235\001$`fThlma,\023\021\314\2348\246\351\370\272\232\261F2\231p?k\227\035A\343\031m\2130\010\372NP.\321imSv0\336K\273\360\333\202\366\307\273\264\253\017h\343\340\005!\274\325$D\245\302g\022\310\202$\240\333\251\362\274\320K\264\226B\215\302\370M\002tx\256\232\220\266\240\230A[\307\304\247\316jy\362\355d\317\022\356\303\250\313\010p\010\270OE\022\271Y\244]\254t\312\351\270%\032\022\222j\220\210\361\324\211\212\275\202fn$\302\3078\014!/\034\216j\217\233\224\205M\250\177\233\3024Kq^E\314\024\036g\3014\215\224-@\031\373\030\330\3008\002\366\354\332e\021D\210`,\"\027)\222A\302\335\263\r%\361\"\025b,H\004\232\251y\251_\230\027\350A\240\303?\226-\3423\235\272\212\265d\013c\230#\\\302\265b[\333\211\305\3609I\010\037:\216\317\207v\246\357\307\n \n\277\243\037c""\n\314\3064\016\001G\"0m\333f\344R\266\024\345\215K\373s\246%/\351B7de\352\343&\234\355\273q\253\201P\376\tM\214'\276dTm\033\272\232c\254\001\271]\273\340\317v\215s\344\026\354\245\326X\262[V\032\372L\250\026\211!\231\244\005\305\201r'\324-\252\303\002\335\354\270>\357\246\275\271\377\252\357U\256\366\3766\313f\325l\347wrU\334+\236\365+\375\345A\345#\247\\\037\013\275\332\333\312M\263\372\266r\245w\230\325\006\363\013\203J\365\254\372y\276?\250\3346\277\345^\261\324\367^/\236\256\235\3427\033o\344\331K|\206\377\032T\356\346s\003w\343\013\243\362\373\371\221\363=\177=;\031Tn\230\005\263\223?-\226\213o\373\020\246\332c\331?9\261\216\347o\230\271rY\030}\337\357\235\224\313\0076\372\265\014\334\000\034\363K1\334\rq}l\346\315\223\274f\017}f\366\r\031T\300\224}g\202\374\253\002b,f\253\331\372%x\026\263'\346\226\371=\217\255\263j\257\221mdd\260\360!\234\275\272\224y\200\303\311\363\220l\036\024_\366\357\365\361\351\316\277\253\216\200;6\310\225\336\237\246f\356\233fNr]<\205\003\373\023\020\340nvh\356\002\254\312RF2m\354\315\336\261\251\331\0077\313\226\331[\346\327b\265p44\317\226P1W\334,6\213N\277\371\232\\4g\"_\317\367{\000\352Z\366\265\331\267\346\251\324\2017H\306\351\001\337'y\355\\\032!.5\2568\023\317s\213\313j\014\256\332;2s\275\0324\013T\000\304\301t\300\232\271mB\240\206\025'v3$\"\352\257Ny\030\tg\325O\363\3452\232,\366\013R\"\270^\234\364\347\2067\356\033bN\006\227\301\220\346Y>\237?\312GZ\37323z\227\031\376y\273\327\202\377\001n<\217B";
+    PyObject *data = __Pyx_DecompressString(cstring, 1214, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (1869 bytes) */
-const char* const bytes = "Color must be RGB or RGBA.CreateWindowExW failed.Direct2D initialization failed.Nice TitlebarNote that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.RegisterClassExW failed.-[]?add_notedisableenablegcisenabledno default __reduce__ due to non-trivial __cinit__src/nice_titlebar/_win32_titlebar.pyx<stringsource>NativeWindowNativeWindow.__reduce_cython__NativeWindow.__setstate_cython__NativeWindow.closeNativeWindow.configure_titlebarNativeWindow.register_close_callbackNativeWindow.set_client_backgroundNativeWindow.set_titleNativeWindow.show__Pyx_PyDict_NextRefRXaalphaasyncio.coroutinesbbgbuttonscallbackcline_in_tracebackcloseconfigure_titlebarcustomenumerateex_stylefont_familyfont_size__func__gget__getstate__heighthovericon_is_coroutineitemskind__main__maximizeminimize__module__msg__name__nice_titlebar._win32_titlebaron_clickopacityownerpop__pyx_state__pyx_vtable____qualname__r__reduce____reduce_cython____reduce_ex__register_close_callbackrestorerun_event_loopselfset_client_background__set_name__set_titlesetdefault__setstate____setstate_cython__showstyle__test__text_colortitletitle_bytestitlebar_heighttransparentvaluevalueswidth\200\001\360\006\000\002\010\200{\220!\2201\220E\230\026\230s\240#\240S\250\002\250!\330\002\022\220!\2201\220A\330\002\022\220!\2201\220A\200\021\340\002\023\2201\340\002\005\200T\210\021\330\003\004\330\002\006\320\006\035\230Q\330\002\025\220Y\230b\240\016\250b\260\013\2702\270_\310B\310o\320]_\320_`\330\002\030\230\001\330\002\005\200T\210\036\220s\230$\230j\250\002\250!\330\003\017\210q\330\002\020\220\004\220G\2307\240!\2409\250A\330\002\006\200i\210\177\230a\330\003\004\330\003\020\220\001\330\003\020\220\001\330\003\004\330\003\004\330\003\004\330\003\007\200q\330\003\007\200q\330\003\t\210\021\330\003\n\210!\330\003\023\2201\220M\240\021\330\003\n\210!\340\002\005\200T\210\027\220\003\2206\230\021\330\003\t\210\034""\220Q\220a\330\002\n\210!\210;\220d\230*\240A\330\002\013\2101\210A\330\002\005\200T\210\036\220s\230$\230j\250\002\250!\330\003\013\2106\220\024\220Z\230r\240\021\330\003\006\200f\210B\210a\330\004\014\210A\330\010\016\210b\220\001\330\004\014\210A\330\003\035\230Q\230d\240(\250#\250_\270G\3001\330\002\006\320\006\026\220a\330\002\005\200\\\220\021\220$\220h\230a\230t\2407\250#\250Q\330\003\t\210\034\220Q\220a\330\002\014\210A\210T\220\030\230\021\330\002\016\210a\210t\2201\330\002\006\200k\220\021\330\002\006\200l\220!\200\001\330\004\n\210+\220Q\200\021\340\002\005\200T\210\027\220\003\2206\230\021\330\003\020\220\001\220\024\220Q\200\021\340\002\006\320\006\031\230\021\330\002\006\320\006\026\220a\200\021\360\006\000\003\007\200j\220\001\330\002\005\200T\210\027\220\003\2206\230\021\330\003\021\220\025\220g\230Q\230i\240q\330\003\021\220\021\220$\220h\230m\2501\330\002\006\200l\220!\200\021\340\002\006\320\006\032\230!\330\002\006\320\006\026\220o\240Q\240a\330\002\006\320\006\030\230\017\240q\250\001\330\002\006\200l\220$\220a\220q\330\002\006\320\006\026\220a\330\002\006\200l\220!\200\021\340\002\006\200o\220S\230\003\2303\230a\330\002\006\200l\220!NiceTitlebarWindowClass";
+    #else /* compression: none (2356 bytes) */
+const char* const bytes = "Color must be RGB or RGBA.CreateWindowExW failed.Direct2D initialization failed.Nice TitlebarNote that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.RegisterClassExW failed.-[]?add_notedisableenablegcisenabledno default __reduce__ due to non-trivial __cinit__src/nice_titlebar/_win32_titlebar.pyx<stringsource>CanvasCanvas.__reduce_cython__Canvas.__setstate_cython__Canvas.clearCanvas.fill_rectNativeWindowNativeWindow.__reduce_cython__NativeWindow.__setstate_cython__NativeWindow.closeNativeWindow.configure_titlebarNativeWindow.invalidateNativeWindow.register_close_callbackNativeWindow.set_client_backgroundNativeWindow.set_key_callbacksNativeWindow.set_mouse_callbacksNativeWindow.set_ownerNativeWindow.set_paint_callbackNativeWindow.set_titleNativeWindow.show__Pyx_PyDict_NextRefRXaalphaasyncio.coroutinesbbgbuttonscallbackchar_cbclearcline_in_tracebackclosecolorconfigure_titlebarcustomdown_cbenumerateex_stylefill_rectfont_familyfont_size__func__gget__getstate__heighthovericoninvalidate_is_coroutineitemskey_down_cbkind__main__maximizeminimize__module__move_cbmsg__name__nice_titlebar._win32_titlebaron_clickopacityownerpop__pyx_state__pyx_vtable____qualname__r__reduce____reduce_cython____reduce_ex__register_close_callbackrestorergbarun_event_loopselfset_client_backgroundset_key_callbacksset_mouse_callbacks__set_name__set_ownerset_paint_callbackset_titlesetdefault__setstate____setstate_cython__showstyle__test__text_colortitletitle_bytestitlebar_heighttransparentup_cbvaluevalueswidthwindowxy\200\001\360\006\000\002\010\200{\220!\2201\220E\230\026\230s\240#\240S\250\002\250!\330\002\022\220!\2201\220A\330\002\022\220!\2201\220A\200\021\340\002\023\2201\340\002\005\200T\210\021\330\003\004\330\002\006\320\006\035\230Q\330\002\025\220Y\230b\240\016\250b\260\013\2702\270_\310B\310o\320]_\320_`\330\002\030\230\001\330\002\005\200T\210\036\220s\230$\230j\250""\002\250!\330\003\017\210q\330\002\020\220\004\220G\2307\240!\2409\250A\330\002\006\200i\210\177\230a\330\003\004\330\003\020\220\001\330\003\020\220\001\330\003\004\330\003\004\330\003\004\330\003\007\200q\330\003\007\200q\330\003\t\210\021\330\003\n\210!\330\003\023\2201\220M\240\021\330\003\n\210!\340\002\005\200T\210\027\220\003\2206\230\021\330\003\t\210\034\220Q\220a\330\002\n\210!\210;\220d\230*\240A\330\002\013\2101\210A\330\002\005\200T\210\036\220s\230$\230j\250\002\250!\330\003\013\2106\220\024\220Z\230r\240\021\330\003\006\200f\210B\210a\330\004\014\210A\330\010\016\210b\220\001\330\004\014\210A\330\003\035\230Q\230d\240(\250#\250_\270G\3001\330\002\006\320\006\026\220a\330\002\005\200\\\220\021\220$\220h\230a\230t\2407\250#\250Q\330\003\t\210\034\220Q\220a\330\002\014\210A\210T\220\030\230\021\330\002\016\210a\210t\2201\330\002\006\200k\220\021\330\002\006\200l\220!\200\021\340\002\024\220O\2401\240A\330\002\006\200h\320\016 \240\001\240\023\240C\240w\250h\260a\200\021\340\002\024\220O\2401\240A\330\002\006\200h\210n\230A\230Q\200\001\330\004\n\210+\220Q\200\021\340\002\005\200T\210\027\220\003\2206\230\021\330\003\020\220\001\220\024\220Q\200\021\340\002\006\320\006\031\230\021\200\021\340\002\006\320\006\031\230\021\330\002\006\320\006\026\220a\200\021\340\002\006\320\006\030\230\001\330\002\006\320\006\030\230\001\330\002\006\320\006\026\220a\200\021\340\002\006\320\006\026\220a\330\002\006\200l\220!\200\021\340\002\006\200j\220\001\200\021\360\006\000\003\007\200j\220\001\330\002\005\200T\210\027\220\003\2206\230\021\330\003\021\220\025\220g\230Q\230i\240q\330\003\021\220\021\220$\220h\230m\2501\330\002\006\200l\220!\200\021\340\002\006\200l\220!\200\021\340\002\006\320\006\032\230!\330\002\006\320\006\026\220o\240Q\240a\330\002\006\320\006\030\230\017\240q\250\001\330\002\006\200l\220$\220a\220q\330\002\006\320\006\026\220a\330\002\006\200l\220!\200\021\340\002\006\200o\220S\230\003\2303\230a\330\002\006\200l\220!NiceTitlebarWindowClass";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif
     PyObject **stringtab = __pyx_mstate->__pyx_string_tab;
     Py_ssize_t pos = 0;
-    for (int i = 0; i < 94; i++) {
+    for (int i = 0; i < 121; i++) {
       Py_ssize_t bytes_length = index[i].length;
       PyObject *string = PyUnicode_DecodeUTF8(bytes + pos, bytes_length, NULL);
       if (likely(string) && i >= 18) PyUnicode_InternInPlace(&string);
@@ -10669,7 +14321,7 @@ const char* const bytes = "Color must be RGB or RGBA.CreateWindowExW failed.Dire
       stringtab[i] = string;
       pos += bytes_length;
     }
-    for (int i = 94; i < 103; i++) {
+    for (int i = 121; i < 137; i++) {
       Py_ssize_t bytes_length = index[i].length;
       PyObject *string = PyBytes_FromStringAndSize(bytes + pos, bytes_length);
       stringtab[i] = string;
@@ -10680,15 +14332,15 @@ const char* const bytes = "Color must be RGB or RGBA.CreateWindowExW failed.Dire
       }
     }
     Py_XDECREF(data);
-    for (Py_ssize_t i = 0; i < 103; i++) {
+    for (Py_ssize_t i = 0; i < 137; i++) {
       if (unlikely(PyObject_Hash(stringtab[i]) == -1)) {
         __PYX_ERR(0, 1, __pyx_L1_error)
       }
     }
     #if CYTHON_IMMORTAL_CONSTANTS
     {
-      PyObject **table = stringtab + 94;
-      for (Py_ssize_t i=0; i<9; ++i) {
+      PyObject **table = stringtab + 121;
+      for (Py_ssize_t i=0; i<16; ++i) {
         #if CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
         #if PY_VERSION_HEX < 0x030E0000
         if (_Py_IsOwnedByCurrentThread(table[i]) && Py_REFCNT(table[i]) == 1)
@@ -10769,49 +14421,94 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   PyObject* tuple_dedup_map = PyDict_New();
   if (unlikely(!tuple_dedup_map)) return -1;
   {
-    const __Pyx_PyCode_New_function_description descr = {7, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 413};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_height, __pyx_mstate->__pyx_n_u_bg, __pyx_mstate->__pyx_n_u_text_color, __pyx_mstate->__pyx_n_u_font_family, __pyx_mstate->__pyx_n_u_font_size, __pyx_mstate->__pyx_n_u_buttons};
-    __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_configure_titlebar, __pyx_mstate->__pyx_kp_b_iso88591_oQa_q_l_aq_a_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 383};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_color, __pyx_mstate->__pyx_n_u_rgba};
+    __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_clear, __pyx_mstate->__pyx_kp_b_iso88591_O1A_hnAQ, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 422};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_r, __pyx_mstate->__pyx_n_u_g, __pyx_mstate->__pyx_n_u_b, __pyx_mstate->__pyx_n_u_a};
-    __pyx_mstate_global->__pyx_codeobj_tab[1] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_client_background, __pyx_mstate->__pyx_kp_b_iso88591_oS_3a_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[1])) goto bad;
-  }
-  {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 427};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_value, __pyx_mstate->__pyx_n_u_title_bytes};
-    __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_title, __pyx_mstate->__pyx_kp_b_iso88591_j_T_6_gQiq_hm1_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
-  }
-  {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 436};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_callback, __pyx_mstate->__pyx_n_u_owner};
-    __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_register_close_callback, __pyx_mstate->__pyx_kp_b_iso88591_a_2, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
-  }
-  {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 441};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_alpha, __pyx_mstate->__pyx_n_u_title_bytes, __pyx_mstate->__pyx_n_u_style, __pyx_mstate->__pyx_n_u_ex_style};
-    __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_show, __pyx_mstate->__pyx_kp_b_iso88591_1_T_Q_Yb_b_2_Bo____T_s_j_q_G7_9, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
-  }
-  {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 486};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
-    __pyx_mstate_global->__pyx_codeobj_tab[5] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_close, __pyx_mstate->__pyx_kp_b_iso88591_T_6_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[5])) goto bad;
+    const __Pyx_PyCode_New_function_description descr = {6, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 388};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_x, __pyx_mstate->__pyx_n_u_y, __pyx_mstate->__pyx_n_u_width, __pyx_mstate->__pyx_n_u_height, __pyx_mstate->__pyx_n_u_color, __pyx_mstate->__pyx_n_u_rgba};
+    __pyx_mstate_global->__pyx_codeobj_tab[1] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_fill_rect, __pyx_mstate->__pyx_kp_b_iso88591_O1A_h_Cwha, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[1])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
-    __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_mstate->__pyx_kp_b_iso88591_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_mstate->__pyx_kp_b_iso88591_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 3};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_pyx_state};
-    __pyx_mstate_global->__pyx_codeobj_tab[7] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_setstate_cython, __pyx_mstate->__pyx_kp_b_iso88591_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[7])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_setstate_cython, __pyx_mstate->__pyx_kp_b_iso88591_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {0, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 774};
+    const __Pyx_PyCode_New_function_description descr = {7, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 483};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_height, __pyx_mstate->__pyx_n_u_bg, __pyx_mstate->__pyx_n_u_text_color, __pyx_mstate->__pyx_n_u_font_family, __pyx_mstate->__pyx_n_u_font_size, __pyx_mstate->__pyx_n_u_buttons};
+    __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_configure_titlebar, __pyx_mstate->__pyx_kp_b_iso88591_oQa_q_l_aq_a_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 492};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_r, __pyx_mstate->__pyx_n_u_g, __pyx_mstate->__pyx_n_u_b, __pyx_mstate->__pyx_n_u_a};
+    __pyx_mstate_global->__pyx_codeobj_tab[5] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_client_background, __pyx_mstate->__pyx_kp_b_iso88591_oS_3a_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[5])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 497};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_value, __pyx_mstate->__pyx_n_u_title_bytes};
+    __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_title, __pyx_mstate->__pyx_kp_b_iso88591_j_T_6_gQiq_hm1_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 506};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_callback, __pyx_mstate->__pyx_n_u_owner};
+    __pyx_mstate_global->__pyx_codeobj_tab[7] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_register_close_callback, __pyx_mstate->__pyx_kp_b_iso88591_a_2, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[7])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 511};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_owner};
+    __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_owner, __pyx_mstate->__pyx_kp_b_iso88591_j, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 515};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_callback};
+    __pyx_mstate_global->__pyx_codeobj_tab[9] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_paint_callback, __pyx_mstate->__pyx_kp_b_iso88591__5, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[9])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 519};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_move_cb, __pyx_mstate->__pyx_n_u_down_cb, __pyx_mstate->__pyx_n_u_up_cb};
+    __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_mouse_callbacks, __pyx_mstate->__pyx_kp_b_iso88591_a_3, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 525};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_key_down_cb, __pyx_mstate->__pyx_n_u_char_cb};
+    __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_set_key_callbacks, __pyx_mstate->__pyx_kp_b_iso88591_a_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 530};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
+    __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_invalidate, __pyx_mstate->__pyx_kp_b_iso88591_l, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 552};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_alpha, __pyx_mstate->__pyx_n_u_title_bytes, __pyx_mstate->__pyx_n_u_style, __pyx_mstate->__pyx_n_u_ex_style};
+    __pyx_mstate_global->__pyx_codeobj_tab[13] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_show, __pyx_mstate->__pyx_kp_b_iso88591_1_T_Q_Yb_b_2_Bo____T_s_j_q_G7_9, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[13])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 597};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
+    __pyx_mstate_global->__pyx_codeobj_tab[14] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_close, __pyx_mstate->__pyx_kp_b_iso88591_T_6_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[14])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
+    __pyx_mstate_global->__pyx_codeobj_tab[15] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_mstate->__pyx_kp_b_iso88591_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[15])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 3};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_pyx_state};
+    __pyx_mstate_global->__pyx_codeobj_tab[16] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_setstate_cython, __pyx_mstate->__pyx_kp_b_iso88591_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[16])) goto bad;
+  }
+  {
+    const __Pyx_PyCode_New_function_description descr = {0, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 994};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_msg};
-    __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_run_event_loop, __pyx_mstate->__pyx_kp_b_iso88591_1E_s_S_1A_1A, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[17] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_nice_titlebar__win32_titleba, __pyx_mstate->__pyx_n_u_run_event_loop, __pyx_mstate->__pyx_kp_b_iso88591_1E_s_S_1A_1A, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[17])) goto bad;
   }
   Py_DECREF(tuple_dedup_map);
   return 0;
@@ -11037,269 +14734,6 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
             "name '%U' is not defined", name);
     }
     return result;
-}
-
-/* RaiseTooManyValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
-    PyErr_Format(PyExc_ValueError,
-                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
-}
-
-/* RaiseNeedMoreValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
-    PyErr_Format(PyExc_ValueError,
-                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
-                 index, (index == 1) ? "" : "s");
-}
-
-/* IterFinish */
-static CYTHON_INLINE int __Pyx_IterFinish(void) {
-    PyObject* exc_type;
-    __Pyx_PyThreadState_declare
-    __Pyx_PyThreadState_assign
-    exc_type = __Pyx_PyErr_CurrentExceptionType();
-    if (unlikely(exc_type)) {
-        if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)))
-            return -1;
-        __Pyx_PyErr_Clear();
-        return 0;
-    }
-    return 0;
-}
-
-/* UnpackItemEndCheck */
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
-    if (unlikely(retval)) {
-        Py_DECREF(retval);
-        __Pyx_RaiseTooManyValuesError(expected);
-        return -1;
-    }
-    return __Pyx_IterFinish();
-}
-
-/* PyObjectCall (used by PyObjectFastCall) */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
-    PyObject *result;
-    ternaryfunc call = Py_TYPE(func)->tp_call;
-    if (unlikely(!call))
-        return PyObject_Call(func, arg, kw);
-    if (unlikely(Py_EnterRecursiveCall(" while calling a Python object")))
-        return NULL;
-    result = (*call)(func, arg, kw);
-    Py_LeaveRecursiveCall();
-    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
-        PyErr_SetString(
-            PyExc_SystemError,
-            "NULL result without error in PyObject_Call");
-    }
-    return result;
-}
-#endif
-
-/* PyObjectCallMethO (used by PyObjectFastCall) */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
-    PyObject *self, *result;
-    PyCFunction cfunc;
-    cfunc = __Pyx_CyOrPyCFunction_GET_FUNCTION(func);
-    self = __Pyx_CyOrPyCFunction_GET_SELF(func);
-    if (unlikely(Py_EnterRecursiveCall(" while calling a Python object")))
-        return NULL;
-    result = cfunc(self, arg);
-    Py_LeaveRecursiveCall();
-    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
-        PyErr_SetString(
-            PyExc_SystemError,
-            "NULL result without error in PyObject_Call");
-    }
-    return result;
-}
-#endif
-
-/* PyObjectFastCall */
-#if PY_VERSION_HEX < 0x03090000 || CYTHON_COMPILING_IN_LIMITED_API
-static PyObject* __Pyx_PyObject_FastCall_fallback(PyObject *func, PyObject * const*args, size_t nargs, PyObject *kwargs) {
-    PyObject *argstuple;
-    PyObject *result = 0;
-    size_t i;
-    argstuple = PyTuple_New((Py_ssize_t)nargs);
-    if (unlikely(!argstuple)) return NULL;
-    for (i = 0; i < nargs; i++) {
-        Py_INCREF(args[i]);
-        if (__Pyx_PyTuple_SET_ITEM(argstuple, (Py_ssize_t)i, args[i]) != (0)) goto bad;
-    }
-    result = __Pyx_PyObject_Call(func, argstuple, kwargs);
-  bad:
-    Py_DECREF(argstuple);
-    return result;
-}
-#endif
-#if CYTHON_VECTORCALL && !CYTHON_COMPILING_IN_LIMITED_API
-  #if PY_VERSION_HEX < 0x03090000
-    #define __Pyx_PyVectorcall_Function(callable) _PyVectorcall_Function(callable)
-  #elif CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE vectorcallfunc __Pyx_PyVectorcall_Function(PyObject *callable) {
-    PyTypeObject *tp = Py_TYPE(callable);
-    #if defined(__Pyx_CyFunction_USED)
-    if (__Pyx_CyFunction_CheckExact(callable)) {
-        return __Pyx_CyFunction_func_vectorcall(callable);
-    }
-    #endif
-    if (!PyType_HasFeature(tp, Py_TPFLAGS_HAVE_VECTORCALL)) {
-        return NULL;
-    }
-    assert(PyCallable_Check(callable));
-    Py_ssize_t offset = tp->tp_vectorcall_offset;
-    assert(offset > 0);
-    vectorcallfunc ptr;
-    memcpy(&ptr, (char *) callable + offset, sizeof(ptr));
-    return ptr;
-}
-  #else
-    #define __Pyx_PyVectorcall_Function(callable) PyVectorcall_Function(callable)
-  #endif
-#endif
-static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject *const *args, size_t _nargs, PyObject *kwargs) {
-    Py_ssize_t nargs = __Pyx_PyVectorcall_NARGS(_nargs);
-#if CYTHON_COMPILING_IN_CPYTHON
-    if (nargs == 0 && kwargs == NULL) {
-        if (__Pyx_CyOrPyCFunction_Check(func) && likely( __Pyx_CyOrPyCFunction_GET_FLAGS(func) & METH_NOARGS))
-            return __Pyx_PyObject_CallMethO(func, NULL);
-    }
-    else if (nargs == 1 && kwargs == NULL) {
-        if (__Pyx_CyOrPyCFunction_Check(func) && likely( __Pyx_CyOrPyCFunction_GET_FLAGS(func) & METH_O))
-            return __Pyx_PyObject_CallMethO(func, args[0]);
-    }
-#endif
-    if (kwargs == NULL) {
-        #if CYTHON_VECTORCALL
-          #if CYTHON_COMPILING_IN_LIMITED_API
-            return PyObject_Vectorcall(func, args, _nargs, NULL);
-          #else
-            vectorcallfunc f = __Pyx_PyVectorcall_Function(func);
-            if (f) {
-                return f(func, args, _nargs, NULL);
-            }
-          #endif
-        #endif
-    }
-    if (nargs == 0) {
-        return __Pyx_PyObject_Call(func, __pyx_mstate_global->__pyx_empty_tuple, kwargs);
-    }
-    #if PY_VERSION_HEX >= 0x03090000 && !CYTHON_COMPILING_IN_LIMITED_API
-    return PyObject_VectorcallDict(func, args, (size_t)nargs, kwargs);
-    #else
-    return __Pyx_PyObject_FastCall_fallback(func, args, (size_t)nargs, kwargs);
-    #endif
-}
-
-/* RaiseException */
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
-    PyObject* owned_instance = NULL;
-    if (tb == Py_None) {
-        tb = 0;
-    } else if (tb && !PyTraceBack_Check(tb)) {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: arg 3 must be a traceback or None");
-        goto bad;
-    }
-    if (value == Py_None)
-        value = 0;
-    if (PyExceptionInstance_Check(type)) {
-        if (value) {
-            PyErr_SetString(PyExc_TypeError,
-                "instance exception may not have a separate value");
-            goto bad;
-        }
-        value = type;
-        type = (PyObject*) Py_TYPE(value);
-    } else if (PyExceptionClass_Check(type)) {
-        PyObject *instance_class = NULL;
-        if (value && PyExceptionInstance_Check(value)) {
-            instance_class = (PyObject*) Py_TYPE(value);
-            if (instance_class != type) {
-                int is_subclass = PyObject_IsSubclass(instance_class, type);
-                if (!is_subclass) {
-                    instance_class = NULL;
-                } else if (unlikely(is_subclass == -1)) {
-                    goto bad;
-                } else {
-                    type = instance_class;
-                }
-            }
-        }
-        if (!instance_class) {
-            PyObject *args;
-            if (!value)
-                args = PyTuple_New(0);
-            else if (PyTuple_Check(value)) {
-                Py_INCREF(value);
-                args = value;
-            } else
-                args = PyTuple_Pack(1, value);
-            if (!args)
-                goto bad;
-            owned_instance = PyObject_Call(type, args, NULL);
-            Py_DECREF(args);
-            if (!owned_instance)
-                goto bad;
-            value = owned_instance;
-            if (!PyExceptionInstance_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                             "calling %R should have returned an instance of "
-                             "BaseException, not %R",
-                             type, Py_TYPE(value));
-                goto bad;
-            }
-        }
-    } else {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: exception class must be a subclass of BaseException");
-        goto bad;
-    }
-    if (cause) {
-        PyObject *fixed_cause;
-        if (cause == Py_None) {
-            fixed_cause = NULL;
-        } else if (PyExceptionClass_Check(cause)) {
-            fixed_cause = PyObject_CallObject(cause, NULL);
-            if (fixed_cause == NULL)
-                goto bad;
-        } else if (PyExceptionInstance_Check(cause)) {
-            fixed_cause = cause;
-            Py_INCREF(fixed_cause);
-        } else {
-            PyErr_SetString(PyExc_TypeError,
-                            "exception causes must derive from "
-                            "BaseException");
-            goto bad;
-        }
-        PyException_SetCause(value, fixed_cause);
-    }
-    PyErr_SetObject(type, value);
-    if (tb) {
-#if PY_VERSION_HEX >= 0x030C00A6
-        PyException_SetTraceback(value, tb);
-#elif CYTHON_FAST_THREAD_STATE
-        PyThreadState *tstate = __Pyx_PyThreadState_Current;
-        PyObject* tmp_tb = tstate->curexc_traceback;
-        if (tb != tmp_tb) {
-            Py_INCREF(tb);
-            tstate->curexc_traceback = tb;
-            Py_XDECREF(tmp_tb);
-        }
-#else
-        PyObject *tmp_type, *tmp_value, *tmp_tb;
-        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
-        Py_INCREF(tb);
-        PyErr_Restore(tmp_type, tmp_value, tb);
-        Py_XDECREF(tmp_tb);
-#endif
-    }
-bad:
-    Py_XDECREF(owned_instance);
-    return;
 }
 
 /* TupleAndListFromArray (used by fastcall) */
@@ -11541,30 +14975,121 @@ bad:
 #endif
 #endif
 
-/* RaiseArgTupleInvalid */
-static void __Pyx_RaiseArgtupleInvalid(
-    const char* func_name,
-    int exact,
-    Py_ssize_t num_min,
-    Py_ssize_t num_max,
-    Py_ssize_t num_found)
-{
-    Py_ssize_t num_expected;
-    const char *more_or_less;
-    if (num_found < num_min) {
-        num_expected = num_min;
-        more_or_less = "at least";
-    } else {
-        num_expected = num_max;
-        more_or_less = "at most";
+/* PyObjectCall (used by PyObjectFastCall) */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
+    PyObject *result;
+    ternaryfunc call = Py_TYPE(func)->tp_call;
+    if (unlikely(!call))
+        return PyObject_Call(func, arg, kw);
+    if (unlikely(Py_EnterRecursiveCall(" while calling a Python object")))
+        return NULL;
+    result = (*call)(func, arg, kw);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
     }
-    if (exact) {
-        more_or_less = "exactly";
+    return result;
+}
+#endif
+
+/* PyObjectCallMethO (used by PyObjectFastCall) */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
+    PyObject *self, *result;
+    PyCFunction cfunc;
+    cfunc = __Pyx_CyOrPyCFunction_GET_FUNCTION(func);
+    self = __Pyx_CyOrPyCFunction_GET_SELF(func);
+    if (unlikely(Py_EnterRecursiveCall(" while calling a Python object")))
+        return NULL;
+    result = cfunc(self, arg);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
     }
-    PyErr_Format(PyExc_TypeError,
-                 "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
-                 func_name, more_or_less, num_expected,
-                 (num_expected == 1) ? "" : "s", num_found);
+    return result;
+}
+#endif
+
+/* PyObjectFastCall (used by PyObjectCallOneArg) */
+#if PY_VERSION_HEX < 0x03090000 || CYTHON_COMPILING_IN_LIMITED_API
+static PyObject* __Pyx_PyObject_FastCall_fallback(PyObject *func, PyObject * const*args, size_t nargs, PyObject *kwargs) {
+    PyObject *argstuple;
+    PyObject *result = 0;
+    size_t i;
+    argstuple = PyTuple_New((Py_ssize_t)nargs);
+    if (unlikely(!argstuple)) return NULL;
+    for (i = 0; i < nargs; i++) {
+        Py_INCREF(args[i]);
+        if (__Pyx_PyTuple_SET_ITEM(argstuple, (Py_ssize_t)i, args[i]) != (0)) goto bad;
+    }
+    result = __Pyx_PyObject_Call(func, argstuple, kwargs);
+  bad:
+    Py_DECREF(argstuple);
+    return result;
+}
+#endif
+#if CYTHON_VECTORCALL && !CYTHON_COMPILING_IN_LIMITED_API
+  #if PY_VERSION_HEX < 0x03090000
+    #define __Pyx_PyVectorcall_Function(callable) _PyVectorcall_Function(callable)
+  #elif CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE vectorcallfunc __Pyx_PyVectorcall_Function(PyObject *callable) {
+    PyTypeObject *tp = Py_TYPE(callable);
+    #if defined(__Pyx_CyFunction_USED)
+    if (__Pyx_CyFunction_CheckExact(callable)) {
+        return __Pyx_CyFunction_func_vectorcall(callable);
+    }
+    #endif
+    if (!PyType_HasFeature(tp, Py_TPFLAGS_HAVE_VECTORCALL)) {
+        return NULL;
+    }
+    assert(PyCallable_Check(callable));
+    Py_ssize_t offset = tp->tp_vectorcall_offset;
+    assert(offset > 0);
+    vectorcallfunc ptr;
+    memcpy(&ptr, (char *) callable + offset, sizeof(ptr));
+    return ptr;
+}
+  #else
+    #define __Pyx_PyVectorcall_Function(callable) PyVectorcall_Function(callable)
+  #endif
+#endif
+static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject *const *args, size_t _nargs, PyObject *kwargs) {
+    Py_ssize_t nargs = __Pyx_PyVectorcall_NARGS(_nargs);
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (nargs == 0 && kwargs == NULL) {
+        if (__Pyx_CyOrPyCFunction_Check(func) && likely( __Pyx_CyOrPyCFunction_GET_FLAGS(func) & METH_NOARGS))
+            return __Pyx_PyObject_CallMethO(func, NULL);
+    }
+    else if (nargs == 1 && kwargs == NULL) {
+        if (__Pyx_CyOrPyCFunction_Check(func) && likely( __Pyx_CyOrPyCFunction_GET_FLAGS(func) & METH_O))
+            return __Pyx_PyObject_CallMethO(func, args[0]);
+    }
+#endif
+    if (kwargs == NULL) {
+        #if CYTHON_VECTORCALL
+          #if CYTHON_COMPILING_IN_LIMITED_API
+            return PyObject_Vectorcall(func, args, _nargs, NULL);
+          #else
+            vectorcallfunc f = __Pyx_PyVectorcall_Function(func);
+            if (f) {
+                return f(func, args, _nargs, NULL);
+            }
+          #endif
+        #endif
+    }
+    if (nargs == 0) {
+        return __Pyx_PyObject_Call(func, __pyx_mstate_global->__pyx_empty_tuple, kwargs);
+    }
+    #if PY_VERSION_HEX >= 0x03090000 && !CYTHON_COMPILING_IN_LIMITED_API
+    return PyObject_VectorcallDict(func, args, (size_t)nargs, kwargs);
+    #else
+    return __Pyx_PyObject_FastCall_fallback(func, args, (size_t)nargs, kwargs);
+    #endif
 }
 
 /* PyObjectCallOneArg (used by CallUnboundCMethod0) */
@@ -11709,7 +15234,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyDict_Values(PyObject* d) {
     return __Pyx_CallUnboundCMethod0(&__pyx_mstate_global->__pyx_umethod_PyDict_Type_values, d);
 }
 
-/* OwnedDictNext (used by RejectKeywords) */
+/* OwnedDictNext (used by ParseKeywordsImpl) */
 #if CYTHON_AVOID_BORROWED_REFS
 static int __Pyx_PyDict_NextRef(PyObject *p, PyObject **ppos, PyObject **pkey, PyObject **pvalue) {
     PyObject *next = NULL;
@@ -11763,33 +15288,6 @@ static int __Pyx_PyDict_NextRef(PyObject *p, Py_ssize_t *ppos, PyObject **pkey, 
     return result;
 }
 #endif
-
-/* RejectKeywords */
-static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds) {
-    PyObject *key = NULL;
-    if (CYTHON_METH_FASTCALL && likely(PyTuple_Check(kwds))) {
-        key = __Pyx_PySequence_ITEM(kwds, 0);
-    } else {
-#if CYTHON_AVOID_BORROWED_REFS
-        PyObject *pos = NULL;
-#else
-        Py_ssize_t pos = 0;
-#endif
-#if !CYTHON_COMPILING_IN_PYPY || defined(PyArg_ValidateKeywordArguments)
-        if (unlikely(!PyArg_ValidateKeywordArguments(kwds))) return;
-#endif
-        __Pyx_PyDict_NextRef(kwds, &pos, &key, NULL);
-#if CYTHON_AVOID_BORROWED_REFS
-        Py_XDECREF(pos);
-#endif
-    }
-    if (likely(key)) {
-        PyErr_Format(PyExc_TypeError,
-            "%s() got an unexpected keyword argument '%U'",
-            function_name, key);
-        Py_DECREF(key);
-    }
-}
 
 /* RaiseDoubleKeywords (used by ParseKeywordsImpl) */
 static void __Pyx_RaiseDoubleKeywordsError(
@@ -12241,6 +15739,32 @@ static int __Pyx_ParseKeywords(
         return __Pyx_ParseKeywordDict(kwds, argnames, values, num_pos_args, num_kwargs, function_name, ignore_unknown_kwargs);
 }
 
+/* RaiseArgTupleInvalid */
+static void __Pyx_RaiseArgtupleInvalid(
+    const char* func_name,
+    int exact,
+    Py_ssize_t num_min,
+    Py_ssize_t num_max,
+    Py_ssize_t num_found)
+{
+    Py_ssize_t num_expected;
+    const char *more_or_less;
+    if (num_found < num_min) {
+        num_expected = num_min;
+        more_or_less = "at least";
+    } else {
+        num_expected = num_max;
+        more_or_less = "at most";
+    }
+    if (exact) {
+        more_or_less = "exactly";
+    }
+    PyErr_Format(PyExc_TypeError,
+                 "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
+                 func_name, more_or_less, num_expected,
+                 (num_expected == 1) ? "" : "s", num_found);
+}
+
 /* ArgTypeTestFunc (used by ArgTypeTest) */
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
 {
@@ -12288,6 +15812,250 @@ static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *nam
     __Pyx_DECREF_TypeName(obj_type_name);
     return 0;
 }
+
+/* RejectKeywords */
+static void __Pyx_RejectKeywords(const char* function_name, PyObject *kwds) {
+    PyObject *key = NULL;
+    if (CYTHON_METH_FASTCALL && likely(PyTuple_Check(kwds))) {
+        key = __Pyx_PySequence_ITEM(kwds, 0);
+    } else {
+#if CYTHON_AVOID_BORROWED_REFS
+        PyObject *pos = NULL;
+#else
+        Py_ssize_t pos = 0;
+#endif
+#if !CYTHON_COMPILING_IN_PYPY || defined(PyArg_ValidateKeywordArguments)
+        if (unlikely(!PyArg_ValidateKeywordArguments(kwds))) return;
+#endif
+        __Pyx_PyDict_NextRef(kwds, &pos, &key, NULL);
+#if CYTHON_AVOID_BORROWED_REFS
+        Py_XDECREF(pos);
+#endif
+    }
+    if (likely(key)) {
+        PyErr_Format(PyExc_TypeError,
+            "%s() got an unexpected keyword argument '%U'",
+            function_name, key);
+        Py_DECREF(key);
+    }
+}
+
+/* RaiseException */
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
+    PyObject* owned_instance = NULL;
+    if (tb == Py_None) {
+        tb = 0;
+    } else if (tb && !PyTraceBack_Check(tb)) {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: arg 3 must be a traceback or None");
+        goto bad;
+    }
+    if (value == Py_None)
+        value = 0;
+    if (PyExceptionInstance_Check(type)) {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto bad;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(value);
+    } else if (PyExceptionClass_Check(type)) {
+        PyObject *instance_class = NULL;
+        if (value && PyExceptionInstance_Check(value)) {
+            instance_class = (PyObject*) Py_TYPE(value);
+            if (instance_class != type) {
+                int is_subclass = PyObject_IsSubclass(instance_class, type);
+                if (!is_subclass) {
+                    instance_class = NULL;
+                } else if (unlikely(is_subclass == -1)) {
+                    goto bad;
+                } else {
+                    type = instance_class;
+                }
+            }
+        }
+        if (!instance_class) {
+            PyObject *args;
+            if (!value)
+                args = PyTuple_New(0);
+            else if (PyTuple_Check(value)) {
+                Py_INCREF(value);
+                args = value;
+            } else
+                args = PyTuple_Pack(1, value);
+            if (!args)
+                goto bad;
+            owned_instance = PyObject_Call(type, args, NULL);
+            Py_DECREF(args);
+            if (!owned_instance)
+                goto bad;
+            value = owned_instance;
+            if (!PyExceptionInstance_Check(value)) {
+                PyErr_Format(PyExc_TypeError,
+                             "calling %R should have returned an instance of "
+                             "BaseException, not %R",
+                             type, Py_TYPE(value));
+                goto bad;
+            }
+        }
+    } else {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: exception class must be a subclass of BaseException");
+        goto bad;
+    }
+    if (cause) {
+        PyObject *fixed_cause;
+        if (cause == Py_None) {
+            fixed_cause = NULL;
+        } else if (PyExceptionClass_Check(cause)) {
+            fixed_cause = PyObject_CallObject(cause, NULL);
+            if (fixed_cause == NULL)
+                goto bad;
+        } else if (PyExceptionInstance_Check(cause)) {
+            fixed_cause = cause;
+            Py_INCREF(fixed_cause);
+        } else {
+            PyErr_SetString(PyExc_TypeError,
+                            "exception causes must derive from "
+                            "BaseException");
+            goto bad;
+        }
+        PyException_SetCause(value, fixed_cause);
+    }
+    PyErr_SetObject(type, value);
+    if (tb) {
+#if PY_VERSION_HEX >= 0x030C00A6
+        PyException_SetTraceback(value, tb);
+#elif CYTHON_FAST_THREAD_STATE
+        PyThreadState *tstate = __Pyx_PyThreadState_Current;
+        PyObject* tmp_tb = tstate->curexc_traceback;
+        if (tb != tmp_tb) {
+            Py_INCREF(tb);
+            tstate->curexc_traceback = tb;
+            Py_XDECREF(tmp_tb);
+        }
+#else
+        PyObject *tmp_type, *tmp_value, *tmp_tb;
+        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
+        Py_INCREF(tb);
+        PyErr_Restore(tmp_type, tmp_value, tb);
+        Py_XDECREF(tmp_tb);
+#endif
+    }
+bad:
+    Py_XDECREF(owned_instance);
+    return;
+}
+
+/* RaiseTooManyValuesToUnpack */
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+    PyErr_Format(PyExc_ValueError,
+                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
+}
+
+/* RaiseNeedMoreValuesToUnpack */
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+    PyErr_Format(PyExc_ValueError,
+                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
+                 index, (index == 1) ? "" : "s");
+}
+
+/* IterFinish */
+static CYTHON_INLINE int __Pyx_IterFinish(void) {
+    PyObject* exc_type;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    exc_type = __Pyx_PyErr_CurrentExceptionType();
+    if (unlikely(exc_type)) {
+        if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)))
+            return -1;
+        __Pyx_PyErr_Clear();
+        return 0;
+    }
+    return 0;
+}
+
+/* UnpackItemEndCheck */
+static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
+    if (unlikely(retval)) {
+        Py_DECREF(retval);
+        __Pyx_RaiseTooManyValuesError(expected);
+        return -1;
+    }
+    return __Pyx_IterFinish();
+}
+
+/* PyFloatBinop */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyFloat_TrueDivideObjC(PyObject *op1, PyObject *op2, double floatval, int inplace, int zerodivision_check) {
+    const double b = floatval;
+    double a, result;
+    CYTHON_UNUSED_VAR(inplace);
+    CYTHON_UNUSED_VAR(zerodivision_check);
+    if (likely(PyFloat_CheckExact(op1))) {
+        a = __Pyx_PyFloat_AS_DOUBLE(op1);
+        
+    } else
+    if (likely(PyLong_CheckExact(op1))) {
+        #if CYTHON_USE_PYLONG_INTERNALS
+        if (__Pyx_PyLong_IsZero(op1)) {
+            a = 0.0;
+            
+        } else if (__Pyx_PyLong_IsCompact(op1)) {
+            a = (double) __Pyx_PyLong_CompactValue(op1);
+        } else {
+            const digit* digits = __Pyx_PyLong_Digits(op1);
+            const Py_ssize_t size = __Pyx_PyLong_SignedDigitCount(op1);
+            switch (size) {
+                case -2:
+                case 2:
+                    if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (1 * PyLong_SHIFT < 53))) {
+                        a = (double) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        if ((8 * sizeof(unsigned long) < 53) || (2 * PyLong_SHIFT < 53) || (a < (double) ((PY_LONG_LONG)1 << 53))) {
+                            if (size == -2)
+                                a = -a;
+                            break;
+                        }
+                    }
+                    CYTHON_FALLTHROUGH;
+                case -3:
+                case 3:
+                    if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (2 * PyLong_SHIFT < 53))) {
+                        a = (double) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        if ((8 * sizeof(unsigned long) < 53) || (3 * PyLong_SHIFT < 53) || (a < (double) ((PY_LONG_LONG)1 << 53))) {
+                            if (size == -3)
+                                a = -a;
+                            break;
+                        }
+                    }
+                    CYTHON_FALLTHROUGH;
+                case -4:
+                case 4:
+                    if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (3 * PyLong_SHIFT < 53))) {
+                        a = (double) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        if ((8 * sizeof(unsigned long) < 53) || (4 * PyLong_SHIFT < 53) || (a < (double) ((PY_LONG_LONG)1 << 53))) {
+                            if (size == -4)
+                                a = -a;
+                            break;
+                        }
+                    }
+                    CYTHON_FALLTHROUGH;
+                default:
+        #endif
+                    a = PyLong_AsDouble(op1);
+                    if (unlikely(a == -1.0 && PyErr_Occurred())) return NULL;
+        #if CYTHON_USE_PYLONG_INTERNALS
+            }
+        }
+        #endif
+    } else {
+        return (inplace ? PyNumber_InPlaceTrueDivide : PyNumber_TrueDivide)(op1, op2);
+    }
+        result = a / b;
+        return PyFloat_FromDouble(result);
+}
+#endif
 
 /* GetTopmostException (used by SaveResetException) */
 #if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
@@ -12381,109 +16149,6 @@ __Pyx_RaiseUnexpectedTypeError(const char *expected, PyObject *obj)
     __Pyx_DECREF_TypeName(obj_type_name);
     return 0;
 }
-
-/* PyFloatBinop */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyFloat_TrueDivideObjC(PyObject *op1, PyObject *op2, double floatval, int inplace, int zerodivision_check) {
-    const double b = floatval;
-    double a, result;
-    CYTHON_UNUSED_VAR(inplace);
-    CYTHON_UNUSED_VAR(zerodivision_check);
-    if (likely(PyFloat_CheckExact(op1))) {
-        a = __Pyx_PyFloat_AS_DOUBLE(op1);
-        
-    } else
-    if (likely(PyLong_CheckExact(op1))) {
-        #if CYTHON_USE_PYLONG_INTERNALS
-        if (__Pyx_PyLong_IsZero(op1)) {
-            a = 0.0;
-            
-        } else if (__Pyx_PyLong_IsCompact(op1)) {
-            a = (double) __Pyx_PyLong_CompactValue(op1);
-        } else {
-            const digit* digits = __Pyx_PyLong_Digits(op1);
-            const Py_ssize_t size = __Pyx_PyLong_SignedDigitCount(op1);
-            switch (size) {
-                case -2:
-                case 2:
-                    if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (1 * PyLong_SHIFT < 53))) {
-                        a = (double) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        if ((8 * sizeof(unsigned long) < 53) || (2 * PyLong_SHIFT < 53) || (a < (double) ((PY_LONG_LONG)1 << 53))) {
-                            if (size == -2)
-                                a = -a;
-                            break;
-                        }
-                    }
-                    CYTHON_FALLTHROUGH;
-                case -3:
-                case 3:
-                    if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (2 * PyLong_SHIFT < 53))) {
-                        a = (double) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        if ((8 * sizeof(unsigned long) < 53) || (3 * PyLong_SHIFT < 53) || (a < (double) ((PY_LONG_LONG)1 << 53))) {
-                            if (size == -3)
-                                a = -a;
-                            break;
-                        }
-                    }
-                    CYTHON_FALLTHROUGH;
-                case -4:
-                case 4:
-                    if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (3 * PyLong_SHIFT < 53))) {
-                        a = (double) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        if ((8 * sizeof(unsigned long) < 53) || (4 * PyLong_SHIFT < 53) || (a < (double) ((PY_LONG_LONG)1 << 53))) {
-                            if (size == -4)
-                                a = -a;
-                            break;
-                        }
-                    }
-                    CYTHON_FALLTHROUGH;
-                default:
-        #endif
-                    a = PyLong_AsDouble(op1);
-                    if (unlikely(a == -1.0 && PyErr_Occurred())) return NULL;
-        #if CYTHON_USE_PYLONG_INTERNALS
-            }
-        }
-        #endif
-    } else {
-        return (inplace ? PyNumber_InPlaceTrueDivide : PyNumber_TrueDivide)(op1, op2);
-    }
-        result = a / b;
-        return PyFloat_FromDouble(result);
-}
-#endif
-
-/* PyObjectFastCallMethod */
-#if !CYTHON_VECTORCALL || PY_VERSION_HEX < 0x03090000
-static PyObject *__Pyx_PyObject_FastCallMethod(PyObject *name, PyObject *const *args, size_t nargsf) {
-    PyObject *result;
-    PyObject *attr = PyObject_GetAttr(args[0], name);
-    if (unlikely(!attr))
-        return NULL;
-    result = __Pyx_PyObject_FastCall(attr, args+1, nargsf - 1);
-    Py_DECREF(attr);
-    return result;
-}
-#endif
-
-/* DictGetItem */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
-    PyObject *value;
-    if (unlikely(__Pyx_PyDict_GetItemRef(d, key, &value) == 0)) { // no value, no error
-        if (unlikely(PyTuple_Check(key))) {
-            PyObject* args = PyTuple_Pack(1, key);
-            if (likely(args)) {
-                PyErr_SetObject(PyExc_KeyError, args);
-                Py_DECREF(args);
-            }
-        } else {
-            PyErr_SetObject(PyExc_KeyError, key);
-        }
-    }
-    return value;
-}
-#endif
 
 /* GetException */
 #if CYTHON_FAST_THREAD_STATE
@@ -12587,6 +16252,38 @@ bad:
     return -1;
 #endif
 }
+
+/* PyObjectFastCallMethod */
+#if !CYTHON_VECTORCALL || PY_VERSION_HEX < 0x03090000
+static PyObject *__Pyx_PyObject_FastCallMethod(PyObject *name, PyObject *const *args, size_t nargsf) {
+    PyObject *result;
+    PyObject *attr = PyObject_GetAttr(args[0], name);
+    if (unlikely(!attr))
+        return NULL;
+    result = __Pyx_PyObject_FastCall(attr, args+1, nargsf - 1);
+    Py_DECREF(attr);
+    return result;
+}
+#endif
+
+/* DictGetItem */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
+    PyObject *value;
+    if (unlikely(__Pyx_PyDict_GetItemRef(d, key, &value) == 0)) { // no value, no error
+        if (unlikely(PyTuple_Check(key))) {
+            PyObject* args = PyTuple_Pack(1, key);
+            if (likely(args)) {
+                PyErr_SetObject(PyExc_KeyError, args);
+                Py_DECREF(args);
+            }
+        } else {
+            PyErr_SetObject(PyExc_KeyError, key);
+        }
+    }
+    return value;
+}
+#endif
 
 /* PyObjectCall2Args (used by CallUnboundCMethod1) */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
@@ -13168,6 +16865,130 @@ static int __Pyx_PyType_Ready(PyTypeObject *t) {
 #endif
 }
 
+/* DelItemOnTypeDict (used by SetupReduce) */
+static int __Pyx__DelItemOnTypeDict(PyTypeObject *tp, PyObject *k) {
+    int result;
+    PyObject *tp_dict;
+#if CYTHON_COMPILING_IN_LIMITED_API
+    tp_dict = __Pyx_GetTypeDict(tp);
+    if (unlikely(!tp_dict)) return -1;
+#else
+    tp_dict = tp->tp_dict;
+#endif
+    result = PyDict_DelItem(tp_dict, k);
+    if (likely(!result)) PyType_Modified(tp);
+    return result;
+}
+
+/* SetupReduce */
+static int __Pyx_setup_reduce_is_named(PyObject* meth, PyObject* name) {
+  int ret;
+  PyObject *name_attr;
+  name_attr = __Pyx_PyObject_GetAttrStrNoError(meth, __pyx_mstate_global->__pyx_n_u_name);
+  if (likely(name_attr)) {
+      ret = PyObject_RichCompareBool(name_attr, name, Py_EQ);
+  } else {
+      ret = -1;
+  }
+  if (unlikely(ret < 0)) {
+      PyErr_Clear();
+      ret = 0;
+  }
+  Py_XDECREF(name_attr);
+  return ret;
+}
+static int __Pyx_setup_reduce(PyObject* type_obj) {
+    int ret = 0;
+    PyObject *object_reduce = NULL;
+    PyObject *object_getstate = NULL;
+    PyObject *object_reduce_ex = NULL;
+    PyObject *reduce = NULL;
+    PyObject *reduce_ex = NULL;
+    PyObject *reduce_cython = NULL;
+    PyObject *setstate = NULL;
+    PyObject *setstate_cython = NULL;
+    PyObject *getstate = NULL;
+#if CYTHON_USE_PYTYPE_LOOKUP
+    getstate = _PyType_Lookup((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_getstate);
+#else
+    getstate = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_getstate);
+    if (!getstate && PyErr_Occurred()) {
+        goto __PYX_BAD;
+    }
+#endif
+    if (getstate) {
+#if CYTHON_USE_PYTYPE_LOOKUP
+        object_getstate = _PyType_Lookup(&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_getstate);
+#else
+        object_getstate = __Pyx_PyObject_GetAttrStrNoError((PyObject*)&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_getstate);
+        if (!object_getstate && PyErr_Occurred()) {
+            goto __PYX_BAD;
+        }
+#endif
+        if (object_getstate != getstate) {
+            goto __PYX_GOOD;
+        }
+    }
+#if CYTHON_USE_PYTYPE_LOOKUP
+    object_reduce_ex = _PyType_Lookup(&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce_ex); if (!object_reduce_ex) goto __PYX_BAD;
+#else
+    object_reduce_ex = __Pyx_PyObject_GetAttrStr((PyObject*)&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce_ex); if (!object_reduce_ex) goto __PYX_BAD;
+#endif
+    reduce_ex = __Pyx_PyObject_GetAttrStr(type_obj, __pyx_mstate_global->__pyx_n_u_reduce_ex); if (unlikely(!reduce_ex)) goto __PYX_BAD;
+    if (reduce_ex == object_reduce_ex) {
+#if CYTHON_USE_PYTYPE_LOOKUP
+        object_reduce = _PyType_Lookup(&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce); if (!object_reduce) goto __PYX_BAD;
+#else
+        object_reduce = __Pyx_PyObject_GetAttrStr((PyObject*)&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce); if (!object_reduce) goto __PYX_BAD;
+#endif
+        reduce = __Pyx_PyObject_GetAttrStr(type_obj, __pyx_mstate_global->__pyx_n_u_reduce); if (unlikely(!reduce)) goto __PYX_BAD;
+        if (reduce == object_reduce || __Pyx_setup_reduce_is_named(reduce, __pyx_mstate_global->__pyx_n_u_reduce_cython)) {
+            reduce_cython = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_reduce_cython);
+            if (likely(reduce_cython)) {
+                ret = __Pyx_SetItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_reduce, reduce_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
+                ret = __Pyx_DelItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_reduce_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
+            } else if (reduce == object_reduce || PyErr_Occurred()) {
+                goto __PYX_BAD;
+            }
+            setstate = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_setstate);
+            if (!setstate) PyErr_Clear();
+            if (!setstate || __Pyx_setup_reduce_is_named(setstate, __pyx_mstate_global->__pyx_n_u_setstate_cython)) {
+                setstate_cython = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_setstate_cython);
+                if (likely(setstate_cython)) {
+                    ret = __Pyx_SetItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_setstate, setstate_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
+                    ret = __Pyx_DelItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_setstate_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
+                } else if (!setstate || PyErr_Occurred()) {
+                    goto __PYX_BAD;
+                }
+            }
+            PyType_Modified((PyTypeObject*)type_obj);
+        }
+    }
+    goto __PYX_GOOD;
+__PYX_BAD:
+    if (!PyErr_Occurred()) {
+        __Pyx_TypeName type_obj_name =
+            __Pyx_PyType_GetFullyQualifiedName((PyTypeObject*)type_obj);
+        PyErr_Format(PyExc_RuntimeError,
+            "Unable to initialize pickling for " __Pyx_FMT_TYPENAME, type_obj_name);
+        __Pyx_DECREF_TypeName(type_obj_name);
+    }
+    ret = -1;
+__PYX_GOOD:
+#if !CYTHON_USE_PYTYPE_LOOKUP
+    Py_XDECREF(object_reduce);
+    Py_XDECREF(object_reduce_ex);
+    Py_XDECREF(object_getstate);
+    Py_XDECREF(getstate);
+#endif
+    Py_XDECREF(reduce);
+    Py_XDECREF(reduce_ex);
+    Py_XDECREF(reduce_cython);
+    Py_XDECREF(setstate);
+    Py_XDECREF(setstate_cython);
+    return ret;
+}
+
 /* SetVTable */
 static int __Pyx_SetVtable(PyTypeObject *type, void *vtable) {
     PyObject *ob = PyCapsule_New(vtable, 0, 0);
@@ -13298,130 +17119,6 @@ other_failure:
 #endif
     PyMem_Free(base_vtables);
     return -1;
-}
-
-/* DelItemOnTypeDict (used by SetupReduce) */
-static int __Pyx__DelItemOnTypeDict(PyTypeObject *tp, PyObject *k) {
-    int result;
-    PyObject *tp_dict;
-#if CYTHON_COMPILING_IN_LIMITED_API
-    tp_dict = __Pyx_GetTypeDict(tp);
-    if (unlikely(!tp_dict)) return -1;
-#else
-    tp_dict = tp->tp_dict;
-#endif
-    result = PyDict_DelItem(tp_dict, k);
-    if (likely(!result)) PyType_Modified(tp);
-    return result;
-}
-
-/* SetupReduce */
-static int __Pyx_setup_reduce_is_named(PyObject* meth, PyObject* name) {
-  int ret;
-  PyObject *name_attr;
-  name_attr = __Pyx_PyObject_GetAttrStrNoError(meth, __pyx_mstate_global->__pyx_n_u_name);
-  if (likely(name_attr)) {
-      ret = PyObject_RichCompareBool(name_attr, name, Py_EQ);
-  } else {
-      ret = -1;
-  }
-  if (unlikely(ret < 0)) {
-      PyErr_Clear();
-      ret = 0;
-  }
-  Py_XDECREF(name_attr);
-  return ret;
-}
-static int __Pyx_setup_reduce(PyObject* type_obj) {
-    int ret = 0;
-    PyObject *object_reduce = NULL;
-    PyObject *object_getstate = NULL;
-    PyObject *object_reduce_ex = NULL;
-    PyObject *reduce = NULL;
-    PyObject *reduce_ex = NULL;
-    PyObject *reduce_cython = NULL;
-    PyObject *setstate = NULL;
-    PyObject *setstate_cython = NULL;
-    PyObject *getstate = NULL;
-#if CYTHON_USE_PYTYPE_LOOKUP
-    getstate = _PyType_Lookup((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_getstate);
-#else
-    getstate = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_getstate);
-    if (!getstate && PyErr_Occurred()) {
-        goto __PYX_BAD;
-    }
-#endif
-    if (getstate) {
-#if CYTHON_USE_PYTYPE_LOOKUP
-        object_getstate = _PyType_Lookup(&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_getstate);
-#else
-        object_getstate = __Pyx_PyObject_GetAttrStrNoError((PyObject*)&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_getstate);
-        if (!object_getstate && PyErr_Occurred()) {
-            goto __PYX_BAD;
-        }
-#endif
-        if (object_getstate != getstate) {
-            goto __PYX_GOOD;
-        }
-    }
-#if CYTHON_USE_PYTYPE_LOOKUP
-    object_reduce_ex = _PyType_Lookup(&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce_ex); if (!object_reduce_ex) goto __PYX_BAD;
-#else
-    object_reduce_ex = __Pyx_PyObject_GetAttrStr((PyObject*)&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce_ex); if (!object_reduce_ex) goto __PYX_BAD;
-#endif
-    reduce_ex = __Pyx_PyObject_GetAttrStr(type_obj, __pyx_mstate_global->__pyx_n_u_reduce_ex); if (unlikely(!reduce_ex)) goto __PYX_BAD;
-    if (reduce_ex == object_reduce_ex) {
-#if CYTHON_USE_PYTYPE_LOOKUP
-        object_reduce = _PyType_Lookup(&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce); if (!object_reduce) goto __PYX_BAD;
-#else
-        object_reduce = __Pyx_PyObject_GetAttrStr((PyObject*)&PyBaseObject_Type, __pyx_mstate_global->__pyx_n_u_reduce); if (!object_reduce) goto __PYX_BAD;
-#endif
-        reduce = __Pyx_PyObject_GetAttrStr(type_obj, __pyx_mstate_global->__pyx_n_u_reduce); if (unlikely(!reduce)) goto __PYX_BAD;
-        if (reduce == object_reduce || __Pyx_setup_reduce_is_named(reduce, __pyx_mstate_global->__pyx_n_u_reduce_cython)) {
-            reduce_cython = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_reduce_cython);
-            if (likely(reduce_cython)) {
-                ret = __Pyx_SetItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_reduce, reduce_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
-                ret = __Pyx_DelItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_reduce_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
-            } else if (reduce == object_reduce || PyErr_Occurred()) {
-                goto __PYX_BAD;
-            }
-            setstate = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_setstate);
-            if (!setstate) PyErr_Clear();
-            if (!setstate || __Pyx_setup_reduce_is_named(setstate, __pyx_mstate_global->__pyx_n_u_setstate_cython)) {
-                setstate_cython = __Pyx_PyObject_GetAttrStrNoError(type_obj, __pyx_mstate_global->__pyx_n_u_setstate_cython);
-                if (likely(setstate_cython)) {
-                    ret = __Pyx_SetItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_setstate, setstate_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
-                    ret = __Pyx_DelItemOnTypeDict((PyTypeObject*)type_obj, __pyx_mstate_global->__pyx_n_u_setstate_cython); if (unlikely(ret < 0)) goto __PYX_BAD;
-                } else if (!setstate || PyErr_Occurred()) {
-                    goto __PYX_BAD;
-                }
-            }
-            PyType_Modified((PyTypeObject*)type_obj);
-        }
-    }
-    goto __PYX_GOOD;
-__PYX_BAD:
-    if (!PyErr_Occurred()) {
-        __Pyx_TypeName type_obj_name =
-            __Pyx_PyType_GetFullyQualifiedName((PyTypeObject*)type_obj);
-        PyErr_Format(PyExc_RuntimeError,
-            "Unable to initialize pickling for " __Pyx_FMT_TYPENAME, type_obj_name);
-        __Pyx_DECREF_TypeName(type_obj_name);
-    }
-    ret = -1;
-__PYX_GOOD:
-#if !CYTHON_USE_PYTYPE_LOOKUP
-    Py_XDECREF(object_reduce);
-    Py_XDECREF(object_reduce_ex);
-    Py_XDECREF(object_getstate);
-    Py_XDECREF(getstate);
-#endif
-    Py_XDECREF(reduce);
-    Py_XDECREF(reduce_ex);
-    Py_XDECREF(reduce_cython);
-    Py_XDECREF(setstate);
-    Py_XDECREF(setstate_cython);
-    return ret;
 }
 
 /* TypeImport */
