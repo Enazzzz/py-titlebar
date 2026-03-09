@@ -171,6 +171,22 @@ cdef extern from *:
 	static unsigned int ntb_hi_word(LPARAM p) {
 		return HIWORD((DWORD_PTR)p);
 	}
+
+	static void ntb_init_wndclass(WNDCLASSEXA* cls, void* proc, HINSTANCE inst, const char* class_name) {
+		ZeroMemory(cls, sizeof(WNDCLASSEXA));
+		cls->cbSize = sizeof(WNDCLASSEXA);
+		cls->style = 0;
+		cls->lpfnWndProc = (WNDPROC)proc;
+		cls->cbClsExtra = 0;
+		cls->cbWndExtra = 0;
+		cls->hInstance = inst;
+		cls->hIcon = NULL;
+		cls->hCursor = NULL;
+		cls->hbrBackground = NULL;
+		cls->lpszMenuName = NULL;
+		cls->lpszClassName = class_name;
+		cls->hIconSm = NULL;
+	}
 	"""
 	ctypedef struct RECT:
 		int left
@@ -187,18 +203,7 @@ cdef extern from *:
 		unsigned char rgbReserved[32]
 
 	ctypedef struct WNDCLASSEXA:
-		unsigned int cbSize
-		unsigned int style
-		LRESULT (__stdcall *lpfnWndProc)(HWND, UINT, WPARAM, LPARAM)
-		int cbClsExtra
-		int cbWndExtra
-		HINSTANCE hInstance
-		HICON hIcon
-		HCURSOR hCursor
-		HBRUSH hbrBackground
-		const char* lpszMenuName
-		const char* lpszClassName
-		HICON hIconSm
+		pass
 
 	ctypedef void* HWND
 	ctypedef void* HINSTANCE
@@ -258,6 +263,7 @@ cdef extern from *:
 	int PostMessageW(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	unsigned int GetDpiForWindow(HWND hwnd)
 	int SetLayeredWindowAttributes(HWND hwnd, COLORREF key, unsigned char alpha, DWORD flags)
+	void ntb_init_wndclass(WNDCLASSEXA* cls, void* proc, HINSTANCE inst, const char* class_name)
 	int ntb_d2d_init(HWND hwnd, NtbD2DContext* ctx)
 	int ntb_d2d_begin(NtbD2DContext* ctx)
 	int ntb_d2d_end(NtbD2DContext* ctx)
@@ -488,18 +494,12 @@ cdef class NativeWindow:
 		if _CLASS_REGISTERED:
 			return
 		cdef WNDCLASSEXA cls
-		cls.cbSize = <unsigned int>sizeof(WNDCLASSEXA)
-		cls.style = 0
-		cls.lpfnWndProc = <LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM)>_wnd_proc
-		cls.cbClsExtra = 0
-		cls.cbWndExtra = 0
-		cls.hInstance = GetModuleHandleA(<const char*>0)
-		cls.hIcon = <HICON>0
-		cls.hCursor = <HCURSOR>0
-		cls.hbrBackground = <HBRUSH>0
-		cls.lpszMenuName = <const char*>0
-		cls.lpszClassName = <const char*>_CLASS_NAME
-		cls.hIconSm = <HICON>0
+		ntb_init_wndclass(
+			&cls,
+			<void*>_wnd_proc,
+			GetModuleHandleA(<const char*>0),
+			<const char*>_CLASS_NAME,
+		)
 		if RegisterClassExA(&cls) == 0:
 			raise RuntimeError("RegisterClassExW failed.")
 		_CLASS_REGISTERED = True
