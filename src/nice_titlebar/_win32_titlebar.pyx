@@ -189,21 +189,22 @@ cdef extern from *:
 	ctypedef struct WNDCLASSEXA:
 		unsigned int cbSize
 		unsigned int style
-		void* lpfnWndProc
+		LRESULT (__stdcall *lpfnWndProc)(HWND, UINT, WPARAM, LPARAM)
 		int cbClsExtra
 		int cbWndExtra
-		void* hInstance
-		void* hIcon
-		void* hCursor
-		void* hbrBackground
+		HINSTANCE hInstance
+		HICON hIcon
+		HCURSOR hCursor
+		HBRUSH hbrBackground
 		const char* lpszMenuName
 		const char* lpszClassName
-		void* hIconSm
+		HICON hIconSm
 
 	ctypedef void* HWND
 	ctypedef void* HINSTANCE
 	ctypedef void* HBRUSH
 	ctypedef void* HCURSOR
+	ctypedef void* HICON
 	ctypedef void* HMENU
 	ctypedef void* HDC
 	ctypedef intptr_t LRESULT
@@ -462,7 +463,11 @@ cdef class NativeWindow:
 		_WINDOWS[<uintptr_t>self._hwnd] = self
 		Py_INCREF(self)
 		if self._transparent or self._opacity < 1.0:
-			alpha = int(max(0.0, min(1.0, self._opacity)) * 255)
+			alpha = <int>(self._opacity * 255.0)
+			if alpha < 0:
+				alpha = 0
+			elif alpha > 255:
+				alpha = 255
 			SetLayeredWindowAttributes(self._hwnd, 0, <unsigned char>alpha, LWA_ALPHA)
 		self._layout_buttons()
 		if ntb_d2d_init(self._hwnd, &self._d2d) != 0:
@@ -485,16 +490,16 @@ cdef class NativeWindow:
 		cdef WNDCLASSEXA cls
 		cls.cbSize = <unsigned int>sizeof(WNDCLASSEXA)
 		cls.style = 0
-		cls.lpfnWndProc = <void*>_wnd_proc
+		cls.lpfnWndProc = <LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM)>_wnd_proc
 		cls.cbClsExtra = 0
 		cls.cbWndExtra = 0
 		cls.hInstance = GetModuleHandleA(<const char*>0)
-		cls.hIcon = <void*>0
-		cls.hCursor = <void*>0
-		cls.hbrBackground = <void*>0
+		cls.hIcon = <HICON>0
+		cls.hCursor = <HCURSOR>0
+		cls.hbrBackground = <HBRUSH>0
 		cls.lpszMenuName = <const char*>0
 		cls.lpszClassName = <const char*>_CLASS_NAME
-		cls.hIconSm = <void*>0
+		cls.hIconSm = <HICON>0
 		if RegisterClassExA(&cls) == 0:
 			raise RuntimeError("RegisterClassExW failed.")
 		_CLASS_REGISTERED = True
@@ -691,7 +696,7 @@ cdef class NativeWindow:
 			PyErr_Clear()
 
 
-cdef LRESULT _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) except? -1 with gil:
+cdef LRESULT __stdcall _wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) except? -1 with gil:
 	# This routes messages into the owning NativeWindow instance.
 	cdef NativeWindow window = <NativeWindow>_WINDOWS.get(<uintptr_t>hwnd)
 	cdef PAINTSTRUCT paint
