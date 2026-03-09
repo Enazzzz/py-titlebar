@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=69", "wheel", "Cython>=3.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nice-titlebar"
+version = "0.1.0"
+description = "Windows custom titlebar library powered by Cython and Direct2D."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+	{ name = "nice-titlebar contributors" }
+]
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"Programming Language :: Cython",
+	"Operating System :: Microsoft :: Windows",
+	"Topic :: Software Development :: User Interfaces"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+	"pytest>=8.0",
+	"Cython>=3.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[[tool.setuptools.ext-modules]]
+name = "nice_titlebar._win32_titlebar"
+sources = ["src/nice_titlebar/_win32_titlebar.pyx"]
+libraries = ["user32", "gdi32", "d2d1", "dwrite", "ole32"]
+define-macros = [["UNICODE", "1"], ["_UNICODE", "1"]]
+language = "c++"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

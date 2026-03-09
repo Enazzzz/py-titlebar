@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+src/nice_titlebar/_win32_titlebar.pyx
+src/nice_titlebar/__init__.py
+src/nice_titlebar/_win32_titlebar.pyx
+src/nice_titlebar/api.py
+src/nice_titlebar/types.py
+src/nice_titlebar.egg-info/PKG-INFO
+src/nice_titlebar.egg-info/SOURCES.txt
+src/nice_titlebar.egg-info/dependency_links.txt
+src/nice_titlebar.egg-info/requires.txt
+src/nice_titlebar.egg-info/top_level.txt
+tests/test_basic_window.py
